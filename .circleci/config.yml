@@ -13,8 +13,11 @@ jobs:
           command: npm install --save --prefix TDD-Assignment
       - run:
           name: start server
-          command: npm start --prefix TDD-Assignment
-          background: true
+          command: (npm run start&)
+      # - run:
+      #     name: start server
+      #     command: npm start --prefix TDD-Assignment
+      #     background: true
       - run:
           name: run mocha test
           command: ./node_modules/mocha/bin/mocha TDD-Assignment/server.test.js
