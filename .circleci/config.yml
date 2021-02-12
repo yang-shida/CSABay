@@ -13,7 +13,7 @@ jobs:
           command: npm install --save
       - run:
           name: start server
-          command: npm start
+          command: npm start --prefix TDD-Assignment
       - run:
           name: run mocha test
           command: mocha TDD-Assignment/server.test.js
