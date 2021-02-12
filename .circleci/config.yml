@@ -6,12 +6,13 @@ jobs:
       - image: circleci/node:10
     steps:
       - checkout
+          path: ~/CSABay
       - run:
           name: install npm dependencies
           command: npm install --save
-      - run:
-          name: go to dir 
-          command: cd TDD-Assignment
+      # - run:
+      #     name: go to dir 
+      #     command: cd TDD-Assignment
       - run:
           name: start server
           command: npm start
