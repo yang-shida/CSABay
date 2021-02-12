@@ -6,7 +6,6 @@ jobs:
       - image: circleci/node:10
     steps:
       - checkout
-          path: ~/CSABay
       - run:
           name: install npm dependencies
           command: npm install --save
