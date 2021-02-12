@@ -10,7 +10,7 @@ jobs:
           command: npm install mocha --prefix TDD-Assignment
       - run:    
           name: install npm dependencies
-          command: npm install --save
+          command: npm install --save --prefix TDD-Assignment
       - run:
           name: start server
           command: npm start --prefix TDD-Assignment
