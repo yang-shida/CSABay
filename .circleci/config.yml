@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: install mocha
-          command: npm install -g mocha
+          command: npm install mocha
       - run:    
           name: install npm dependencies
           command: npm install --save
@@ -16,7 +16,7 @@ jobs:
           command: npm start
       - run:
           name: run mocha test
-          command: mocha server.test.js
+          command: mocha TDD-Assignment/server.test.js
       - store_test_results:
           path: test_results
       - store_artifacts:
