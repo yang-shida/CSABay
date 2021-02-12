@@ -16,6 +16,9 @@ jobs:
           command: npm start --prefix TDD-Assignment
           background: true
       - run:
+          name: xx
+          command: cd TDD-Assignment
+      - run:
           name: run mocha test
           command: ./node_modules/mocha/bin/mocha TDD-Assignment/server.test.js
       - store_test_results:
