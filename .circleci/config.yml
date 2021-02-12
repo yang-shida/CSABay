@@ -1,23 +1,16 @@
 version: 2.1
-general:
-  build_dir: CSABay/TDD-Assignment
 jobs:
   run_tests:
-    # working_directory: ~/CSABay/TDD-Assignment
     docker:
       - image: circleci/node:10
     steps:
       - checkout
-          # path: CSABay
       - run:
           name: install npm dependencies
           command: npm install --save
       # - run:
-      #     name: go to dir 
-      #     command: cd TDD-Assignment
-      - run:
-          name: start server
-          command: npm start
+      #     name: start server
+      #     command: npm start
       - run:
           name: run mocha test
           command: mocha server.test.js
