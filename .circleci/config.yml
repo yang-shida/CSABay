@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: install mocha
-          command: npm install mocha
+          command: npm install mocha --prefix TDD-Assignment
       - run:    
           name: install npm dependencies
           command: npm install --save
