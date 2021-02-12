@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: install mocha
-          command: npm install mocha --prefix TDD-Assignment
+          command: npm install mocha
       - run:    
           name: install npm dependencies
           command: npm install --save --prefix TDD-Assignment
@@ -17,7 +17,7 @@ jobs:
           background: true
       - run:
           name: run mocha test
-          command: mocha TDD-Assignment/server.test.js
+          command: ./node_modules/mocha/bin/mocha TDD-Assignment/server.test.js
       - store_test_results:
           path: test_results
       - store_artifacts:
