@@ -1,10 +1,12 @@
 version: 2.1
 jobs:
   run_tests:
+    working_directory: ~/CSABay/TDD-Assignment
     docker:
       - image: circleci/node:10
     steps:
       - checkout
+          path: ~/CSABay
       - run:
           name: install npm dependencies
           command: npm install --save
