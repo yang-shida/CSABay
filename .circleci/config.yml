@@ -1,7 +1,9 @@
 version: 2.1
+general:
+  build_dir: CSABay/TDD-Assignment
 jobs:
   run_tests:
-    working_directory: ~/CSABay/TDD-Assignment
+    # working_directory: ~/CSABay/TDD-Assignment
     docker:
       - image: circleci/node:10
     steps:
