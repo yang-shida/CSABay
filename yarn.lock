@@ -2303,6 +2303,13 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
   dependencies:
     color-convert "^2.0.1"
 
+antd-password-input-strength@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/antd-password-input-strength/-/antd-password-input-strength-1.1.1.tgz#66572ecaecc35140c8ebf47e32f324680d2b6920"
+  integrity sha512-+GlDcjxBaKkReE/O9T+Ff/kgJPJ5YjtcX5ZXnNXf2d2PJQxm8Fjkesmse/nB+WY0z9OQjpy3uNrKvVsZuY4VLg==
+  dependencies:
+    zxcvbn "^4.4.2"
+
 antd@^4.12.3:
   version "4.12.3"
   resolved "https://registry.yarnpkg.com/antd/-/antd-4.12.3.tgz#b9f1401e4f2899a3b33c1953491775efbbaa4da3"
@@ -12015,3 +12022,8 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zxcvbn@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/zxcvbn/-/zxcvbn-4.4.2.tgz#28ec17cf09743edcab056ddd8b1b06262cc73c30"
+  integrity sha1-KOwXzwl0PtyrBW3dixsGJizHPDA=
