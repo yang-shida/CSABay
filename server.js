@@ -10,6 +10,7 @@ const expressLayouts = require('express-ejs-layouts')
 
 //include routes
 const indexRouter = require('./routes/index')
+const userRouter = require('./routes/users')
 
 //set server requirements
 app.set('view engine', 'ejs')
@@ -31,7 +32,7 @@ db.once('open', () => console.error('Connected to mongoose'))
 
 //use index route
 app.use('/', indexRouter)
+app.use('/users', userRouter)
 
 //localhost
 app.listen(process.env.PORT || 3000)
-
