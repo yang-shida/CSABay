@@ -33,6 +33,36 @@ const formItemLayout = {
     },
 };
 
+const emailVerificationLayout = {
+    labelCol: {
+        xs: {
+          span: 24,
+        },
+        sm: {
+          span: 8,
+        },
+      },
+      wrapperCol: {
+        xs: {
+          span: 22,
+        },
+        sm: {
+          span: 6,
+        },
+      },
+}
+
+const emailVerificationButtonLayout = {
+    wrapperCol: {
+        xs: {
+            span: 1,
+        },
+        sm: {
+            span: 1, 
+        },
+    },
+}
+
 const tailFormItemLayout = {
     wrapperCol: {
         xs: {
@@ -49,7 +79,9 @@ const SignupForm = () => {
 
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
+    const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
+    const [emailVerification, setEmailVerification] = useState('')
     const [wechatID, setWechatID] = useState('')
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
@@ -60,6 +92,7 @@ const SignupForm = () => {
         const newUser = {
             firstName: firstName,
             lastName: lastName,
+            username: username,
             email: email,
             wechatID: wechatID,
             password: password,
@@ -76,7 +109,9 @@ const SignupForm = () => {
 
         setFirstName('')
         setLastName('')
+        setUsername('')
         setEmail('')
+        setEmailVerification('')
         setWechatID('')
         setPassword('')
         setConfirm('')
@@ -108,7 +143,7 @@ const SignupForm = () => {
                     ]
                     }
                 >
-                    <Input value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
+                    <Input onChange={(e) => setFirstName(e.target.value)}/>
                 </Form.Item>
 
                 <Form.Item
@@ -124,6 +159,22 @@ const SignupForm = () => {
                 >
                     <Input value={lastName} onChange={(e) => setLastName(e.target.value)}/>
                 </Form.Item>
+
+                {/* Can use email as key */}
+                {/* <Form.Item
+                    name="username"
+                    label="Username"
+                    rules={[
+                        // TODO: add rule to make it unique
+                        {
+                            required: true,
+                            message: 'Please input your username!',
+                        },
+                    ]
+                    }
+                >
+                    <Input value={username} onChange={(e) => setUsername(e.target.value)}/>
+                </Form.Item> */}
 
                 <Form.Item
                     name="email"
@@ -141,6 +192,33 @@ const SignupForm = () => {
                 >
                     <Input value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </Form.Item>
+
+                <Form.Item label="Verify Email">
+                    <Row gutter={6}>
+                        <Col span={20}>
+                            <Form.Item
+                                name='code'
+                                noStyle						
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input the email verification code you got!'
+                                    }
+                                ]}
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            {/* TODO: add onClick action to check if match database */}
+                            <Button>    
+                                Get Code
+                            </Button>
+                        </Col>
+                    </Row>
+                </Form.Item>
+
+                
 
                 <Form.Item
                     name="wechat-id"
