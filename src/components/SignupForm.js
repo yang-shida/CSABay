@@ -33,36 +33,6 @@ const formItemLayout = {
     },
 };
 
-const emailVerificationLayout = {
-    labelCol: {
-        xs: {
-          span: 24,
-        },
-        sm: {
-          span: 8,
-        },
-      },
-      wrapperCol: {
-        xs: {
-          span: 22,
-        },
-        sm: {
-          span: 6,
-        },
-      },
-}
-
-const emailVerificationButtonLayout = {
-    wrapperCol: {
-        xs: {
-            span: 1,
-        },
-        sm: {
-            span: 1, 
-        },
-    },
-}
-
 const tailFormItemLayout = {
     wrapperCol: {
         xs: {
@@ -206,7 +176,7 @@ const SignupForm = () => {
                                     }
                                 ]}
                             >
-                                <Input />
+                                <Input value={emailVerification} onChange={(e) => setEmailVerification(e.target.value)}/>
                             </Form.Item>
                         </Col>
                         <Col span={4}>
