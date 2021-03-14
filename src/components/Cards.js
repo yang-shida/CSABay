@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, Col, Row, Avatar } from 'antd';
-import { StarOutlined } from '@ant-design/icons';
+import { StarOutlined, StarFilled, StarTwoTone } from '@ant-design/icons';
 
 const { Meta } = Card;
 
@@ -36,21 +36,24 @@ const priceStyle = {
     float: 'left'
 };
 
-const Cards = ({posts}) => {
+const Cards = ({posts, onClickStar, favoriteIDs}) => {
+
     return (
         <div>
             <Row>
                 {
                     posts.map(
                         (post) => (
-                            <Col style={{margin: '20px 15px'}}>
+                            <Col key={post.id} style={{margin: '20px 15px'}}>
                                 <Card
                                     hoverable={true}
                                     bordered={false}
-                                    key={post.id}
                                     style={{width:widthOfCard}}
                                     actions={[
-                                        <StarOutlined key="favorite" />,
+                                            favoriteIDs.includes(post.id)?
+                                            <StarTwoTone key="favorite" twoToneColor="yellow" onClick={()=>onClickStar(post.id)}/>:
+                                            <StarOutlined key="favorite" onClick={()=>onClickStar(post.id)}/>
+                                        
                                     ]}
                                     cover={
                                         <div style={{overflow: 'hidden', width: widthOfCard, height: widthOfCard, borderRadius: '10px'}}>

@@ -1,17 +1,41 @@
 import React from 'react';
 import { Button } from 'antd';
 import './App.less';
+import {useState, useEffect} from 'react'
 
 import NavBar from './components/NavBar'
 import SignupForm from './components/SignupForm'
 import MainPage from './components/MainPage'
 
-const App = () => (
-  <div className="App">
-    <NavBar></NavBar>
-    {/* <SignupForm></SignupForm> */}
-    <MainPage></MainPage>
-  </div>
-);
+const App = () => {
+  const [userInfo, setUserInfo] = useState();
+
+  useEffect(
+    ()=>{
+      const getUser = async() =>{
+        const userFromServer = await fetchUser(1)
+        setUserInfo(userFromServer)
+      }
+
+      getUser()
+      
+    }, []
+  )
+
+  const fetchUser = async(userID) =>{
+    const res = await fetch(`http://localhost:8080/users/${userID}`)
+    const data = await res.json()
+    return data
+  }
+
+  return (
+    <div className="App">
+      <NavBar></NavBar>
+      {/* <SignupForm></SignupForm> */}
+      {userInfo===undefined?"":<MainPage user={userInfo} setUser={setUserInfo}></MainPage>}
+      
+    </div>
+  )
+}
 
 export default App;
