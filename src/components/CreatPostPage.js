@@ -65,8 +65,36 @@ const CreatPostPage = () => {
     const [wechatID, setWechatID] = useState('')
     const [phoneNum, setPhoneNum] = useState('')
 
-    const onFinish = () => {
-        console.log("post created")
+    const onFinish = async () => {
+        const newPost = {
+            title: title,
+            description: description,
+            durationDays: durationDays,
+            zipcode: zipcode,
+            price: price,
+            email: email,
+            wechatID: wechatID,
+            phoneNum: phoneNum
+        }
+
+        const res = await fetch('http://localhost:8080/posts1', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(newPost),
+        })
+
+        setTitle('')
+        setDescription('')
+        setDurationDays('')
+        setZipcode('')
+        setPrice('')
+        setEmail('')
+        setWechatID('')
+        setPhoneNum('')
+
+        form.resetFields();
     }
 
     return (
@@ -171,7 +199,7 @@ const CreatPostPage = () => {
                         [
                             ()=>({
                                 validator(_, value){
-                                    if(value===''){
+                                    if(value==='' || value===undefined){
                                         return Promise.resolve();
                                     }
                                     else if(!(/^\d{5}(-\d{4})?$/.test(value))){
