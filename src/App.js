@@ -6,6 +6,7 @@ import {useState, useEffect} from 'react'
 import NavBar from './components/NavBar'
 import SignupForm from './components/SignupForm'
 import MainPage from './components/MainPage'
+import CreatePostPage from './components/CreatePostPage'
 
 const App = () => {
   const [userInfo, setUserInfo] = useState();
@@ -30,10 +31,10 @@ const App = () => {
 
   return (
     <div className="App">
-      <NavBar></NavBar>
+      <NavBar />
       {/* <SignupForm></SignupForm> */}
-      {userInfo===undefined?"":<MainPage user={userInfo} setUser={setUserInfo}></MainPage>}
-      
+      {/* {userInfo===undefined?"":<MainPage user={userInfo} setUser={setUserInfo}></MainPage>} */}
+      <CreatePostPage />
     </div>
   )
 }

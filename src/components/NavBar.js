@@ -20,8 +20,8 @@ const NavBar = () => {
                     UF CSABay
                 </Menu.Item>
 
-                <Menu.Item key="placeholder1" style={{margin: '0px 5px 0px 5px', padding: '0px 20px'}}>
-                    NavBar Placeholder 1
+                <Menu.Item key="create-post" style={{margin: '0px 5px 0px 5px', padding: '0px 20px'}}>
+                    New Post
                 </Menu.Item>
 
                 <Menu.Item key="placeholder2" style={{margin: '0px 5px 0px 5px', padding: '0px 20px'}}>
