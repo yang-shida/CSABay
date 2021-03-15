@@ -4,10 +4,16 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import CreatePostPage from './components/CreatePostPage'
+import NavBar from './components/NavBar'
+
 ReactDOM.render(
-  <React.StrictMode>
+  // <React.StrictMode>
+  //   <App />
+  // </React.StrictMode>,
+  <span>
     <App />
-  </React.StrictMode>,
+  </span>,
   document.getElementById('root')
 );
 

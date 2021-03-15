@@ -11,7 +11,9 @@ import {
     InputNumber,
   } from 'antd';
 
-  import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import ImageUploader from './ImageUploader'
+
 
 const formItemLayout = {
     labelCol: {
@@ -237,11 +239,14 @@ const CreatPostPage = () => {
                     />
                 </Form.Item>
 
-                <Row justify='center'>
-                    <Col span={10} style={{borderWidth: '5px', borderColor: 'black', borderStyle: 'solid', padding: '40px'}}>
-                        <div style={{fontSize: '30pt'}}>PLACEHOLDER FOR IMAGE UPLOADER</div>
-                    </Col>
-                </Row>
+                <Form.Item
+                    name="pictures"
+                    label="Pictures"
+                >
+                    <div style={{borderWidth: '1px', borderColor: '#E0E0E0', borderStyle: 'solid', padding: '40px'}}>
+                        <ImageUploader maxNumberOfPictures='6'></ImageUploader>
+                    </div>
+                </Form.Item>
 
                 <Row justify='center'>
                     <Col {...dividerLayout}>
