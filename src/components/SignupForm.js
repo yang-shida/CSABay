@@ -3,13 +3,9 @@ import {
   Form,
   Input,
   Tooltip,
-  Cascader,
-  Select,
   Row,
   Col,
-  Checkbox,
   Button,
-  AutoComplete,
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {PasswordInput} from 'antd-password-input-strength'
@@ -69,13 +65,13 @@ const SignupForm = () => {
             phoneNum: phoneNum
         }
 
-    const res = await fetch('http://localhost:8080/users', {
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify(newUser),
-    })
+        const res = await fetch('http://localhost:8080/users', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(newUser),
+        })
 
         setFirstName('')
         setLastName('')
@@ -113,7 +109,7 @@ const SignupForm = () => {
                     ]
                     }
                 >
-                    <Input onChange={(e) => setFirstName(e.target.value)}/>
+                    <Input value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
                 </Form.Item>
 
                 <Form.Item
