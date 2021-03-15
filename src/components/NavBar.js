@@ -2,6 +2,7 @@ import { Menu } from 'antd';
 import {useState} from 'react'
 import { Avatar, Image } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import {Link} from 'react-router-dom'
 
 const { SubMenu } = Menu;
 
@@ -17,15 +18,15 @@ const NavBar = () => {
             <Menu onClick={handleClick} selectedKeys={[currentPage]} mode="horizontal">
                 
                 <Menu.Item key="home" style={{margin: '0px 5px 0px 10px', padding: '0px 20px', fontSize: '18px'}}>
-                    UF CSABay
+                    <Link to='/'>UF CSABay</Link>
                 </Menu.Item>
 
                 <Menu.Item key="create-post" style={{margin: '0px 5px 0px 5px', padding: '0px 20px'}}>
-                    New Post
+                    <Link to='/create-post'>New Post</Link>
                 </Menu.Item>
 
                 <Menu.Item key="placeholder2" style={{margin: '0px 5px 0px 5px', padding: '0px 20px'}}>
-                    NavBar Placeholder 2
+                    <Link to='/register'>Test Register Page</Link>
                 </Menu.Item>
 
                 {/* <SubMenu key="SubMenu" title="Navigation Three - Submenu" style={{margin: '0px 5px 0px 5px', padding: '0px 20px'}}>

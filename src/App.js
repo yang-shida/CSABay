@@ -7,6 +7,7 @@ import NavBar from './components/NavBar'
 import SignupForm from './components/SignupForm'
 import MainPage from './components/MainPage'
 import CreatePostPage from './components/CreatePostPage'
+import {BrowserRouter as Router, Route} from 'react-router-dom'
 
 const App = () => {
   const [userInfo, setUserInfo] = useState();
@@ -30,12 +31,45 @@ const App = () => {
   }
 
   return (
-    <div className="App">
-      <NavBar />
-      {/* <SignupForm></SignupForm> */}
-      {/* {userInfo===undefined?"":<MainPage user={userInfo} setUser={setUserInfo}></MainPage>} */}
-      <CreatePostPage />
-    </div>
+    <Router>
+      <div className="App">
+        <NavBar />
+
+        <Route
+          path='/'
+          exact render={
+            ()=>(
+              <>
+                {userInfo===undefined?"":<MainPage user={userInfo} setUser={setUserInfo}></MainPage>}
+              </>
+            )
+          }
+        ></Route>
+
+        <Route
+          path='/register'
+          exact render={
+            ()=>(
+              <>
+                <SignupForm></SignupForm>
+              </>
+            )
+          }
+        ></Route>
+        
+        <Route
+          path='/create-post'
+          exact render={
+            ()=>(
+              <>
+                <CreatePostPage />
+              </>
+            )
+          }
+        ></Route>
+        
+      </div>
+    </Router>
   )
 }
 
