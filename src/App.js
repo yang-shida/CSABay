@@ -21,6 +21,8 @@ const App = () => {
       }
 
       getUser()
+
+      console.log('fetching user')
       
     }, []
   )
@@ -34,7 +36,7 @@ const App = () => {
   return (
     <Router>
       <div className="App">
-        <NavBar />
+        {userInfo===undefined?"":<NavBar user={userInfo} />}
 
         <Route
           path='/'
@@ -74,7 +76,7 @@ const App = () => {
           exact render={
             ()=>(
               <>
-                {userInfo===undefined?"":<ProfilePage user={userInfo}/>}
+                {userInfo===undefined?"":<ProfilePage user={userInfo} setUser={setUserInfo}/>}
                 
               </>
             )

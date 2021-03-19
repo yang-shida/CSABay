@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { Avatar, Image, Divider, Row, Col, Layout, Menu } from 'antd';
 import Cards from './Cards'
+import ChangePasswordPage from './ChangePasswordPage'
 
 const profileContainerStyle = {
     // borderWidth: '2px',
@@ -53,7 +54,7 @@ const profileMainBodyStyle = {
 
 const defaultMenuKey = 1
 
-const ProfilePage = ({user}) => {
+const ProfilePage = ({user, setUser}) => {
     const [myPosts, setMyPosts] = useState([])
     const [mySavedPosts, setMySavedPosts] = useState([])
     const [currentMenuKey, setCurrentMenuKey] = useState(defaultMenuKey)
@@ -92,8 +93,6 @@ const ProfilePage = ({user}) => {
     const fetchPost = async (postID) => {
         const res = await fetch(`http://localhost:8080/posts/${postID}`)
         const data = await res.json()
-
-        console.log('Fetching Post ID: ', postID)
         
         return data
     }
@@ -157,15 +156,18 @@ const ProfilePage = ({user}) => {
 
                 <Menu id="profile-side-bar-menu" mode="inline" defaultSelectedKeys={[`${defaultMenuKey}`]} onSelect={(selectedKeys)=>onSelectMenu(selectedKeys)}>
                     <Menu.Item key="1">
-                        My Posts
+                        My Profile Information
                     </Menu.Item>
                     <Menu.Item key="2">
-                        Favorite Posts
+                        My Posts
                     </Menu.Item>
                     <Menu.Item key="3">
-                        Change Password
+                        Favorite Posts
                     </Menu.Item>
                     <Menu.Item key="4">
+                        Change Password
+                    </Menu.Item>
+                    <Menu.Item key="5">
                         Edit Profile
                     </Menu.Item>
                 </Menu>
@@ -175,9 +177,13 @@ const ProfilePage = ({user}) => {
             <div id="profile-main-body" style={profileMainBodyStyle}>
                 {
                     currentMenuKey==1?
-                    <Cards posts={myPosts} displayDelete={true} onClickDelete={onClickDelete}></Cards>:
+                    <h1>My Profile</h1>:
                     currentMenuKey==2?
+                    <Cards posts={myPosts} displayDelete={true} onClickDelete={onClickDelete}></Cards>:
+                    currentMenuKey==3?
                     <Cards posts={mySavedPosts} displayDelete={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}></Cards>:
+                    currentMenuKey==4?
+                    <ChangePasswordPage user={user} setUser={setUser}/>:
                     'x'
                 }
             </div>

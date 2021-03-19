@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom'
 
 const { SubMenu } = Menu;
 
-const NavBar = () => {
+const NavBar = ({user}) => {
     const [currentPage, setCurrentPage] = useState('home')
 
     const handleClick = e => {
@@ -49,13 +49,13 @@ const NavBar = () => {
                 <SubMenu key="user-info"
 
                     icon = {<Avatar size="default" src="../CSA_icon.jpg" style={{marginRight: '10px'}}/>} 
-                    title="CSA Test User" 
+                    title= {`${user.firstName} ${user.lastName}`}
                     style={{float: 'right', margin: '0px 10px 0px 0px', padding: '0px'}}>
                     
                     <Menu.Item key="profile"><Link to='/profile'>User Profile</Link></Menu.Item>
-                    <Menu.Item key="my-posts">My Posts</Menu.Item>
+                    {/* <Menu.Item key="my-posts">My Posts</Menu.Item>
                     <Menu.Item key="liked-posts">Liked Posts</Menu.Item>
-                    <Menu.Item key="change-password">Change Password</Menu.Item>
+                    <Menu.Item key="change-password">Change Password</Menu.Item> */}
                     <Menu.Item key="sign-out">Sign Out</Menu.Item>
                     
 
