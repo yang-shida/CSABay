@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, Col, Row, Avatar } from 'antd';
-import { StarOutlined, StarFilled, StarTwoTone } from '@ant-design/icons';
+import { StarOutlined, DeleteOutlined, StarTwoTone } from '@ant-design/icons';
 
 const { Meta } = Card;
 
@@ -36,7 +36,7 @@ const priceStyle = {
     float: 'left'
 };
 
-const Cards = ({posts, onClickStar, favoriteIDs}) => {
+const Cards = ({posts, onClickStar, favoriteIDs, displayDelete, onClickDelete}) => {
 
     return (
         <div>
@@ -49,12 +49,19 @@ const Cards = ({posts, onClickStar, favoriteIDs}) => {
                                     hoverable={true}
                                     bordered={false}
                                     style={{width:widthOfCard}}
-                                    actions={[
-                                            favoriteIDs.includes(post.id)?
-                                            <StarTwoTone key="favorite" twoToneColor="yellow" onClick={()=>onClickStar(post.id)}/>:
-                                            <StarOutlined key="favorite" onClick={()=>onClickStar(post.id)}/>
+                                    actions={
+                                        displayDelete?
+                                            [
+                                                <DeleteOutlined key="delete" onClick={()=>onClickDelete(post.id)} />
+                                            ]
+                                            :
+                                            [
+                                                favoriteIDs.includes(post.id)?
+                                                <StarTwoTone key="favorite" twoToneColor="yellow" onClick={()=>onClickStar(post.id)}/>:
+                                                <StarOutlined key="favorite" onClick={()=>onClickStar(post.id)}/>
+                                            ]
                                         
-                                    ]}
+                                    }
                                     cover={
                                         <div style={{overflow: 'hidden', width: widthOfCard, height: widthOfCard, borderRadius: '10px'}}>
                                             <img

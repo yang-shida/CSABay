@@ -7,6 +7,7 @@ import NavBar from './components/NavBar'
 import SignupForm from './components/SignupForm'
 import MainPage from './components/MainPage'
 import CreatePostPage from './components/CreatePostPage'
+import ProfilePage from './components/ProfilePage'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 
 const App = () => {
@@ -63,6 +64,18 @@ const App = () => {
             ()=>(
               <>
                 <CreatePostPage />
+              </>
+            )
+          }
+        ></Route>
+
+        <Route
+          path='/profile'
+          exact render={
+            ()=>(
+              <>
+                {userInfo===undefined?"":<ProfilePage user={userInfo}/>}
+                
               </>
             )
           }

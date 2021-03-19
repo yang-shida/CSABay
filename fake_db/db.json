@@ -10,8 +10,7 @@
       "password": "Aa123456",
       "phoneNum": "",
       "savedPosts": [
-        2,
-        4
+        2,4
       ],
       "id": 1
     },
@@ -49,6 +48,7 @@
   ],
   "posts": [
     {
+      "userID": 1,
       "pictures": [
         "https://www.wpclipart.com/signs_symbol/alphabets_numbers/outlined_numbers/green/number_0_green.png",
         "https://cdn.pixabay.com/photo/2012/04/23/15/20/one-38484_1280.png",
@@ -62,6 +62,7 @@
       "id": 1
     },
     {
+      "userID": 1,
       "pictures": [
         "https://www.wpclipart.com/signs_symbol/alphabets_numbers/outlined_numbers/green/number_0_green.png",
         "https://scontent-mia3-2.xx.fbcdn.net/v/t1.0-9/s960x960/149271249_3195703104014428_6541556232544047160_o.jpg?_nc_cat=103&ccb=1-3&_nc_sid=843cd7&_nc_ohc=ojbEpv53X2YAX-J9rvx&_nc_oc=AQk6yB5uGDDujDD0NJvDWIuqmHjPOWdlRHlz-yvaRAaureb7wfTh1UlyXVsl_tWH6Lw&_nc_ht=scontent-mia3-2.xx&tp=7&oh=0816dacc0a1e25356048a4ac9068e577&oe=607127D3",
@@ -75,6 +76,7 @@
       "id": 2
     },
     {
+      "userID": 1,
       "pictures": [
         "https://www.wpclipart.com/signs_symbol/alphabets_numbers/outlined_numbers/green/number_0_green.png",
         "https://cdn.pixabay.com/photo/2012/04/23/15/20/one-38484_1280.png",
@@ -88,6 +90,7 @@
       "id": 3
     },
     {
+      "userID": 1,
       "pictures": [
         "https://www.wpclipart.com/signs_symbol/alphabets_numbers/outlined_numbers/green/number_0_green.png",
         "https://cdn.pixabay.com/photo/2012/04/23/15/20/one-38484_1280.png",
@@ -95,12 +98,13 @@
         "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Eo_circle_deep-orange_number-3.svg/768px-Eo_circle_deep-orange_number-3.svg.png"
       ],
       "cardPictureIndex": 3,
-      "title": "Selling my dog",
+      "title": "Selling my dog1",
       "price": 69.9,
       "profilePicture": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
       "id": 4
     },
     {
+      "userID": 3,
       "pictures": [
         "https://www.wpclipart.com/signs_symbol/alphabets_numbers/outlined_numbers/green/number_0_green.png",
         "https://cdn.pixabay.com/photo/2012/04/23/15/20/one-38484_1280.png",
@@ -108,12 +112,13 @@
         "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Eo_circle_deep-orange_number-3.svg/768px-Eo_circle_deep-orange_number-3.svg.png"
       ],
       "cardPictureIndex": 3,
-      "title": "Selling my dog",
+      "title": "Selling my dog2",
       "price": 69.9,
       "profilePicture": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
       "id": 5
     },
     {
+      "userID": 1,
       "pictures": [
         "https://www.wpclipart.com/signs_symbol/alphabets_numbers/outlined_numbers/green/number_0_green.png",
         "https://cdn.pixabay.com/photo/2012/04/23/15/20/one-38484_1280.png",
@@ -121,12 +126,13 @@
         "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Eo_circle_deep-orange_number-3.svg/768px-Eo_circle_deep-orange_number-3.svg.png"
       ],
       "cardPictureIndex": 3,
-      "title": "Selling my dog",
+      "title": "Selling my dog3",
       "price": 69.9,
       "profilePicture": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
       "id": 6
     },
     {
+      "userID": 2,
       "pictures": [
         "https://www.wpclipart.com/signs_symbol/alphabets_numbers/outlined_numbers/green/number_0_green.png",
         "https://cdn.pixabay.com/photo/2012/04/23/15/20/one-38484_1280.png",
@@ -134,7 +140,7 @@
         "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Eo_circle_deep-orange_number-3.svg/768px-Eo_circle_deep-orange_number-3.svg.png"
       ],
       "cardPictureIndex": 3,
-      "title": "Selling my dog",
+      "title": "Selling my dog4",
       "price": 69.9,
       "profilePicture": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
       "id": 7

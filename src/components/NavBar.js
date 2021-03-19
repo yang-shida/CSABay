@@ -52,7 +52,7 @@ const NavBar = () => {
                     title="CSA Test User" 
                     style={{float: 'right', margin: '0px 10px 0px 0px', padding: '0px'}}>
                     
-                    <Menu.Item key="edit-profile">Edit Profile</Menu.Item>
+                    <Menu.Item key="profile"><Link to='/profile'>User Profile</Link></Menu.Item>
                     <Menu.Item key="my-posts">My Posts</Menu.Item>
                     <Menu.Item key="liked-posts">Liked Posts</Menu.Item>
                     <Menu.Item key="change-password">Change Password</Menu.Item>
