@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { Avatar, Image, Divider, Row, Col, Layout, Menu } from 'antd';
 import Cards from './Cards'
 import ChangePasswordPage from './ChangePasswordPage'
+import EditContactInfoPage from './EditContactInfoPage'
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -195,7 +196,7 @@ const ProfilePage = ({user, setUser}) => {
                         Change Password
                     </Menu.Item>
                     <Menu.Item key="4">
-                        Edit Profile
+                        Edit Contact Info
                     </Menu.Item>
                 </Menu>
             </Sider>
@@ -246,7 +247,7 @@ const ProfilePage = ({user, setUser}) => {
                     <Cards posts={mySavedPosts} displayDelete={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}></Cards>:
                     currentMenuKey==3?
                     <ChangePasswordPage user={user} setUser={setUser}/>:
-                    'x'
+                    <EditContactInfoPage user={user} setUser={setUser} />
                 }
             </div>
 

@@ -7,7 +7,6 @@ import {
     Row,
     Col,
     Button,
-    Alert,
   } from 'antd';
 import {PasswordInput} from 'antd-password-input-strength'
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -115,7 +114,7 @@ const ChangePasswordPage = ({user, setUser}) => {
             <Form
                 form={form}
                 {...formItemLayout}
-                name="signup"
+                name="change-password"
                 onFinish={onFinish}
             >
 
