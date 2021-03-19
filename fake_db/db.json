@@ -6,11 +6,12 @@
       "lastName": "Yang",
       "username": "shidayang",
       "email": "SHIDAYZZ@GMAIL.COM",
-      "wechatID": "",
-      "password": "Aa123456",
+      "wechatID": "aas",
+      "password": "AAAbbb123",
       "phoneNum": "",
       "savedPosts": [
-        2,4
+        2,
+        4
       ],
       "id": 1
     },

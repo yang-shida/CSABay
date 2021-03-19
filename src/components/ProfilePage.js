@@ -3,6 +3,8 @@ import { Avatar, Image, Divider, Row, Col, Layout, Menu } from 'antd';
 import Cards from './Cards'
 import ChangePasswordPage from './ChangePasswordPage'
 
+const { Header, Content, Footer, Sider } = Layout;
+
 const profileContainerStyle = {
     // borderWidth: '2px',
     // borderStyle: 'solid',
@@ -36,6 +38,7 @@ const profilePictureStyle = {
 const basicInfoStyle = {
     fontFamily: 'Arial, Helvetica, sans-serif',
     color: '#A0A0A0',
+    textAlign: 'left'
 }
 
 const dividerLayout = {
@@ -58,6 +61,8 @@ const ProfilePage = ({user, setUser}) => {
     const [myPosts, setMyPosts] = useState([])
     const [mySavedPosts, setMySavedPosts] = useState([])
     const [currentMenuKey, setCurrentMenuKey] = useState(defaultMenuKey)
+
+    const [sideBarWidth, setSideBarWidth] = useState(`${window.innerWidth>=992?"20%":"100%"}`)
 
     useEffect(
         () => {
@@ -138,13 +143,38 @@ const ProfilePage = ({user, setUser}) => {
 
     return (
         <div id="profile-container" style={profileContainerStyle}>
-            <div id="profile-side-bar" style={profileSideBarStyle}>
+            <Sider
+                style={profileSideBarStyle}
+                // style={{float: "left"}}
+                theme="light"
+                width={sideBarWidth}
+                breakpoint="lg"
+                collapsedWidth="0"
+                onBreakpoint={broken => {
+                    console.log(window.innerWidth)
+                    if(broken){
+                        setSideBarWidth("100%")
+                    }
+                    else{
+                        setSideBarWidth("20%")
+                    }
+                }}
+                onCollapse={(collapsed, type) => {
+                    console.log(collapsed, type);
+                }}
+            >
                 <Avatar size="default" src="../CSA_icon.jpg" style={profilePictureStyle}/>
                 <div style={basicInfoStyle}>
-                    {user.firstName} {user.lastName}
+                    Name: {user.firstName} {user.lastName}
                 </div>
                 <div style={basicInfoStyle}>
-                    {user.email.toLowerCase()}
+                    Email: {user.email.toLowerCase()}
+                </div>
+                <div style={basicInfoStyle}>
+                    WeChat ID: {user.wechatID===""?"N/A":user.wechatID}
+                </div>
+                <div style={basicInfoStyle}>
+                    Phone Number: {user.phoneNum===""?"N/A":user.phoneNum}
                 </div>
 
                 <Row>
@@ -156,33 +186,65 @@ const ProfilePage = ({user, setUser}) => {
 
                 <Menu id="profile-side-bar-menu" mode="inline" defaultSelectedKeys={[`${defaultMenuKey}`]} onSelect={(selectedKeys)=>onSelectMenu(selectedKeys)}>
                     <Menu.Item key="1">
-                        My Profile Information
-                    </Menu.Item>
-                    <Menu.Item key="2">
                         My Posts
                     </Menu.Item>
-                    <Menu.Item key="3">
+                    <Menu.Item key="2">
                         Favorite Posts
                     </Menu.Item>
-                    <Menu.Item key="4">
+                    <Menu.Item key="3">
                         Change Password
                     </Menu.Item>
-                    <Menu.Item key="5">
+                    <Menu.Item key="4">
+                        Edit Profile
+                    </Menu.Item>
+                </Menu>
+            </Sider>
+            {/* <div id="profile-side-bar" style={profileSideBarStyle}>
+                <Avatar size="default" src="../CSA_icon.jpg" style={profilePictureStyle}/>
+                <div style={basicInfoStyle}>
+                    Name: {user.firstName} {user.lastName}
+                </div>
+                <div style={basicInfoStyle}>
+                    Email: {user.email.toLowerCase()}
+                </div>
+                <div style={basicInfoStyle}>
+                    WeChat ID: {user.wechatID===""?"N/A":user.wechatID}
+                </div>
+                <div style={basicInfoStyle}>
+                    Phone Number: {user.phoneNum===""?"N/A":user.phoneNum}
+                </div>
+
+                <Row>
+                    <Col {...dividerLayout} >
+                        <Divider orientation="left">
+                        </Divider>
+                    </Col>
+                </Row>
+
+                <Menu id="profile-side-bar-menu" mode="inline" defaultSelectedKeys={[`${defaultMenuKey}`]} onSelect={(selectedKeys)=>onSelectMenu(selectedKeys)}>
+                    <Menu.Item key="1">
+                        My Posts
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                        Favorite Posts
+                    </Menu.Item>
+                    <Menu.Item key="3">
+                        Change Password
+                    </Menu.Item>
+                    <Menu.Item key="4">
                         Edit Profile
                     </Menu.Item>
                 </Menu>
             
-            </div>
+            </div> */}
             
             <div id="profile-main-body" style={profileMainBodyStyle}>
                 {
                     currentMenuKey==1?
-                    <h1>My Profile</h1>:
-                    currentMenuKey==2?
                     <Cards posts={myPosts} displayDelete={true} onClickDelete={onClickDelete}></Cards>:
-                    currentMenuKey==3?
+                    currentMenuKey==2?
                     <Cards posts={mySavedPosts} displayDelete={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}></Cards>:
-                    currentMenuKey==4?
+                    currentMenuKey==3?
                     <ChangePasswordPage user={user} setUser={setUser}/>:
                     'x'
                 }

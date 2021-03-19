@@ -14,29 +14,41 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const formItemLayout = {
     labelCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 6,
-      },
+        sm: {
+            span: 24,
+        },
+        sm: {
+            span: 24,
+        },
+        md: {
+            span: 24,
+        },
+        lg: {
+            span: 6,
+        },
     },
     wrapperCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 12,
-      },
+        sm: {
+            span: 24,
+        },
+        sm: {
+            span: 24,
+        },
+        md: {
+            span: 24,
+        },
+        lg: {
+            span: 12,
+        },
     },
 };
 
 const tailFormItemLayout = {
     wrapperCol: {
-        xs: {
+        md: {
             span: 24,
         },
-        sm: {
+        lg: {
             span: 24, 
         },
     },
@@ -51,18 +63,20 @@ const ChangePasswordPage = ({user, setUser}) => {
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
 
+    const [warningMessage, setWarningMessage] = useState('')
+
     const onFinish = async () =>{
         if(oldPassword !== user.password){
-            Alert('Your old password is incorrect.')
+            setWarningMessage('Your old password is incorrect.')
         }
         else if(false /*check email verification*/){
-            Alert('Your email verification code is incorrect.')
+            setWarningMessage('Your email verification code is incorrect.')
         }
         else{
             const newUser = {...user, password: password}
 
-            const res = await fetch('http://localhost:8080/users', {
-                method: 'POST',
+            const res = await fetch(`http://localhost:8080/users/${user.id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-type': 'application/json'
                 },
@@ -77,6 +91,7 @@ const ChangePasswordPage = ({user, setUser}) => {
             setOldPassword('')
             setPassword('')
             setConfirm('')
+            setWarningMessage('')
     
             form.resetFields();
         }
@@ -84,10 +99,19 @@ const ChangePasswordPage = ({user, setUser}) => {
 
     }
 
+    const warningStyle = {
+        color: 'red',
+        display: `${warningMessage===''?'none':'block'}`,
+        marginBottom: '5px'
+    }
+
 
     return (
         <div>
             <h1>Change Password</h1>
+            <div style={warningStyle}>
+                {warningMessage}
+            </div>
             <Form
                 form={form}
                 {...formItemLayout}
@@ -95,7 +119,7 @@ const ChangePasswordPage = ({user, setUser}) => {
                 onFinish={onFinish}
             >
 
-                <Form.Item label="Verify Email">
+                <Form.Item label="* Email Verification Code" >
                     <Row gutter={6}>
                         <Col span={20}>
                             <Form.Item
@@ -108,7 +132,7 @@ const ChangePasswordPage = ({user, setUser}) => {
                                     }
                                 ]}
                             >
-                                <Input value={emailVerification} onChange={(e) => setEmailVerification(e.target.value)}/>
+                                <Input placeholder="Enter your email verification code" value={emailVerification} onChange={(e) => setEmailVerification(e.target.value)}/>
                             </Form.Item>
                         </Col>
                         <Col span={4}>

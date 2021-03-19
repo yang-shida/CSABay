@@ -159,7 +159,7 @@ const SignupForm = () => {
                     <Input value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </Form.Item>
 
-                <Form.Item label="Verify Email">
+                <Form.Item label="* Email Verification Code">
                     <Row gutter={6}>
                         <Col span={20}>
                             <Form.Item
@@ -172,7 +172,7 @@ const SignupForm = () => {
                                     }
                                 ]}
                             >
-                                <Input value={emailVerification} onChange={(e) => setEmailVerification(e.target.value)}/>
+                                <Input placeholder="Enter your email verification code" value={emailVerification} onChange={(e) => setEmailVerification(e.target.value)}/>
                             </Form.Item>
                         </Col>
                         <Col span={4}>
