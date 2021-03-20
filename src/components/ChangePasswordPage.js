@@ -90,7 +90,7 @@ const ChangePasswordPage = ({user, setUser}) => {
             setOldPassword('')
             setPassword('')
             setConfirm('')
-            setWarningMessage('')
+            setWarningMessage('Successfully changed your password!')
     
             form.resetFields();
         }
@@ -99,7 +99,7 @@ const ChangePasswordPage = ({user, setUser}) => {
     }
 
     const warningStyle = {
-        color: 'red',
+        color: `${warningMessage==='Successfully changed your password!'?'green':'red'}`,
         display: `${warningMessage===''?'none':'block'}`,
         marginBottom: '5px'
     }

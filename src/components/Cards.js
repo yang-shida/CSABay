@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, Col, Row, Avatar } from 'antd';
-import { StarOutlined, DeleteOutlined, StarTwoTone } from '@ant-design/icons';
+import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-design/icons';
 
 const { Meta } = Card;
 
@@ -36,7 +36,7 @@ const priceStyle = {
     float: 'left'
 };
 
-const Cards = ({posts, onClickStar, favoriteIDs, displayDelete, onClickDelete}) => {
+const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit}) => {
 
     return (
         <div>
@@ -50,15 +50,16 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayDelete, onClickDelete}) 
                                     bordered={false}
                                     style={{width:widthOfCard}}
                                     actions={
-                                        displayDelete?
+                                        displayMyPost?
                                             [
-                                                <DeleteOutlined key="delete" onClick={()=>onClickDelete(post.id)} />
+                                                <EditOutlined key="edit-post" onClick={()=>onClickEdit(post.id)} />,
+                                                <DeleteOutlined key="delete-post" onClick={()=>onClickDelete(post.id)} />
                                             ]
                                             :
                                             [
                                                 favoriteIDs.includes(post.id)?
-                                                <StarTwoTone key="favorite" twoToneColor="yellow" onClick={()=>onClickStar(post.id)}/>:
-                                                <StarOutlined key="favorite" onClick={()=>onClickStar(post.id)}/>
+                                                <StarTwoTone key="favorite-post-yellow" twoToneColor="yellow" onClick={()=>onClickStar(post.id)}/>:
+                                                <StarOutlined key="favorite-post-gray" onClick={()=>onClickStar(post.id)}/>
                                             ]
                                         
                                     }

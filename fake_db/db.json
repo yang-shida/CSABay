@@ -6,12 +6,14 @@
       "lastName": "Yang",
       "username": "shidayang",
       "email": "SHIDAYZZ@GMAIL.COM",
-      "wechatID": "aas1122",
-      "password": "AAAbbb123",
-      "phoneNum": "",
+      "wechatID": "417688",
+      "password": "Sd90778xxx",
+      "phoneNum": "9293333",
       "savedPosts": [
+        1,
         2,
-        4
+        5,
+        7
       ],
       "id": 1
     },
@@ -75,34 +77,6 @@
       "price": 70,
       "profilePicture": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
       "id": 2
-    },
-    {
-      "userID": 1,
-      "pictures": [
-        "https://www.wpclipart.com/signs_symbol/alphabets_numbers/outlined_numbers/green/number_0_green.png",
-        "https://cdn.pixabay.com/photo/2012/04/23/15/20/one-38484_1280.png",
-        "https://www.clipartmax.com/png/small/16-162224_number-seven-word-clipart-numbers-in-orange-circle.png",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Eo_circle_deep-orange_number-3.svg/768px-Eo_circle_deep-orange_number-3.svg.png"
-      ],
-      "cardPictureIndex": 3,
-      "title": "Selling my dog Selling my dog Selling my dog Selling my dog Selling my dog ",
-      "price": 69.9,
-      "profilePicture": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-      "id": 3
-    },
-    {
-      "userID": 1,
-      "pictures": [
-        "https://www.wpclipart.com/signs_symbol/alphabets_numbers/outlined_numbers/green/number_0_green.png",
-        "https://cdn.pixabay.com/photo/2012/04/23/15/20/one-38484_1280.png",
-        "https://www.clipartmax.com/png/small/16-162224_number-seven-word-clipart-numbers-in-orange-circle.png",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Eo_circle_deep-orange_number-3.svg/768px-Eo_circle_deep-orange_number-3.svg.png"
-      ],
-      "cardPictureIndex": 3,
-      "title": "Selling my dog1",
-      "price": 69.9,
-      "profilePicture": "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-      "id": 4
     },
     {
       "userID": 3,
