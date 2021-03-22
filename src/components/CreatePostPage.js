@@ -54,7 +54,7 @@ const dividerLayout = {
     },
 }
 
-const CreatPostPage = () => {
+const CreatPostPage = ({user}) => {
     const [form] = Form.useForm();
 
     const [title, setTitle] = useState('')
@@ -63,9 +63,9 @@ const CreatPostPage = () => {
     const [zipcode, setZipcode] = useState('')
     const [price, setPrice] = useState('')
 
-    const [email, setEmail] = useState('')
-    const [wechatID, setWechatID] = useState('')
-    const [phoneNum, setPhoneNum] = useState('')
+    const [email, setEmail] = useState(user.email)
+    const [wechatID, setWechatID] = useState(user.wechatID)
+    const [phoneNum, setPhoneNum] = useState(user.phoneNum)
 
     const onFinish = async () => {
         const newPost = {
@@ -92,9 +92,9 @@ const CreatPostPage = () => {
         setDurationDays('')
         setZipcode('')
         setPrice('')
-        setEmail('')
-        setWechatID('')
-        setPhoneNum('')
+        setEmail(user.email)
+        setWechatID(user.wechatID)
+        setPhoneNum(user.phoneNum)
 
         form.resetFields();
     }
@@ -107,6 +107,11 @@ const CreatPostPage = () => {
                 {...formItemLayout}
                 name="createPost"
                 onFinish={onFinish}
+                initialValues={{
+                    ["email"]: user.email,
+                    ["wechat-id"]: user.wechatID,
+                    ["phone"]: user.phoneNum
+                }}
             >
 
                 <Row justify='center'>
@@ -244,7 +249,7 @@ const CreatPostPage = () => {
                     label="Pictures"
                 >
                     <div style={{borderWidth: '1px', borderColor: '#E0E0E0', borderStyle: 'solid', padding: '40px'}}>
-                        <ImageUploader maxNumberOfPictures='6'></ImageUploader>
+                        <ImageUploader maxNumberOfPictures='9'></ImageUploader>
                     </div>
                 </Form.Item>
 

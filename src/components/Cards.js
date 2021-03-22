@@ -36,7 +36,7 @@ const priceStyle = {
     float: 'left'
 };
 
-const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit}) => {
+const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit, onClickCard}) => {
 
     return (
         <div>
@@ -52,14 +52,14 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                     actions={
                                         displayMyPost?
                                             [
-                                                <EditOutlined key="edit-post" onClick={()=>onClickEdit(post.id)} />,
-                                                <DeleteOutlined key="delete-post" onClick={()=>onClickDelete(post.id)} />
+                                                <EditOutlined key="edit-post" onClick={(e)=>{e.stopPropagation();onClickEdit(post.id);}} />,
+                                                <DeleteOutlined key="delete-post" onClick={(e)=>{e.stopPropagation();onClickDelete(post.id);}} />
                                             ]
                                             :
                                             [
                                                 favoriteIDs.includes(post.id)?
-                                                <StarTwoTone key="favorite-post-yellow" twoToneColor="yellow" onClick={()=>onClickStar(post.id)}/>:
-                                                <StarOutlined key="favorite-post-gray" onClick={()=>onClickStar(post.id)}/>
+                                                <StarTwoTone key="favorite-post-yellow" twoToneColor="yellow" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>:
+                                                <StarOutlined key="favorite-post-gray" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>
                                             ]
                                         
                                     }
@@ -72,6 +72,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                             />
                                         </div>
                                     }
+                                    onClick={(e)=>onClickCard(post, e)}
                                 >
                                     <div style={locationPriceContainerStyle}>
                                         <div style={priceStyle}>

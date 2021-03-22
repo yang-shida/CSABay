@@ -65,7 +65,7 @@ const App = () => {
           exact render={
             ()=>(
               <>
-                <CreatePostPage />
+                {userInfo===undefined?"":<CreatePostPage user={userInfo}/>}
               </>
             )
           }
@@ -82,7 +82,7 @@ const App = () => {
             )
           }
         ></Route>
-        
+
         
       </div>
     </Router>

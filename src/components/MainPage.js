@@ -1,13 +1,18 @@
-import { Card, Col, Row, Avatar } from 'antd';
+import { Modal } from 'antd';
 import { useEffect, useState } from 'react';
 
 import Cards from './Cards'
+
+import ProductDetailPage from './ProductDetailPage'
 
 
 
 const MainPage = ({user, setUser}) => {
 
     const [posts, setPosts] = useState([])
+    const [isProductDetailVisible, setIsProductDetailVisible] = useState(false)
+    const [selectedPost, setSelectedPost] = useState('')
+    const [selectedPostUserInfo, setSelectedPostUserInfo] = useState('')
 
     useEffect(
         () => {
@@ -21,6 +26,12 @@ const MainPage = ({user, setUser}) => {
 
         }, []
     )
+
+    const fetchUser = async(userID) =>{
+        const res = await fetch(`http://localhost:8080/users/${userID}`)
+        const data = await res.json()
+        return data
+    }
 
     const fetchPosts = async () => {
         const res = await fetch('http://localhost:8080/posts')
@@ -76,13 +87,36 @@ const MainPage = ({user, setUser}) => {
         }
     }
 
+    const onClickCard = async (post, e) => {
+        setSelectedPost(post)
+        const userFromServer = await fetchUser(post.userID)
+        setSelectedPostUserInfo(userFromServer)
+        setIsProductDetailVisible(true)
+    }
+
+    const onCloseProductDetail = () => {
+        setIsProductDetailVisible(false)
+        setSelectedPost('')
+        setSelectedPost('')
+    }
+
     return (
         <div>
             {
                 posts.length===0?
                 'No posts':
-                <Cards posts={posts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}></Cards>
+                <Cards posts={posts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar} onClickCard={onClickCard}></Cards>
             }
+
+            <Modal 
+                title="Product Detail" 
+                visible={isProductDetailVisible}
+                onCancel={onCloseProductDetail}
+                footer={null}
+                width='70%'
+            >
+                <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={user.savedPosts.includes(selectedPost.id)} onClickStar={onClickStar} user={selectedPostUserInfo}/>
+            </Modal>
             
         </div>
     )

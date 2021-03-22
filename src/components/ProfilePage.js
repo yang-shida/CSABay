@@ -3,6 +3,7 @@ import { Avatar, Image, Divider, Row, Col, Layout, Menu, Modal } from 'antd';
 import Cards from './Cards'
 import ChangePasswordPage from './ChangePasswordPage'
 import EditContactInfoPage from './EditContactInfoPage'
+import ProductDetailPage from './ProductDetailPage'
 
 const { Sider } = Layout;
 
@@ -56,6 +57,10 @@ const ProfilePage = ({user, setUser}) => {
     const [selectedPostID, setSelectedPostID] = useState('')
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
+    const [isProductDetailVisible, setIsProductDetailVisible] = useState(false)
+    const [selectedPost, setSelectedPost] = useState('')
+    const [selectedPostUserInfo, setSelectedPostUserInfo] = useState('')
+
 
     useEffect(
         () => {
@@ -107,6 +112,12 @@ const ProfilePage = ({user, setUser}) => {
             const data = await res.json()
             return data
         }
+    }
+
+    const fetchUser = async(userID) =>{
+        const res = await fetch(`http://localhost:8080/users/${userID}`)
+        const data = await res.json()
+        return data
     }
 
     const onSelectMenu = async (selectedKeys) => {
@@ -189,6 +200,19 @@ const ProfilePage = ({user, setUser}) => {
         console.log('Edit post: ', postID)
     }
 
+    const onClickCard = async (post, e) => {
+        setSelectedPost(post)
+        const userFromServer = await fetchUser(post.userID)
+        setSelectedPostUserInfo(userFromServer)
+        setIsProductDetailVisible(true)
+    }
+
+    const onCloseProductDetail = () => {
+        setIsProductDetailVisible(false)
+        setSelectedPost('')
+        setSelectedPost('')
+    }
+
     return (
         <div id="profile-container" style={profileContainerStyle}>
             <Sider
@@ -199,7 +223,6 @@ const ProfilePage = ({user, setUser}) => {
                 breakpoint="lg"
                 collapsedWidth="0"
                 onBreakpoint={broken => {
-                    console.log(window.innerWidth)
                     if(broken){
                         setSideBarWidth("100%")
                     }
@@ -251,17 +274,27 @@ const ProfilePage = ({user, setUser}) => {
             <div id="profile-main-body" style={profileMainBodyStyle}>
                 {
                     currentMenuKey==1?
-                    <Cards posts={myPosts} displayMyPost={true} onClickDelete={onClickDelete} onClickEdit={onClickEdit}></Cards>:
+                    <Cards posts={myPosts} displayMyPost={true} onClickDelete={onClickDelete} onClickEdit={onClickEdit} onClickCard={onClickCard}></Cards>:
                     currentMenuKey==2?
-                    <Cards posts={mySavedPosts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}></Cards>:
+                    <Cards posts={mySavedPosts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}  onClickCard={onClickCard}></Cards>:
                     currentMenuKey==3?
                     <ChangePasswordPage user={user} setUser={setUser}/>:
                     <EditContactInfoPage user={user} setUser={setUser} />
                 }
             </div>
 
-            <Modal title="Basic Modal" visible={isDeleteModalVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
+            <Modal title="Warning" visible={isDeleteModalVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
                 <p>Are you sure you want to delete this post?</p>
+            </Modal>
+
+            <Modal 
+                title="Product Detail" 
+                visible={isProductDetailVisible}
+                onCancel={onCloseProductDetail}
+                footer={null}
+                width='70%'
+            >
+                <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost.id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={selectedPostUserInfo}/>
             </Modal>
 
 

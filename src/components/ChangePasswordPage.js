@@ -13,7 +13,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const formItemLayout = {
     labelCol: {
-        sm: {
+        xs: {
             span: 24,
         },
         sm: {
@@ -27,7 +27,7 @@ const formItemLayout = {
         },
     },
     wrapperCol: {
-        sm: {
+        xs: {
             span: 24,
         },
         sm: {
