@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from "axios";
 import {
   Form,
   Input,
@@ -106,6 +107,16 @@ const SignupForm = () => {
         },
         body: JSON.stringify(newUser),
     })
+
+    //using the real db
+    function handleSubmit(event) {
+        event.preventDefault();
+        const newUser = {
+            username: form.username,
+            pw: form.password
+        }
+        axios.post('http://localhost:3001/SignupForm');
+    }
 
         setFirstName('')
         setLastName('')
