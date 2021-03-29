@@ -14,7 +14,6 @@ import {
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ImageUploader from './ImageUploader'
 
-
 const formItemLayout = {
     labelCol: {
         xs: {
