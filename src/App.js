@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'antd';
 import './App.less';
 import {useState, useEffect} from 'react'
 
@@ -21,8 +20,6 @@ const App = () => {
       }
 
       getUser()
-
-      console.log('fetching user')
       
     }, []
   )

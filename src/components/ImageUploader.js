@@ -2,13 +2,10 @@ import { Upload, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
+import axios from "axios";
+
 import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
-
-import S3FileUpload from 'react-s3';
- 
-//Optional Import
-import { uploadFile } from 'react-s3';
 
 const config = {
     bucketName: 'csabayphotos',
@@ -57,8 +54,7 @@ const ImageUploader = ({maxNumberOfPictures}) => {
     const [previewTitle, setPreviewTitle] = useState('')
     const [fileList, setFileList] = useState([])
     const [currentNumberOfPictures, setCurrentNumberOfPictures] = useState(fileList.length)
-
-    const [action, setAction] = useState('')
+    const [progress, setProgress] = useState(0);
 
     const handleCancel = () => setPreviewVisible(false);
 
@@ -72,62 +68,137 @@ const ImageUploader = ({maxNumberOfPictures}) => {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1))
     };
 
-    const handleChange = ({ fileList, event }) => {
+    const handleChange = ({ fileList, file }) => {
         setFileList(fileList)
         setCurrentNumberOfPictures(fileList.length)
     }
 
-    const handleUpload = async ({file}) => {
-        
-        console.log("file: ", file)
+    const handleRemove = (file) => {
+        console.log("removing: ", file)
+    }
 
+    const handleUpload = async ({file, onError, onProgress, onSuccess}) => {
+        onProgress(file)
         var S3 = new AWS.S3();
-        await S3.createPresignedPost({
+
+        var signedObj;
+
+        S3.createPresignedPost({
             Fields: {
-                key: uuidv4(),
+                key: `${config.dirName}/${uuidv4()}`,
             },
             Expires: 30,
             Bucket: config.bucketName,
-        }, (err, signed) => {
-            const objParams = {
-                Key: `${config.dirName}/${signed.fields.key}`,
-                Bucket: signed.fields.bucket,
-                Body: file,
-                ContentType: file.type,
-                Metadata: {
-                    ...signed.fields
-                },
+            Conditions: [
+                ["starts-with", "$Content-Type", ""]
+            ]
+        }, async (err, signed) => {
+            if(err){
+                console.log("Fail to create pre-signed post")
+                console.log(err)
+            }
+            if(signed){
+                console.log("Created pre-signed post")
+                console.log(signed)
+                signedObj = signed
+            }
+
+            const data = {
+                bucket: config.bucketName,
+                ...signed.fields,
+                'Content-Type': file.type,
+                file: file
+            }
+
+            const formData = new FormData()
+            for (const name in data){
+                formData.append(name, data[name])
+            }
+
+            const uploadConfig = {
+                onUploadProgress: event => {
+                    const percent = Math.floor((event.loaded / event.total) * 100);
+                    setProgress(percent);
+                    if (percent === 100) {
+                        setTimeout(() => setProgress(0), 1000);
+                    }
+                    onProgress({ percent: (event.loaded / event.total) * 100 });
+                }
             };
 
-            S3.putObject(objParams, function(err, data) {
-                if (err){
-                    console.log("Something went wrong");
-                    console.log(err, err.stack);
-                }
-                else{
-                    console.log("SEND FINISHED")
-                }    
-            });
+            try {
+                const res = await axios.post(
+                    signed.url,
+                    formData,
+                    uploadConfig
+                );
+        
+                onSuccess()
+            } catch (err) {
+                onError(file)
+            }
+
+            // const res = await fetch(signed.url, {
+            //     method: 'POST',
+            //     body: formData,
+            // })
+
+            // if(res.ok){
+            //     onSuccess()
+            // }
+            // else{
+            //     onError(file)
+            // }
+
             
+            // const objParams = {
+            //     Key: `${config.dirName}/${signed.fields.key}`,
+            //     Bucket: signed.fields.bucket,
+            //     Body: file,
+            //     ContentType: file.type,
+            //     Metadata: {
+            //         ...signed.fields
+            //     },
+            // };
+
+            // S3.putObject(
+            //     objParams, 
+            //     function(err, data) {
+            //         if (err){
+            //             console.log("Something went wrong");
+            //             console.log(err, err.stack);
+            //             onError()
+            //         }
+            //         else{
+            //             console.log("SEND FINISHED")
+            //             onSuccess()
+            //         }    
+            //     }
+            // )
+            // .on(
+            //     "httpUploadProgress", 
+            //     function({ loaded, total }) {
+            //         onProgress(
+            //             {percent: Math.round((loaded / total) * 100)},
+            //             file
+            //         )
+            //     }
+            // )
         })
+
+
+
+
     }
 
     return (
         <div style={{textAlign: 'left'}}>
-            <input type="file" onChange={(e)=>{
-                S3FileUpload
-                .uploadFile(e.target.files[0], config)
-                .then(data => console.log(data))
-                .catch(err => console.error(err))
-            }}/>
             <Upload
-                // action="https://csabayphotos.s3.amazonaws.com/"
-                // action={action}
                 listType="picture-card"
                 fileList={fileList}
                 onPreview={handlePreview}
                 onChange={handleChange}
-                // beforeUpload={handleBeforeUpload}
+                onRemove={handleRemove}
                 customRequest={handleUpload}
             >
                 {fileList.length >= maxNumberOfPictures ? null : uploadButton}
