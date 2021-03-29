@@ -92,7 +92,7 @@ const ProfilePage = ({user, setUser}) => {
     )
 
     const fetchMyPosts = async () => {
-        const res = await fetch(`http://localhost:8080/posts?userID=${user.id}`)
+        const res = await fetch(`http://localhost:8080/posts1?userID=${user.email.toLowerCase()}`)
         if(res.status===404){
             return 'User Not Found'
         }
@@ -104,7 +104,7 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const fetchPost = async (postID) => {
-        const res = await fetch(`http://localhost:8080/posts/${postID}`)
+        const res = await fetch(`http://localhost:8080/posts1/${postID}`)
         if(res.status===404){
             return 'Post Not Found'
         }
@@ -172,7 +172,7 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const deletePost = async (postID) => {
-        await fetch(`http://localhost:8080/posts/${postID}`, {
+        await fetch(`http://localhost:8080/posts1/${postID}`, {
             method: 'DELETE',
         })
         setMyPosts(myPosts.filter((post) => post.id !== postID))

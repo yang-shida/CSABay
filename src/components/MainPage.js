@@ -20,6 +20,7 @@ const MainPage = ({user, setUser}) => {
             const getPosts = async()=>{
                 const postsFromServer = await fetchPosts()
                 setPosts(postsFromServer)
+                console.log(postsFromServer)
             }
 
             getPosts()
@@ -34,7 +35,7 @@ const MainPage = ({user, setUser}) => {
     }
 
     const fetchPosts = async () => {
-        const res = await fetch('http://localhost:8080/posts')
+        const res = await fetch('http://localhost:8080/posts1')
         const data = await res.json()
         
         return data

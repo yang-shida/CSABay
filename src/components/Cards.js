@@ -2,6 +2,22 @@ import React from 'react'
 import { Card, Col, Row, Avatar } from 'antd';
 import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-design/icons';
 
+import AWS from 'aws-sdk';
+
+const config = {
+    bucketName: 'csabayphotos',
+    dirName: 'ProductDetailPhotos', /* optional */
+    region: 'us-east-2',
+    accessKeyId: 'AKIA2SGQI5JKBX7R45YB',
+    secretAccessKey: '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',
+}
+
+AWS.config.update({
+    region: config.region,
+    accessKeyId: config.accessKeyId,
+    secretAccessKey: config.secretAccessKey
+});
+
 const { Meta } = Card;
 
 const widthOfCard = '300px';
@@ -38,6 +54,14 @@ const priceStyle = {
 
 const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit, onClickCard}) => {
 
+    const S3_GET = (key) => {
+        var S3 = new AWS.S3();
+        var params = {Bucket: config.bucketName, Key: key, Expires: 60};
+        var url = S3.getSignedUrl('getObject', params);
+        console.log('The URL is', url);
+        return url
+    }
+
     return (
         <div>
             <Row>
@@ -68,7 +92,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                             <img
                                                 style={{height: '100%', width: '100%', objectFit: 'cover'}}
                                                 alt="example"
-                                                src={post.pictures[post.cardPictureIndex]}
+                                                src={post.pictureKeyArray.length===0?'../no_image.jpg':S3_GET(post.pictureKeyArray[0])}
                                             />
                                         </div>
                                     }
@@ -76,7 +100,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                 >
                                     <div style={locationPriceContainerStyle}>
                                         <div style={priceStyle}>
-                                            {`\$${post.price}`}
+                                            {`\$${post.price?post.price:' N/A'}`}
                                         </div>
                                         <div style={locationStyle}>
                                             {'Gainesville, FL 32607'}

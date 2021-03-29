@@ -1,5 +1,69 @@
 {
-  "posts1": [],
+  "posts1": [
+    {
+      "userID": "shidayzz@gmail.com",
+      "title": "Selling Cici",
+      "description": "hahaha",
+      "durationDays": 5,
+      "zipcode": "33647",
+      "price": 100.55,
+      "pictureKeyArray": [
+        "ProductDetailPhotos/rc-upload-1617045713266-2",
+        "ProductDetailPhotos/rc-upload-1617045713266-4"
+      ],
+      "email": "SHIDAYZZ@GMAIL.COM",
+      "wechatID": "417688x",
+      "phoneNum": "92933330002",
+      "id": 3
+    },
+    {
+      "userID": "shidayzz@gmail.com",
+      "title": "Just a random post",
+      "description": "dasdaasd",
+      "durationDays": 23,
+      "zipcode": "33647",
+      "price": "",
+      "pictureKeyArray": [
+        "ProductDetailPhotos/rc-upload-1617046235795-2"
+      ],
+      "email": "SHIDAYZZ@GMAIL.COM",
+      "wechatID": "417688x",
+      "phoneNum": "19292354428",
+      "id": 4
+    },
+    {
+      "userID": "shidayzz@gmail.com",
+      "title": "Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post",
+      "description": "Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post ",
+      "durationDays": 3,
+      "zipcode": "33647",
+      "price": 1,
+      "pictureKeyArray": [
+        "ProductDetailPhotos/rc-upload-1617047329471-2",
+        "ProductDetailPhotos/rc-upload-1617047329471-6",
+        "ProductDetailPhotos/rc-upload-1617047329471-8",
+        "ProductDetailPhotos/rc-upload-1617047329471-10",
+        "ProductDetailPhotos/rc-upload-1617047329471-12"
+      ],
+      "email": "SHIDAYZZ@GMAIL.COM",
+      "wechatID": "417688x",
+      "phoneNum": "19292354428",
+      "id": 5
+    },
+    {
+      "userID": "shidayzz@gmail.com",
+      "title": "hello",
+      "description": "hi",
+      "durationDays": 3,
+      "zipcode": "",
+      "price": "",
+      "pictureKeyArray": [],
+      "email": "SHIDAYZZ@GMAIL.COM",
+      "wechatID": "417688x",
+      "phoneNum": "92933330002",
+      "id": 6
+    }
+  ],
   "users": [
     {
       "firstName": "Shida",
@@ -9,11 +73,7 @@
       "wechatID": "417688x",
       "password": "123456Aa",
       "phoneNum": "92933330002",
-      "savedPosts": [
-        1,
-        5,
-        7
-      ],
+      "savedPosts": [],
       "id": 1
     },
     {

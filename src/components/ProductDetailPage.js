@@ -4,6 +4,22 @@ import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-de
 
 import ContactInfoCard from './ContactInfoCard'
 
+import AWS from 'aws-sdk';
+
+const config = {
+    bucketName: 'csabayphotos',
+    dirName: 'ProductDetailPhotos', /* optional */
+    region: 'us-east-2',
+    accessKeyId: 'AKIA2SGQI5JKBX7R45YB',
+    secretAccessKey: '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',
+}
+
+AWS.config.update({
+    region: config.region,
+    accessKeyId: config.accessKeyId,
+    secretAccessKey: config.secretAccessKey
+});
+
 // title | actions
 const headerContainerStyle = {
     // borderStyle: 'solid',
@@ -122,6 +138,14 @@ const dividerLayout = {
 
 const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, onClickEdit, onClickDelete}) => {
 
+    const S3_GET = (key) => {
+        var S3 = new AWS.S3();
+        var params = {Bucket: config.bucketName, Key: key, Expires: 60};
+        var url = S3.getSignedUrl('getObject', params);
+        console.log('The URL is', url);
+        return url
+    }
+
     return (
         <div>
             <div style={headerContainerStyle}>
@@ -168,14 +192,21 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                     </div>
                     <Image.PreviewGroup>
                         {
-                            post.pictures.map(
-                                (url, index) => (
+                            post.pictureKeyArray.length===0?
+                            <Image
+                                width="250px"
+                                height="250px"
+                                style={{objectFit: 'contain', padding: '10px'}}
+                                src='../no_image.jpg'
+                            />:
+                            post.pictureKeyArray.map(
+                                (key, index) => (
                                     <Image
                                         key={index}
                                         width="250px"
                                         height="250px"
                                         style={{objectFit: 'contain', padding: '10px'}}
-                                        src={url}
+                                        src={S3_GET(key)}
                                     />
                                 )
                             )

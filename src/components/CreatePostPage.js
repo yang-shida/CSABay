@@ -62,17 +62,21 @@ const CreatPostPage = ({user}) => {
     const [zipcode, setZipcode] = useState('')
     const [price, setPrice] = useState('')
 
+    const [pictureKeyArray, setPictureKeyArray] = useState([])
+
     const [email, setEmail] = useState(user.email)
     const [wechatID, setWechatID] = useState(user.wechatID)
     const [phoneNum, setPhoneNum] = useState(user.phoneNum)
 
     const onFinish = async () => {
         const newPost = {
+            userID: user.email.toLowerCase(),
             title: title,
             description: description,
             durationDays: durationDays,
             zipcode: zipcode,
             price: price,
+            pictureKeyArray: pictureKeyArray,
             email: email,
             wechatID: wechatID,
             phoneNum: phoneNum
@@ -91,6 +95,7 @@ const CreatPostPage = ({user}) => {
         setDurationDays('')
         setZipcode('')
         setPrice('')
+        setPictureKeyArray([])
         setEmail(user.email)
         setWechatID(user.wechatID)
         setPhoneNum(user.phoneNum)
@@ -245,10 +250,17 @@ const CreatPostPage = ({user}) => {
 
                 <Form.Item
                     name="pictures"
-                    label="Pictures"
+                    label={
+                        <span>
+                            Pictures&nbsp;
+                            <Tooltip title="The first picture will be used as the cover picture.">
+                                <QuestionCircleOutlined />
+                            </Tooltip>
+                        </span>
+                    }
                 >
                     <div style={{borderWidth: '1px', borderColor: '#E0E0E0', borderStyle: 'solid', padding: '40px'}}>
-                        <ImageUploader maxNumberOfPictures='9'></ImageUploader>
+                        <ImageUploader maxNumberOfPictures='9' pictureKeyArray={pictureKeyArray} setPictureKeyArray={setPictureKeyArray}></ImageUploader>
                     </div>
                 </Form.Item>
 
