@@ -8,7 +8,7 @@ backend:
  - email verification
  - sort and filter main page
  - password storage/encoding
- - required DBs:
+ - required DBs (collections):
     - users
     - posts
     - passwords
@@ -16,12 +16,8 @@ backend:
 
 
 frontend:
- - edit post page
-   - dont change image until ok (store in an array)
  - update password checking
  - integrate email verification
  - change profile picture
  - update navbar based on current page and login?
- - move frontend into a sub folder
- - delete aws picture when delete post
- - product detail page delete wdinow to front
+ - hide contact info when not logged in
