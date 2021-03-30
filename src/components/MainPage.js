@@ -29,9 +29,9 @@ const MainPage = ({user, setUser}) => {
     )
 
     const fetchUser = async(userID) =>{
-        const res = await fetch(`http://localhost:8080/users/${userID}`)
+        const res = await fetch(`http://localhost:8080/users?email=${userID.toLowerCase()}`)
         const data = await res.json()
-        return data
+        return data[0]
     }
 
     const fetchPosts = async () => {

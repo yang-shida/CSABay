@@ -159,7 +159,7 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                          displayMyPost?
                         (
                             [
-                                <EditOutlined style={actionIconStyle} key="edit-post" onClick={()=>onClickEdit(post.id)} />,
+                                <EditOutlined style={actionIconStyle} key="edit-post" onClick={()=>onClickEdit(post)} />,
                                 <DeleteOutlined style={actionIconStyle} key="delete-post" onClick={()=>onClickDelete(post.id)} />
                             ]
                         ):

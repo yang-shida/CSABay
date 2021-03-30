@@ -77,8 +77,8 @@ const CreatPostPage = ({user}) => {
             zipcode: zipcode,
             price: price,
             pictureKeyArray: pictureKeyArray,
-            email: email,
-            wechatID: wechatID,
+            email: email.toLowerCase(),
+            wechatID: wechatID.toLowerCase(),
             phoneNum: phoneNum
         }
 

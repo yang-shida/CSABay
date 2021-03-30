@@ -57,11 +57,36 @@ const uploadButton = (
 
 const ImageUploader = ({maxNumberOfPictures, pictureKeyArray, setPictureKeyArray}) => {
 
+    console.log(pictureKeyArray)
+
+    const S3_GET = (key) => {
+        var S3 = new AWS.S3();
+        var params = {Bucket: config.bucketName, Key: key, Expires: 60};
+        var url = S3.getSignedUrl('getObject', params);
+        console.log('The URL is', url);
+        return url
+    }
+
     const [previewVisible, setPreviewVisible] = useState(false)
     const [previewImage, setPreviewImage] = useState('')
     const [previewTitle, setPreviewTitle] = useState('')
-    const [fileList, setFileList] = useState([])
-    const [currentNumberOfPictures, setCurrentNumberOfPictures] = useState(fileList.length)
+    const [fileList, setFileList] = useState(
+        () => {
+            
+            var array = []
+            for(const key in pictureKeyArray){
+                var temp = {
+                    uid: pictureKeyArray[key].substring(pictureKeyArray[key].lastIndexOf('/')+1),
+                    name: pictureKeyArray[key].substring(pictureKeyArray[key].lastIndexOf('/')+1),
+                    status: 'done',
+                    url: S3_GET(pictureKeyArray[key])
+                }
+                array = [...array, temp]
+            }
+            return array
+        }
+    )
+    const [currentNumberOfPictures, setCurrentNumberOfPictures] = useState(pictureKeyArray.length)
 
     const S3_UPLOAD = async (signed, file, onError, onProgress, onSuccess) => {
         const data = {
@@ -128,9 +153,6 @@ const ImageUploader = ({maxNumberOfPictures, pictureKeyArray, setPictureKeyArray
     };
 
     const handleChange = ({ fileList, file, event }) => {
-        // console.log("change event: ", event)
-        // console.log("change file: ", file)
-        // console.log("change file list: ", fileList)
         setFileList([...fileList])
         setCurrentNumberOfPictures(fileList.length)
     }

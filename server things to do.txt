@@ -1,0 +1,21 @@
+backend:
+ - append time when receiving a new post
+ - interact with AWS
+    - receive request from client
+    - generate get, put presigned URL OR delete request
+ - email verification
+ - sort and filter main page
+ - password storage/encoding
+ - required DBs:
+    - users
+    - posts
+    - passwords
+
+
+
+frontend:
+ - edit post page
+ - update password checking
+ - integrate email verification
+ - change profile picture
+ - update navbar based on current page and login?

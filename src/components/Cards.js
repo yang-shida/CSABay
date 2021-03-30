@@ -76,7 +76,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                     actions={
                                         displayMyPost?
                                             [
-                                                <EditOutlined key="edit-post" onClick={(e)=>{e.stopPropagation();onClickEdit(post.id);}} />,
+                                                <EditOutlined key="edit-post" onClick={(e)=>{e.stopPropagation();onClickEdit(post);}} />,
                                                 <DeleteOutlined key="delete-post" onClick={(e)=>{e.stopPropagation();onClickDelete(post.id);}} />
                                             ]
                                             :

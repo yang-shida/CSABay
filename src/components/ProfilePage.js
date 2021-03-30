@@ -4,6 +4,7 @@ import Cards from './Cards'
 import ChangePasswordPage from './ChangePasswordPage'
 import EditContactInfoPage from './EditContactInfoPage'
 import ProductDetailPage from './ProductDetailPage'
+import EditPostPage from './EditPostPage'
 
 const { Sider } = Layout;
 
@@ -58,6 +59,7 @@ const ProfilePage = ({user, setUser}) => {
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
     const [isProductDetailVisible, setIsProductDetailVisible] = useState(false)
+    const [isEditPostVisible, setIsEditPostVisible] = useState(false)
     const [selectedPost, setSelectedPost] = useState('')
     const [selectedPostUserInfo, setSelectedPostUserInfo] = useState('')
 
@@ -114,10 +116,10 @@ const ProfilePage = ({user, setUser}) => {
         }
     }
 
-    const fetchUser = async(userID) =>{
-        const res = await fetch(`http://localhost:8080/users/${userID}`)
+    const fetchUser = async(email) =>{
+        const res = await fetch(`http://localhost:8080/users?email=${email.toLowerCase()}`)
         const data = await res.json()
-        return data
+        return data[0]
     }
 
     const onSelectMenu = async (selectedKeys) => {
@@ -196,8 +198,9 @@ const ProfilePage = ({user, setUser}) => {
         showDeleteModal()
     }
 
-    const onClickEdit = (postID) => {
-        console.log('Edit post: ', postID)
+    const onClickEdit = (post) => {
+        setSelectedPost(post)
+        setIsEditPostVisible(true)
     }
 
     const onClickCard = async (post, e) => {
@@ -209,7 +212,6 @@ const ProfilePage = ({user, setUser}) => {
 
     const onCloseProductDetail = () => {
         setIsProductDetailVisible(false)
-        setSelectedPost('')
         setSelectedPost('')
     }
 
@@ -283,7 +285,7 @@ const ProfilePage = ({user, setUser}) => {
                 }
             </div>
 
-            <Modal title="Warning" visible={isDeleteModalVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
+            <Modal title="Delete Warning" visible={isDeleteModalVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
                 <p>Are you sure you want to delete this post?</p>
             </Modal>
 
@@ -296,6 +298,15 @@ const ProfilePage = ({user, setUser}) => {
             >
                 <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost.id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={selectedPostUserInfo}/>
             </Modal>
+
+            {
+                selectedPost.pictureKeyArray===undefined?
+                '':
+                <EditPostPage post={selectedPost} isEditPostVisible={isEditPostVisible} setIsEditPostVisible={setIsEditPostVisible} />  
+            }
+            
+            
+
 
 
         </div>

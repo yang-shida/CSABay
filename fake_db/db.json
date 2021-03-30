@@ -11,7 +11,7 @@
         "ProductDetailPhotos/rc-upload-1617045713266-2",
         "ProductDetailPhotos/rc-upload-1617045713266-4"
       ],
-      "email": "SHIDAYZZ@GMAIL.COM",
+      "email": "shidayzz@gmail.com",
       "wechatID": "417688x",
       "phoneNum": "92933330002",
       "id": 3
@@ -26,7 +26,7 @@
       "pictureKeyArray": [
         "ProductDetailPhotos/rc-upload-1617046235795-2"
       ],
-      "email": "SHIDAYZZ@GMAIL.COM",
+      "email": "shidayzz@gmail.com",
       "wechatID": "417688x",
       "phoneNum": "19292354428",
       "id": 4
@@ -45,7 +45,7 @@
         "ProductDetailPhotos/rc-upload-1617047329471-10",
         "ProductDetailPhotos/rc-upload-1617047329471-12"
       ],
-      "email": "SHIDAYZZ@GMAIL.COM",
+      "email": "shidayzz@gmail.com",
       "wechatID": "417688x",
       "phoneNum": "19292354428",
       "id": 5
@@ -69,18 +69,21 @@
       "firstName": "Shida",
       "lastName": "Yang",
       "username": "shidayang",
-      "email": "SHIDAYZZ@GMAIL.COM",
-      "wechatID": "417688x",
+      "email": "shidayzz@gmail.com",
+      "wechatID": "as",
       "password": "123456Aa",
       "phoneNum": "92933330002",
-      "savedPosts": [],
+      "savedPosts": [
+        3,
+        5
+      ],
       "id": 1
     },
     {
       "firstName": "Shida",
       "lastName": "Yang",
       "username": "shidayang",
-      "email": "shidayzz@gmail.com",
+      "email": "shidayzz1@gmail.com",
       "wechatID": "",
       "password": "123456Aa",
       "phoneNum": "",

@@ -58,9 +58,8 @@ const SignupForm = () => {
         const newUser = {
             firstName: firstName,
             lastName: lastName,
-            username: username,
             email: email.toLowerCase(),
-            wechatID: wechatID,
+            wechatID: wechatID.toLowerCase(),
             password: password,
             phoneNum: phoneNum
         }
