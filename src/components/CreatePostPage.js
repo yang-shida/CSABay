@@ -100,11 +100,17 @@ const CreatPostPage = ({user}) => {
                     //         }
                     //     )
 
-                    const signed = await S3_GET_SIGNED_POST(file)
-                    await S3_UPLOAD(signed, fileList, index, value, setValue)
+                    try{
+                        const signed = await S3_GET_SIGNED_POST(file)
+                        await S3_UPLOAD(signed, fileList, index, value, setValue)
+                        resolve()
+                    }
+                    catch{
+                        fileList[index] = {...fileList[index], status: "error"}
+                        setValue(value+1)
+                        reject()
+                    }
                 }
-                console.log("end")
-                resolve()
             }
         )
     }

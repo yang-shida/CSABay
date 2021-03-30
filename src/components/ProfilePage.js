@@ -6,6 +6,8 @@ import EditContactInfoPage from './EditContactInfoPage'
 import ProductDetailPage from './ProductDetailPage'
 import EditPostPage from './EditPostPage'
 
+import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY} from './S3'
+
 const { Sider } = Layout;
 
 const profileContainerStyle = {
@@ -176,10 +178,15 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const deletePost = async (postID) => {
+        const postToDelete = await fetchPost(postID)
+        for(const key in postToDelete.pictureKeyArray){
+            S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
+        }
         await fetch(`http://localhost:8080/posts1/${postID}`, {
             method: 'DELETE',
         })
         setMyPosts(myPosts.filter((post) => post.id !== postID))
+        
     }
 
     const showDeleteModal = () => {
@@ -188,7 +195,13 @@ const ProfilePage = ({user, setUser}) => {
 
     const handleDeleteOk = () => {
         deletePost(selectedPostID)
-        setIsDeleteModalVisible(false);
+        setIsDeleteModalVisible(false)
+        setTimeout(
+            () => {
+                setIsProductDetailVisible(false)
+            }, 500
+        )
+        
     };
 
     const handleDeleteCancel = () => {
@@ -288,10 +301,6 @@ const ProfilePage = ({user, setUser}) => {
                 }
             </div>
 
-            <Modal title="Delete Warning" visible={isDeleteModalVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
-                <p>Are you sure you want to delete this post?</p>
-            </Modal>
-
             <Modal 
                 title="Product Detail" 
                 visible={isProductDetailVisible}
@@ -300,6 +309,15 @@ const ProfilePage = ({user, setUser}) => {
                 width='70%'
             >
                 <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost.id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={selectedPostUserInfo}/>
+            
+                <Modal title="Delete Warning" visible={isDeleteModalVisible && isProductDetailVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
+                    <p>Are you sure you want to delete this post?</p>
+                </Modal>
+            
+            </Modal>
+
+            <Modal title="Delete Warning" visible={isDeleteModalVisible && !isProductDetailVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
+                <p>Are you sure you want to delete this post?</p>
             </Modal>
 
             {

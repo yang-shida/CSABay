@@ -1,4 +1,4 @@
-// import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
+// import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY} from './S3'
 
 import AWS from 'aws-sdk';
 import axios from "axios";
@@ -31,7 +31,7 @@ export const S3_UPLOAD = async (signed, fileList, index, value, setValue) => {
     return new Promise(
         async (resolve, reject) => {
             const data = {
-                ...signed.fields,
+                // ...signed.fields,
                 'Content-Type': fileList[index].type,
                 file: fileList[index].originFileObj
             }
@@ -76,7 +76,6 @@ export const S3_UPLOAD = async (signed, fileList, index, value, setValue) => {
 export const S3_DELETE = async (file) => {
     // send request to backend
     var S3 = new AWS.S3();
-    var res;
     var params = {
         Bucket: config.bucketName, 
         Key: `ProductDetailPhotos/${file.uid}`
@@ -88,6 +87,23 @@ export const S3_DELETE = async (file) => {
 
     // confirm delete
 }
+
+export const S3_DELETE_BY_KEY = async (key) => {
+    // send request to backend
+    var S3 = new AWS.S3();
+    var params = {
+        Bucket: config.bucketName, 
+        Key: key
+    };
+    S3.deleteObject(params, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else     console.log(`Delete success: ${key}`)           // successful response
+    });
+
+    // confirm delete
+}
+
+
 
 export const S3_GET_SIGNED_POST = (file) => {
     return new Promise(

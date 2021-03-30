@@ -2,199 +2,38 @@
   "posts1": [
     {
       "userID": "shidayzz@gmail.com",
-      "title": "Selling Cici",
-      "description": "hahaha",
-      "durationDays": 5,
-      "zipcode": "33647",
-      "price": 100.55,
-      "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617045713266-2",
-        "ProductDetailPhotos/rc-upload-1617045713266-4"
-      ],
-      "email": "shidayzz@gmail.com",
-      "wechatID": "417688x",
-      "phoneNum": "92933330002",
-      "id": 3
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "Just a random post",
-      "description": "dasdaasd",
-      "durationDays": 23,
-      "zipcode": "33647",
-      "price": "",
-      "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617046235795-2"
-      ],
-      "email": "shidayzz@gmail.com",
-      "wechatID": "417688x",
-      "phoneNum": "19292354428",
-      "id": 4
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post",
-      "description": "Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post Just a random post ",
+      "title": "Test a fresh upload",
+      "description": "123123123",
       "durationDays": 3,
-      "zipcode": "33647",
-      "price": 1,
+      "zipcode": "33255",
+      "price": 11050,
       "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617047329471-2",
-        "ProductDetailPhotos/rc-upload-1617047329471-6",
-        "ProductDetailPhotos/rc-upload-1617047329471-8",
-        "ProductDetailPhotos/rc-upload-1617047329471-10",
-        "ProductDetailPhotos/rc-upload-1617047329471-12"
+        "ProductDetailPhotos/rc-upload-1617125401360-2",
+        "ProductDetailPhotos/rc-upload-1617125401360-4",
+        "ProductDetailPhotos/rc-upload-1617125401360-6",
+        "ProductDetailPhotos/rc-upload-1617125401360-8"
       ],
-      "email": "shidayzz@gmail.com",
-      "wechatID": "417688x",
-      "phoneNum": "19292354428",
-      "id": 5
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "hello",
-      "description": "hi",
-      "durationDays": 3,
-      "zipcode": "",
-      "price": "",
-      "pictureKeyArray": [],
-      "email": "SHIDAYZZ@GMAIL.COM",
-      "wechatID": "417688x",
-      "phoneNum": "92933330002",
-      "id": 6
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "Hello world",
-      "description": "sell my house",
-      "durationDays": 13,
-      "zipcode": "32607",
-      "price": 13322,
-      "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617076476192-2",
-        "ProductDetailPhotos/rc-upload-1617076476192-4",
-        "ProductDetailPhotos/rc-upload-1617076476192-6"
-      ],
-      "email": "shidayang@ufl.edu",
+      "email": "shidayzz123@gmail.com",
       "wechatID": "as",
-      "phoneNum": "9292354428",
-      "id": 7
+      "phoneNum": "92933330002",
+      "id": 1
     },
     {
       "userID": "shidayzz@gmail.com",
-      "title": "test upload bar",
-      "description": "hahaha",
-      "durationDays": 1,
+      "title": "test error upload ",
+      "description": "123213",
+      "durationDays": 2,
       "zipcode": "",
       "price": "",
       "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617077157645-2",
-        "ProductDetailPhotos/rc-upload-1617077157645-4"
+        "ProductDetailPhotos/rc-upload-1617125401360-12",
+        "ProductDetailPhotos/rc-upload-1617125401360-14",
+        "ProductDetailPhotos/rc-upload-1617125401360-16"
       ],
       "email": "shidayzz@gmail.com",
       "wechatID": "as",
       "phoneNum": "92933330002",
-      "id": 8
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "test upload bar",
-      "description": "123",
-      "durationDays": 12,
-      "zipcode": "",
-      "price": "",
-      "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617083140924-48",
-        "ProductDetailPhotos/rc-upload-1617083140924-50",
-        "ProductDetailPhotos/rc-upload-1617083140924-52"
-      ],
-      "email": "shidayzz@gmail.com",
-      "wechatID": "as",
-      "phoneNum": "92933330002",
-      "id": 9
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "force update test",
-      "description": "121",
-      "durationDays": 12,
-      "zipcode": "",
-      "price": "",
-      "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617085705446-5",
-        "ProductDetailPhotos/rc-upload-1617085705446-7",
-        "ProductDetailPhotos/rc-upload-1617085705446-9"
-      ],
-      "email": "shidayzz@gmail.com",
-      "wechatID": "as",
-      "phoneNum": "92933330002",
-      "id": 10
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "Hello world123321",
-      "description": "12",
-      "durationDays": 12,
-      "zipcode": "",
-      "price": "",
-      "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617085705446-15",
-        "ProductDetailPhotos/rc-upload-1617085705446-17"
-      ],
-      "email": "shidayzz@gmail.com",
-      "wechatID": "as",
-      "phoneNum": "92933330002",
-      "id": 11
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "test upload bar2",
-      "description": "1",
-      "durationDays": 1,
-      "zipcode": "",
-      "price": "",
-      "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617085705446-26",
-        "ProductDetailPhotos/rc-upload-1617085705446-28"
-      ],
-      "email": "shidayzz@gmail.com",
-      "wechatID": "as",
-      "phoneNum": "92933330002",
-      "id": 13
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "123232",
-      "description": "12",
-      "durationDays": 12,
-      "zipcode": "",
-      "price": "",
-      "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617085705446-42",
-        "ProductDetailPhotos/rc-upload-1617085705446-44",
-        "ProductDetailPhotos/rc-upload-1617085705446-46"
-      ],
-      "email": "shidayzz@gmail.com",
-      "wechatID": "as",
-      "phoneNum": "92933330002",
-      "id": 15
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "test upload baraaaa",
-      "description": "1111",
-      "durationDays": 1,
-      "zipcode": "",
-      "price": "",
-      "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617085705446-65",
-        "ProductDetailPhotos/rc-upload-1617085705446-67",
-        "ProductDetailPhotos/rc-upload-1617085705446-69"
-      ],
-      "email": "shidayzz@gmail.com",
-      "wechatID": "as",
-      "phoneNum": "92933330002",
-      "id": 16
+      "id": 2
     }
   ],
   "users": [
@@ -207,7 +46,6 @@
       "password": "123456Aa",
       "phoneNum": "92933330002",
       "savedPosts": [
-        3,
         5
       ],
       "id": 1
