@@ -7,6 +7,7 @@ import {
     Row,
     Col,
     Button,
+    message,
   } from 'antd';
 import {PasswordInput} from 'antd-password-input-strength'
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -62,14 +63,12 @@ const ChangePasswordPage = ({user, setUser}) => {
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
 
-    const [warningMessage, setWarningMessage] = useState('')
-
     const onFinish = async () =>{
         if(oldPassword !== user.password){
-            setWarningMessage('Your old password is incorrect.')
+            message.error('Your old password is incorrect.')
         }
         else if(false /*check email verification*/){
-            setWarningMessage('Your email verification code is incorrect.')
+            message.error('Your email verification code is incorrect.')
         }
         else{
             const newUser = {...user, password: password}
@@ -90,7 +89,7 @@ const ChangePasswordPage = ({user, setUser}) => {
             setOldPassword('')
             setPassword('')
             setConfirm('')
-            setWarningMessage('Successfully changed your password!')
+            message.success('Successfully changed your password!')
     
             form.resetFields();
         }
@@ -98,19 +97,10 @@ const ChangePasswordPage = ({user, setUser}) => {
 
     }
 
-    const warningStyle = {
-        color: `${warningMessage==='Successfully changed your password!'?'green':'red'}`,
-        display: `${warningMessage===''?'none':'block'}`,
-        marginBottom: '5px'
-    }
-
 
     return (
         <div>
             <h1>Change Password</h1>
-            <div style={warningStyle}>
-                {warningMessage}
-            </div>
             <Form
                 form={form}
                 {...formItemLayout}

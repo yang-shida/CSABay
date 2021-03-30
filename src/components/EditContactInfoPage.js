@@ -6,6 +6,7 @@ import {
     Row,
     Col,
     Button,
+    message,
 } from 'antd';
 
 const formItemLayout = {
@@ -57,8 +58,6 @@ const EditContactInfoPage = ({user, setUser}) => {
     const [wechatID, setWechatID] = useState(user.wechatID)
     const [phoneNum, setPhoneNum] = useState(user.phoneNum)
 
-    const [warningMessage, setWarningMessage] = useState('')
-
     const onFinish = async () =>{
         const newUser = {...user, wechatID: wechatID, phoneNum: phoneNum}
 
@@ -74,28 +73,19 @@ const EditContactInfoPage = ({user, setUser}) => {
 
         if(data.wechatID===newUser.wechatID && data.phoneNum===newUser.phoneNum){
             setUser({...user, wechatID: data.wechatID, phoneNum: data.phoneNum})
-            setWarningMessage('Successfully updated your contact info!')
+            message.success('Successfully updated your contact info!')
         }
         else{
-            setWarningMessage('Update failed, please try again or contach a CSA IT department member!')
+            message.error('Update failed, please try again or contach a CSA IT department member!')
         }
 
         
 
     }
 
-    const warningStyle = {
-        color: `${warningMessage==='Successfully updated your contact info!'?'green':'red'}`,
-        display: `${warningMessage===''?'none':'block'}`,
-        marginBottom: '5px'
-    }
-
     return (
         <div>
             <h1>Edit Contact Information</h1>
-            <div style={warningStyle}>
-                {warningMessage}
-            </div>
 
             <Form
                 form={form}
