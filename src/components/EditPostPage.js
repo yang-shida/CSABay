@@ -10,11 +10,12 @@ import {
     Divider,
     InputNumber,
     Modal,
+    message,
   } from 'antd';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ImageUploader from './ImageUploader'
-import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
+import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY, S3_GET_OBJECT_TYPE} from './S3'
 
 const formItemLayout = {
     labelCol: {
@@ -22,7 +23,7 @@ const formItemLayout = {
             span: 24,
         },
         sm: {
-            span: 8,
+            span: 6,
         },
     },
     wrapperCol: {
@@ -30,32 +31,50 @@ const formItemLayout = {
                 span: 24,
         },
         sm: {
-                span: 8,
+                span: 12,
         },
     },
 };
-
-const tailFormItemLayout = {
-    wrapperCol: {
-        xs: {
-            span: 24,
-        },
-        sm: {
-            span: 24, 
-        },
-    },
-}
 
 const dividerLayout = {
     xs: {
         span: 24
     },
     sm: {
-        span: 12
+        span: 20
     },
 }
 
 const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
+
+    const [fileList, setFileList] = useState([])
+
+    useEffect(
+        async () => {
+            var array = []
+            for(const key in post.pictureKeyArray){
+                await S3_GET_OBJECT_TYPE(post.pictureKeyArray[key])
+                    .then(
+                        (type) => {
+                            var temp = {
+                                uid: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
+                                name: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
+                                status: 'done',
+                                url: S3_GET(post.pictureKeyArray[key]),
+                                type: type
+                            }
+                            array = [...array, temp]
+                        }
+                    )
+                    .catch(
+                        (err) => {
+                            console.log(err)
+                        }
+                    )
+            }
+            setFileList(array)
+        },[]
+    )
 
     const [form] = Form.useForm();
 
@@ -66,49 +85,85 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
     const [price, setPrice] = useState(post.price)
 
     const [pictureKeyArray, setPictureKeyArray] = useState(post.pictureKeyArray)
-    const [fileList, setFileList] = useState(
-        () => {
-            var array = []
-            for(const key in pictureKeyArray){
-                var temp = {
-                    uid: pictureKeyArray[key].substring(pictureKeyArray[key].lastIndexOf('/')+1),
-                    name: pictureKeyArray[key].substring(pictureKeyArray[key].lastIndexOf('/')+1),
-                    status: 'done',
-                    url: S3_GET(pictureKeyArray[key])
-                }
-                array = [...array, temp]
-            }
-            return array
-        }
-    )
+
+    const originalPictureKeyArray = post.pictureKeyArray
+
+    
 
     const [email, setEmail] = useState(post.email)
     const [wechatID, setWechatID] = useState(post.wechatID)
     const [phoneNum, setPhoneNum] = useState(post.phoneNum)
 
+    const uploadAllPictures = () => {
+        return new Promise(
+            async (resolve, reject) => {
+                try{
+                    for(let index = 0; index < fileList.length; index ++){
+                        const file = fileList[index]
+                        if(!originalPictureKeyArray.includes(`ProductDetailPhotos/${file.uid}`)){
+                            const signed = await S3_GET_SIGNED_POST(file)
+                            await S3_UPLOAD(signed, fileList, index)
+                        }
+                    }
+                    resolve()
+                }
+                catch{
+                    reject()
+                }
+            }
+        )
+    }
+
+    const deleteAllOldPictures = () => {
+        return new Promise(
+            async (resolve, reject) => {
+                for(const key in originalPictureKeyArray){
+                    await S3_DELETE_BY_KEY(originalPictureKeyArray[key])
+                }
+                resolve()
+            }
+        )
+    }
+
     const onFinish = async () => {
-        const updatedPost = {
-            ...post,
-            title: title,
-            description: description,
-            durationDays: durationDays,
-            zipcode: zipcode,
-            price: price,
-            pictureKeyArray: pictureKeyArray,
-            email: email.toLowerCase(),
-            wechatID: wechatID.toLowerCase(),
-            phoneNum: phoneNum
-        }
+        message.loading({content: "Uploading Pictures", key: "updatable"})
+        await uploadAllPictures()
+            .then(
+                async () => {
+                    const updatedPost = {
+                        ...post,
+                        title: title,
+                        description: description,
+                        durationDays: durationDays,
+                        zipcode: zipcode,
+                        price: price,
+                        pictureKeyArray: pictureKeyArray,
+                        email: email.toLowerCase(),
+                        wechatID: wechatID.toLowerCase(),
+                        phoneNum: phoneNum
+                    }
 
-        const res = await fetch(`http://localhost:8080/posts1/${post.id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(updatedPost),
-        })
+                    const res = await fetch(`http://localhost:8080/posts1/${post.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedPost),
+                    })
 
-        setIsEditPostVisible(false)
+                    message.success({content: "Post updated!", key: "updatable", duration: 2})
+
+                    // setIsEditPostVisible(false)
+                }
+            )
+            .catch(
+                () => {
+                    message.error({content: "Fail to update pictures", key: "updatable", duration: 2})
+                }
+            )
+        
+
+        
     }
 
     const onCloseEditPost = () => {
@@ -121,7 +176,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                 title="Edit Post" 
                 visible={isEditPostVisible}
                 onCancel={onCloseEditPost}
-                onOk={()=>onFinish()}
+                footer={null}
                 width='70%'
             >
                 <Form
@@ -283,7 +338,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                         }
                     >
                         <div style={{borderWidth: '1px', borderColor: '#E0E0E0', borderStyle: 'solid', padding: '40px'}}>
-                            <ImageUploader maxNumberOfPictures='9' pictureKeyArray={post.pictureKeyArray} setPictureKeyArray={setPictureKeyArray} fileList={fileList} setFileList={setFileList}></ImageUploader>
+                            <ImageUploader maxNumberOfPictures='9' pictureKeyArray={pictureKeyArray} setPictureKeyArray={setPictureKeyArray} fileList={fileList} setFileList={setFileList}></ImageUploader>
                         </div>
                     </Form.Item>
 
@@ -324,12 +379,14 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                     >
                         <Input value={phoneNum} onChange={(e) => setPhoneNum(e.target.value)}/>
                     </Form.Item>
-
-                    <Form.Item {...tailFormItemLayout}>
-                        <Button type="primary" htmlType="submit">
-                            Create Post
-                        </Button>
-                    </Form.Item>
+                
+                    <Row justify='center'>
+                        <Col>
+                            <Button type="primary" htmlType="submit">
+                                Update Post
+                            </Button>
+                        </Col>
+                    </Row>
 
                 </Form>
             </Modal>

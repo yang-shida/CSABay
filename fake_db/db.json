@@ -2,38 +2,20 @@
   "posts1": [
     {
       "userID": "shidayzz@gmail.com",
-      "title": "Test a fresh upload",
-      "description": "123123123",
-      "durationDays": 3,
-      "zipcode": "33255",
-      "price": 11050,
+      "title": "Hello world edited",
+      "description": "111xxx",
+      "durationDays": 11,
+      "zipcode": "30350",
+      "price": 10.5,
       "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617125401360-2",
-        "ProductDetailPhotos/rc-upload-1617125401360-4",
-        "ProductDetailPhotos/rc-upload-1617125401360-6",
-        "ProductDetailPhotos/rc-upload-1617125401360-8"
+        "ProductDetailPhotos/rc-upload-1617134583663-3",
+        "ProductDetailPhotos/rc-upload-1617134583663-5",
+        "ProductDetailPhotos/rc-upload-1617135800810-18"
       ],
-      "email": "shidayzz123@gmail.com",
-      "wechatID": "as",
-      "phoneNum": "92933330002",
+      "email": "11shidayzz@gmail.com",
+      "wechatID": "11as",
+      "phoneNum": "1192933330002",
       "id": 1
-    },
-    {
-      "userID": "shidayzz@gmail.com",
-      "title": "test error upload ",
-      "description": "123213",
-      "durationDays": 2,
-      "zipcode": "",
-      "price": "",
-      "pictureKeyArray": [
-        "ProductDetailPhotos/rc-upload-1617125401360-12",
-        "ProductDetailPhotos/rc-upload-1617125401360-14",
-        "ProductDetailPhotos/rc-upload-1617125401360-16"
-      ],
-      "email": "shidayzz@gmail.com",
-      "wechatID": "as",
-      "phoneNum": "92933330002",
-      "id": 2
     }
   ],
   "users": [
@@ -45,9 +27,7 @@
       "wechatID": "as",
       "password": "123456Aa",
       "phoneNum": "92933330002",
-      "savedPosts": [
-        5
-      ],
+      "savedPosts": [],
       "id": 1
     },
     {

@@ -94,7 +94,7 @@ const ProfilePage = ({user, setUser}) => {
             
             getMySavedPosts()
 
-        }, []
+        }, [isEditPostVisible]
     )
 
     const fetchMyPosts = async () => {
@@ -217,6 +217,7 @@ const ProfilePage = ({user, setUser}) => {
         setValue(value+1)
         setSelectedPost(post)
         setIsEditPostVisible(true)
+        setIsProductDetailVisible(false)
     }
 
     const onClickCard = async (post, e) => {

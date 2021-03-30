@@ -1,8 +1,10 @@
 backend:
  - append time when receiving a new post
+ - append modification dates to post (latest or an array)
  - interact with AWS
     - receive request from client
     - generate get, put presigned URL OR delete request
+    - periodically delete pictures that is no longer in use
  - email verification
  - sort and filter main page
  - password storage/encoding

@@ -23,15 +23,14 @@ export const S3_GET = (key) => {
     var S3 = new AWS.S3();
     var params = {Bucket: config.bucketName, Key: key, Expires: 60};
     var url = S3.getSignedUrl('getObject', params);
-    console.log('The URL is', url);
     return url
 }
 
-export const S3_UPLOAD = async (signed, fileList, index, value, setValue) => {
+export const S3_UPLOAD = async (signed, fileList, index) => {
     return new Promise(
         async (resolve, reject) => {
             const data = {
-                // ...signed.fields,
+                ...signed.fields,
                 'Content-Type': fileList[index].type,
                 file: fileList[index].originFileObj
             }
@@ -41,30 +40,17 @@ export const S3_UPLOAD = async (signed, fileList, index, value, setValue) => {
                 formData.append(name, data[name])
             }
         
-            const uploadConfig = {
-                onUploadProgress: event => {
-                    fileList[index] = {...fileList[index], status: "uploading", percent: (event.loaded / event.total) * 100}
-                    setValue(value+1)
-                }
-            };
-        
             axios.post(
                 signed.url,
-                formData,
-                uploadConfig
+                formData
             )
                 .then(
                     () => {
-                        fileList[index].status = 'done'
-                        setValue(value+1)
-                        console.log("add: ", signed.fields.key.substring(signed.fields.key.lastIndexOf('/') + 1))
                         resolve("S3 Upload OK!")
                     }
                 )
                 .catch (
                     (err) => {
-                        fileList[index].status = 'error'
-                        setValue(value+1)
                         reject(err)
                     }
                 ) 
@@ -89,18 +75,24 @@ export const S3_DELETE = async (file) => {
 }
 
 export const S3_DELETE_BY_KEY = async (key) => {
-    // send request to backend
-    var S3 = new AWS.S3();
-    var params = {
-        Bucket: config.bucketName, 
-        Key: key
-    };
-    S3.deleteObject(params, function(err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else     console.log(`Delete success: ${key}`)           // successful response
-    });
+    return new Promise(
+        (resolve, reject) => {
+            // send request to backend
+            var S3 = new AWS.S3();
+            var params = {
+                Bucket: config.bucketName, 
+                Key: key
+            };
+            S3.deleteObject(params, function(err, data) {
+                if (err) console.log(err, err.stack); // an error occurred
+                else     console.log(`Delete success: ${key}`)           // successful response
+            });
+            resolve()
 
-    // confirm delete
+            // confirm delete
+        }
+    )
+    
 }
 
 
@@ -135,4 +127,36 @@ export const S3_GET_SIGNED_POST = (file) => {
         }
     )
 
+}
+
+export const S3_GET_OBJECT_TYPE = (key) => {
+    return new Promise(
+        (resolve, reject) => {
+            var S3 = new AWS.S3();
+            var params = {
+                Bucket: config.bucketName, 
+                Key: key
+            };
+            S3.headObject(params, function(err, data) {
+                if (err) {
+                    reject(err)
+                }
+                else {
+                    resolve(data.ContentType)
+                }    
+                /*
+                data = {
+                AcceptRanges: "bytes", 
+                ContentLength: 3191, 
+                ContentType: "image/jpeg", 
+                ETag: "\"6805f2cfc46c0f04559748bb039d69ae\"", 
+                LastModified: <Date Representation>, 
+                Metadata: {
+                }, 
+                VersionId: "null"
+                }
+                */
+            });
+        }
+    )
 }

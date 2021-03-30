@@ -10,6 +10,7 @@ import {
     Button,
     Divider,
     InputNumber,
+    message,
   } from 'antd';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -77,37 +78,12 @@ const CreatPostPage = ({user}) => {
             async (resolve, reject) => {
                 for(let index = 0; index < fileList.length; index ++){
                     const file = fileList[index]
-                    // S3_GET_SIGNED_POST(file)
-                    //     .then(
-                    //         (signed) => {
-                    //             console.log(index)
-                    //             S3_UPLOAD(signed, fileList, index, value, setValue)
-                    //                 .then(
-                    //                     file.status = 'done'
-                    //                 )
-                    //                 .catch(
-                    //                     (err) => {
-                    //                         file.status = 'error'
-                    //                         reject()
-                    //                     }
-                    //                 )
-                    //         }
-                    //     )
-                    //     .catch(
-                    //         (err) => {
-                    //             file.status = 'error'
-                    //             reject()
-                    //         }
-                    //     )
-
                     try{
                         const signed = await S3_GET_SIGNED_POST(file)
-                        await S3_UPLOAD(signed, fileList, index, value, setValue)
+                        await S3_UPLOAD(signed, fileList, index)
                         resolve()
                     }
                     catch{
-                        fileList[index] = {...fileList[index], status: "error"}
-                        setValue(value+1)
                         reject()
                     }
                 }
@@ -117,7 +93,8 @@ const CreatPostPage = ({user}) => {
 
     const onFinish = async () => {
 
-        uploadAllPictures()
+        message.loading({content: "Uploading Pictures", key: "updatable"})
+        await uploadAllPictures()
             .then(
                 async () => {
                     const newPost = {
@@ -153,11 +130,13 @@ const CreatPostPage = ({user}) => {
                     setPhoneNum(user.phoneNum)
             
                     form.resetFields();
+
+                    message.success({content: "Post Created!", key: "updatable", duration: 2})
                 }
             )
             .catch(
                 () => {
-                    return
+                    message.error({content: "Fail to upload pictures", key: "updatable", duration: 2})
                 }
             )
 

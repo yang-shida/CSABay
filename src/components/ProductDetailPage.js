@@ -162,7 +162,7 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
 
             <Row gutter='16'>
                 <Col {...contactInfoLayout}>
-                    <ContactInfoCard user={user} isInfoVisible={true}/>
+                    <ContactInfoCard user={user} post={post} isInfoVisible={true}/>
                 </Col>
                 <Col {...pictureWallLayout}>
                     <div style={headingTextStyle}>

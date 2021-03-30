@@ -28,7 +28,7 @@ const contactInfoStyle = {
     marginTop: '10px'
 }
 
-const ContactInfoCard = ({user, isInfoVisible}) => {
+const ContactInfoCard = ({user, post, isInfoVisible}) => {
     return (
         <div>
             <Card style={{ width: '100%', marginTop: 16 }} loading={!isInfoVisible} hoverable={true}>
@@ -40,13 +40,13 @@ const ContactInfoCard = ({user, isInfoVisible}) => {
                     Name: {user.firstName} {user.lastName}
                 </div>
                 <div style={contactInfoStyle}>
-                    {`Email: ${user.email===''?'N/A':user.email}`}
+                    {`Email: ${post.email===''?'N/A':post.email}`}
                 </div>
                 <div style={contactInfoStyle}>
-                    {`WeChat ID: ${user.wechatID===''?'N/A':user.wechatID}`}
+                    {`WeChat ID: ${post.wechatID===''?'N/A':post.wechatID}`}
                 </div>
                 <div style={contactInfoStyle}>
-                    {`Phone Number: ${user.phoneNum===''?'N/A':user.phoneNum}`}
+                    {`Phone Number: ${post.phoneNum===''?'N/A':post.phoneNum}`}
                 </div>
             </Card>
         </div>
