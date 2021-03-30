@@ -63,6 +63,8 @@ const ProfilePage = ({user, setUser}) => {
     const [selectedPost, setSelectedPost] = useState('')
     const [selectedPostUserInfo, setSelectedPostUserInfo] = useState('')
 
+    const [value, setValue] = useState(0)
+
 
     useEffect(
         () => {
@@ -199,6 +201,7 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const onClickEdit = (post) => {
+        setValue(value+1)
         setSelectedPost(post)
         setIsEditPostVisible(true)
     }
@@ -302,7 +305,7 @@ const ProfilePage = ({user, setUser}) => {
             {
                 selectedPost.pictureKeyArray===undefined?
                 '':
-                <EditPostPage post={selectedPost} isEditPostVisible={isEditPostVisible} setIsEditPostVisible={setIsEditPostVisible} />  
+                <EditPostPage key={value} post={selectedPost} isEditPostVisible={isEditPostVisible} setIsEditPostVisible={setIsEditPostVisible} />  
             }
             
             

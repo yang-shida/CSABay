@@ -1,24 +1,8 @@
-import { Upload, Modal } from 'antd';
+import { Upload, Modal, message  } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-import axios from "axios";
-
-import AWS from 'aws-sdk';
-
-const config = {
-    bucketName: 'csabayphotos',
-    dirName: 'ProductDetailPhotos', /* optional */
-    region: 'us-east-2',
-    accessKeyId: 'AKIA2SGQI5JKBX7R45YB',
-    secretAccessKey: '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',
-}
-
-AWS.config.update({
-    region: config.region,
-    accessKeyId: config.accessKeyId,
-    secretAccessKey: config.secretAccessKey
-});
+import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
 
 function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -55,90 +39,12 @@ const uploadButton = (
     </div>
 );
 
-const ImageUploader = ({maxNumberOfPictures, pictureKeyArray, setPictureKeyArray}) => {
-
-    console.log(pictureKeyArray)
-
-    const S3_GET = (key) => {
-        var S3 = new AWS.S3();
-        var params = {Bucket: config.bucketName, Key: key, Expires: 60};
-        var url = S3.getSignedUrl('getObject', params);
-        console.log('The URL is', url);
-        return url
-    }
+const ImageUploader = ({maxNumberOfPictures, pictureKeyArray, setPictureKeyArray, fileList, setFileList}) => {
 
     const [previewVisible, setPreviewVisible] = useState(false)
     const [previewImage, setPreviewImage] = useState('')
     const [previewTitle, setPreviewTitle] = useState('')
-    const [fileList, setFileList] = useState(
-        () => {
-            
-            var array = []
-            for(const key in pictureKeyArray){
-                var temp = {
-                    uid: pictureKeyArray[key].substring(pictureKeyArray[key].lastIndexOf('/')+1),
-                    name: pictureKeyArray[key].substring(pictureKeyArray[key].lastIndexOf('/')+1),
-                    status: 'done',
-                    url: S3_GET(pictureKeyArray[key])
-                }
-                array = [...array, temp]
-            }
-            return array
-        }
-    )
     const [currentNumberOfPictures, setCurrentNumberOfPictures] = useState(pictureKeyArray.length)
-
-    const S3_UPLOAD = async (signed, file, onError, onProgress, onSuccess) => {
-        const data = {
-            ...signed.fields,
-            'Content-Type': file.type,
-            file: file
-        }
-
-        const formData = new FormData()
-        for (const name in data){
-            formData.append(name, data[name])
-        }
-
-        const uploadConfig = {
-            onUploadProgress: event => {
-                onProgress({ percent: (event.loaded / event.total) * 100 });
-            }
-        };
-
-        try {
-            const res = await axios.post(
-                signed.url,
-                formData,
-                uploadConfig
-            );
-
-            console.log(res)
-    
-            onSuccess("OK!")
-            // setTimeout(()=>{onSuccess("OK!")},1000)
-            setPictureKeyArray([...pictureKeyArray, signed.fields.key])
-            console.log("add: ", signed.fields.key.substring(signed.fields.key.lastIndexOf('/') + 1))
-        } catch (err) {
-            onError(err)
-        }
-    }
-
-    const S3_DELETE = async (file) => {
-        // send request to backend
-        var S3 = new AWS.S3();
-        var res;
-        var params = {
-            Bucket: config.bucketName, 
-            Key: `ProductDetailPhotos/${file.uid}`
-        };
-        S3.deleteObject(params, function(err, data) {
-            if (err) console.log(err, err.stack); // an error occurred
-            else     console.log(`Delete success: ProductDetailPhotos/${file.uid}`)           // successful response
-        });
-
-        // confirm delete
-    }
 
     const handleCancel = () => setPreviewVisible(false);
 
@@ -152,71 +58,69 @@ const ImageUploader = ({maxNumberOfPictures, pictureKeyArray, setPictureKeyArray
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1))
     };
 
-    const handleChange = ({ fileList, file, event }) => {
+    const handleChange = ({ fileList, file }) => {
+        if(file.type.substring(0, file.type.indexOf('/'))!=='image'){
+            message.error("You can only upload images")
+            setTimeout(() => {
+                setFileList(fileList.filter(
+                    file1 => file1.name !== file.name
+                ))
+                setCurrentNumberOfPictures(fileList.length)
+                setPictureKeyArray(pictureKeyArray.filter(key => key.substring(key.lastIndexOf('/') + 1)!==file.uid))
+            }, 1000);
+        }
+
+        if(file.size>MAX_CONTENT_LEN){
+            message.error("Single image cannot exceed 10MB")
+            setTimeout(() => {
+                setFileList(fileList.filter(
+                    file1 => file1.name !== file.name
+                ))
+                setCurrentNumberOfPictures(fileList.length)
+                setPictureKeyArray(pictureKeyArray.filter(key => key.substring(key.lastIndexOf('/') + 1)!==file.uid))
+            }, 1000);
+        }
+        
         setFileList([...fileList])
         setCurrentNumberOfPictures(fileList.length)
     }
 
     const handleRemove = (file) => {
         console.log("removing: ", file.uid)
-        S3_DELETE(file)
         setPictureKeyArray(pictureKeyArray.filter(key => key.substring(key.lastIndexOf('/') + 1)!==file.uid))
     }
 
+    const handleBeforeUpload = (file) => {
+        setPictureKeyArray([...pictureKeyArray, `ProductDetailPhotos/${file.uid}`])
+        return false
+    }
+
     const handleUpload = async ({file, onError, onProgress, onSuccess}) => {
-
-        const MAX_CONTENT_LEN = 10485760
-
-        if(file.type.substring(0, file.type.indexOf('/'))!=='image'){
-            onError(undefined, "You can only upload images")
-            return
-        }
-
-        if(file.size>MAX_CONTENT_LEN){
-            onError(undefined, "Single image cannot exceed 10MB")
-            return
-        }
-
-        var S3 = new AWS.S3();
-
-        S3.createPresignedPost({
-            Fields: {
-                key: `${config.dirName}/${file.uid}`,
-            },
-            Expires: 30,
-            Bucket: config.bucketName,
-            Conditions: [
-                ["starts-with", "$Content-Type", "image/"],
-                ["content-length-range", 0, MAX_CONTENT_LEN+1000000]
-            ]
-        }, async (err, signed) => {
-            if(err){
-                console.log("Fail to create pre-signed post")
-                console.log(err)
-                onError(err)
-            }
-            if(signed){
-                console.log("Created pre-signed post")
-                console.log(signed)
-            }
-
-            S3_UPLOAD(signed, file, onError, onProgress, onSuccess)
-        })
-
-
-
-
+        
+        // S3_GET_SIGNED_POST(file)
+        //     .then(
+        //         (signed) => {
+        //             S3_UPLOAD(signed, file, onError, onProgress, onSuccess)
+        //         }
+        //     )
+        //     .catch(
+        //         (err) => {
+        //             onError(err)
+        //         }
+        //     )
+        
     }
 
     return (
         <div style={{textAlign: 'left'}}>
             <Upload
                 listType="picture-card"
-                defaultFileList={fileList}
+                fileList={fileList}
                 onPreview={handlePreview}
                 onChange={handleChange}
                 onRemove={handleRemove}
-                customRequest={handleUpload}
+                // customRequest={handleUpload}
+                beforeUpload={handleBeforeUpload}
             >
                 {fileList.length >= maxNumberOfPictures ? null : uploadButton}
             </Upload>

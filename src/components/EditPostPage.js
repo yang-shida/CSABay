@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     Form,
@@ -14,6 +14,7 @@ import {
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ImageUploader from './ImageUploader'
+import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
 
 const formItemLayout = {
     labelCol: {
@@ -65,12 +66,25 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
     const [price, setPrice] = useState(post.price)
 
     const [pictureKeyArray, setPictureKeyArray] = useState(post.pictureKeyArray)
+    const [fileList, setFileList] = useState(
+        () => {
+            var array = []
+            for(const key in pictureKeyArray){
+                var temp = {
+                    uid: pictureKeyArray[key].substring(pictureKeyArray[key].lastIndexOf('/')+1),
+                    name: pictureKeyArray[key].substring(pictureKeyArray[key].lastIndexOf('/')+1),
+                    status: 'done',
+                    url: S3_GET(pictureKeyArray[key])
+                }
+                array = [...array, temp]
+            }
+            return array
+        }
+    )
 
     const [email, setEmail] = useState(post.email)
     const [wechatID, setWechatID] = useState(post.wechatID)
     const [phoneNum, setPhoneNum] = useState(post.phoneNum)
-
-    setTimeout(()=>{form.resetFields();},100)
 
     const onFinish = async () => {
         const updatedPost = {
@@ -269,7 +283,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                         }
                     >
                         <div style={{borderWidth: '1px', borderColor: '#E0E0E0', borderStyle: 'solid', padding: '40px'}}>
-                            <ImageUploader maxNumberOfPictures='9' pictureKeyArray={post.pictureKeyArray} setPictureKeyArray={setPictureKeyArray}></ImageUploader>
+                            <ImageUploader maxNumberOfPictures='9' pictureKeyArray={post.pictureKeyArray} setPictureKeyArray={setPictureKeyArray} fileList={fileList} setFileList={setFileList}></ImageUploader>
                         </div>
                     </Form.Item>
 

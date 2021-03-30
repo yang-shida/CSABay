@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
 
 import {
     Form,
@@ -63,44 +64,98 @@ const CreatPostPage = ({user}) => {
     const [price, setPrice] = useState('')
 
     const [pictureKeyArray, setPictureKeyArray] = useState([])
+    const [fileList, setFileList] = useState([])
 
     const [email, setEmail] = useState(user.email)
     const [wechatID, setWechatID] = useState(user.wechatID)
     const [phoneNum, setPhoneNum] = useState(user.phoneNum)
 
+    const [value, setValue] = useState(0)
+
+    const uploadAllPictures = () => {
+        return new Promise(
+            async (resolve, reject) => {
+                for(let index = 0; index < fileList.length; index ++){
+                    const file = fileList[index]
+                    // S3_GET_SIGNED_POST(file)
+                    //     .then(
+                    //         (signed) => {
+                    //             console.log(index)
+                    //             S3_UPLOAD(signed, fileList, index, value, setValue)
+                    //                 .then(
+                    //                     file.status = 'done'
+                    //                 )
+                    //                 .catch(
+                    //                     (err) => {
+                    //                         file.status = 'error'
+                    //                         reject()
+                    //                     }
+                    //                 )
+                    //         }
+                    //     )
+                    //     .catch(
+                    //         (err) => {
+                    //             file.status = 'error'
+                    //             reject()
+                    //         }
+                    //     )
+
+                    const signed = await S3_GET_SIGNED_POST(file)
+                    await S3_UPLOAD(signed, fileList, index, value, setValue)
+                }
+                console.log("end")
+                resolve()
+            }
+        )
+    }
+
     const onFinish = async () => {
-        const newPost = {
-            userID: user.email.toLowerCase(),
-            title: title,
-            description: description,
-            durationDays: durationDays,
-            zipcode: zipcode,
-            price: price,
-            pictureKeyArray: pictureKeyArray,
-            email: email.toLowerCase(),
-            wechatID: wechatID.toLowerCase(),
-            phoneNum: phoneNum
-        }
 
-        const res = await fetch('http://localhost:8080/posts1', {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(newPost),
-        })
+        uploadAllPictures()
+            .then(
+                async () => {
+                    const newPost = {
+                        userID: user.email.toLowerCase(),
+                        title: title,
+                        description: description,
+                        durationDays: durationDays,
+                        zipcode: zipcode,
+                        price: price,
+                        pictureKeyArray: pictureKeyArray,
+                        email: email.toLowerCase(),
+                        wechatID: wechatID.toLowerCase(),
+                        phoneNum: phoneNum
+                    }
+            
+                    const res = await fetch('http://localhost:8080/posts1', {
+                        method: 'POST',
+                        headers: {
+                            'Content-type': 'application/json'
+                        },
+                        body: JSON.stringify(newPost),
+                    })
+            
+                    setTitle('')
+                    setDescription('')
+                    setDurationDays('')
+                    setZipcode('')
+                    setPrice('')
+                    setPictureKeyArray([])
+                    setFileList([])
+                    setEmail(user.email)
+                    setWechatID(user.wechatID)
+                    setPhoneNum(user.phoneNum)
+            
+                    form.resetFields();
+                }
+            )
+            .catch(
+                () => {
+                    return
+                }
+            )
 
-        setTitle('')
-        setDescription('')
-        setDurationDays('')
-        setZipcode('')
-        setPrice('')
-        setPictureKeyArray([])
-        setEmail(user.email)
-        setWechatID(user.wechatID)
-        setPhoneNum(user.phoneNum)
 
-        form.resetFields();
     }
 
     return (
@@ -260,7 +315,7 @@ const CreatPostPage = ({user}) => {
                     }
                 >
                     <div style={{borderWidth: '1px', borderColor: '#E0E0E0', borderStyle: 'solid', padding: '40px'}}>
-                        <ImageUploader maxNumberOfPictures='9' pictureKeyArray={pictureKeyArray} setPictureKeyArray={setPictureKeyArray}></ImageUploader>
+                        <ImageUploader key={value} maxNumberOfPictures='9' pictureKeyArray={pictureKeyArray} setPictureKeyArray={setPictureKeyArray} fileList={[...fileList]} setFileList={setFileList}></ImageUploader>
                     </div>
                 </Form.Item>
 

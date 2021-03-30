@@ -1,22 +1,7 @@
 import React from 'react'
 import { Card, Col, Row, Avatar } from 'antd';
 import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-design/icons';
-
-import AWS from 'aws-sdk';
-
-const config = {
-    bucketName: 'csabayphotos',
-    dirName: 'ProductDetailPhotos', /* optional */
-    region: 'us-east-2',
-    accessKeyId: 'AKIA2SGQI5JKBX7R45YB',
-    secretAccessKey: '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',
-}
-
-AWS.config.update({
-    region: config.region,
-    accessKeyId: config.accessKeyId,
-    secretAccessKey: config.secretAccessKey
-});
+import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
 
 const { Meta } = Card;
 
@@ -53,14 +38,6 @@ const priceStyle = {
 };
 
 const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit, onClickCard}) => {
-
-    const S3_GET = (key) => {
-        var S3 = new AWS.S3();
-        var params = {Bucket: config.bucketName, Key: key, Expires: 60};
-        var url = S3.getSignedUrl('getObject', params);
-        console.log('The URL is', url);
-        return url
-    }
 
     return (
         <div>
