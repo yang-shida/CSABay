@@ -33,13 +33,12 @@ const App = () => {
   return (
     <Router>
       <div className="App">
-        {userInfo===undefined?"":<NavBar user={userInfo} />}
-
         <Route
           path='/'
           exact render={
             ()=>(
               <>
+                {userInfo===undefined?"":<NavBar user={userInfo} currentRoute={"home"}/>}
                 {userInfo===undefined?"":<MainPage user={userInfo} setUser={setUserInfo}></MainPage>}
               </>
             )
@@ -51,6 +50,7 @@ const App = () => {
           exact render={
             ()=>(
               <>
+                {userInfo===undefined?"":<NavBar user={userInfo} currentRoute={"register-page"}/>}
                 <SignupForm></SignupForm>
               </>
             )
@@ -62,6 +62,7 @@ const App = () => {
           exact render={
             ()=>(
               <>
+                {userInfo===undefined?"":<NavBar user={userInfo} currentRoute={"create-post"}/>}
                 {userInfo===undefined?"":<CreatePostPage user={userInfo}/>}
               </>
             )
@@ -73,6 +74,7 @@ const App = () => {
           exact render={
             ()=>(
               <>
+                {userInfo===undefined?"":<NavBar user={userInfo} currentRoute={"profile"}/>}
                 {userInfo===undefined?"":<ProfilePage user={userInfo} setUser={setUserInfo}/>}
                 
               </>

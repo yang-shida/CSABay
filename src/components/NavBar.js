@@ -6,8 +6,8 @@ import {Link} from 'react-router-dom'
 
 const { SubMenu } = Menu;
 
-const NavBar = ({user}) => {
-    const [currentPage, setCurrentPage] = useState('home')
+const NavBar = ({user, currentRoute}) => {
+    const [currentPage, setCurrentPage] = useState(currentRoute)
 
     const handleClick = e => {
         setCurrentPage(e.key);
