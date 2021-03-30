@@ -16,6 +16,23 @@
       "wechatID": "11as",
       "phoneNum": "1192933330002",
       "id": 1
+    },
+    {
+      "userID": "shidayzz@gmail.com",
+      "title": "Selling my cat",
+      "description": "she eats a lot",
+      "durationDays": 30,
+      "zipcode": "33647-3132",
+      "price": 0.01,
+      "pictureKeyArray": [
+        "ProductDetailPhotos/rc-upload-1617138356548-10",
+        "ProductDetailPhotos/rc-upload-1617138356548-12",
+        "ProductDetailPhotos/rc-upload-1617138356548-14"
+      ],
+      "email": "shidayang@ufl.edu",
+      "wechatID": "as1",
+      "phoneNum": "92933330002",
+      "id": 2
     }
   ],
   "users": [
