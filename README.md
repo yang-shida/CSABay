@@ -13,6 +13,7 @@ A Craigslist/eBay type website where people can publicize selling information an
 - axion
 - aws-sdk (will eventually be backend)
 - antd-img-crop
+- react-router-dom
 
 ## To run the front end for demo (need two terminals):
 - npm start
