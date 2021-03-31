@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react'
-import { Avatar, Image, Divider, Row, Col, Layout, Menu, Modal } from 'antd';
+import { Avatar, Image, Divider, Row, Col, Layout, Menu, Modal, Upload, Tooltip, message  } from 'antd';
 import Cards from './Cards'
 import ChangePasswordPage from './ChangePasswordPage'
 import EditContactInfoPage from './EditContactInfoPage'
 import ProductDetailPage from './ProductDetailPage'
 import EditPostPage from './EditPostPage'
+import ImgCrop from 'antd-img-crop'
 
-import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY} from './S3'
+
+import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY, S3_UPLOAD_SINGLE_FILE} from './S3'
 
 const { Sider } = Layout;
 
@@ -29,7 +31,9 @@ const profilePictureStyle = {
     borderWidth: '2px',
     borderStyle: 'solid',
     borderColor: '#E0E0E0',
-    marginBottom: '10px'
+    marginBottom: '10px',
+
+    cursor: 'pointer'
 }
 
 const basicInfoStyle = {
@@ -67,6 +71,8 @@ const ProfilePage = ({user, setUser}) => {
 
     const [value, setValue] = useState(0)
 
+    const [profilePictureURL, setProfilePictureURL] = useState("")
+
 
     useEffect(
         () => {
@@ -95,6 +101,14 @@ const ProfilePage = ({user, setUser}) => {
             getMySavedPosts()
 
         }, [isEditPostVisible]
+    )
+
+    useEffect(
+        () => {
+            if(user.profilePictureKey !== ""){
+                setProfilePictureURL(S3_GET(user.profilePictureKey))
+            }
+        }, [user]
     )
 
     const fetchMyPosts = async () => {
@@ -232,6 +246,44 @@ const ProfilePage = ({user, setUser}) => {
         setSelectedPost('')
     }
 
+    const handleProfilePictureBeforeUpload = (file) => {
+        if(file.type.substring(0, file.type.indexOf('/'))!=='image'){
+            message.error("You can only upload images")
+            return false
+        }
+        else if(file.size>MAX_CONTENT_LEN){
+            message.error("Single image cannot exceed 10MB")
+            return false
+        }
+        else{
+            return true
+        }
+    }
+
+    const handleProfilePictureUpload = async ({file}) => {
+        console.log("upload profile picture: ", file)
+        try{
+            const signed = await S3_GET_SIGNED_POST(file, 'ProfilePictures')
+            await S3_UPLOAD_SINGLE_FILE(signed, file)
+            message.success("Profile picture updated!")
+            const newUser = {...user, profilePictureKey: `ProfilePictures/${file.uid}`}
+            const res = await fetch(`http://localhost:8080/users/${user.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(newUser),
+            })
+    
+            const data = await res.json()
+    
+            setUser({...user, profilePictureKey: data.profilePictureKey})
+        }
+        catch{
+            message.error("Fail to update profile picture!")
+        }
+    }
+
     return (
         <div id="profile-container" style={profileContainerStyle}>
             <Sider
@@ -253,7 +305,19 @@ const ProfilePage = ({user, setUser}) => {
                     console.log(collapsed, type);
                 }}
             >
-                <Avatar size="default" src="../CSA_icon.jpg" style={profilePictureStyle}/>
+                <ImgCrop quality={1} modalTitle="Crop Your Profile Picture" modalOK="Confirm">
+                    <Upload customRequest={handleProfilePictureUpload} beforeUpload={handleProfilePictureBeforeUpload} fileList={[]}>
+                        <Tooltip title="Edit Profile Picture" placement="top" >
+                            {
+                                user.profilePictureKey===""?
+                                <Avatar size="default" style={profilePictureStyle}>{`${user.firstName.substring(0,1)}${user.lastName.substring(0,1)}`}</Avatar>:
+                                <Avatar size="default" src={profilePictureURL} style={profilePictureStyle} />
+                            }
+                            
+                        </Tooltip>
+                    </Upload>
+                </ImgCrop>
+                
                 <div style={basicInfoStyle}>
                     Name: {user.firstName} {user.lastName}
                 </div>

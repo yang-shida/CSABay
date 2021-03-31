@@ -8,6 +8,7 @@
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.7.1",
     "antd": "^4.12.3",
+    "antd-img-crop": "^3.14.1",
     "antd-password-input-strength": "^1.1.1",
     "aws-sdk": "^2.874.0",
     "axios": "^0.21.1",

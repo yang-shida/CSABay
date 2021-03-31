@@ -5,6 +5,8 @@ backend:
     - receive request from client
     - generate get, put presigned URL OR delete request
     - periodically delete pictures that is no longer in use
+      - listObjectsV2 or listObjects
+      - post pictures, user profile pictures
  - email verification
  - sort and filter main page
  - password storage/encoding
@@ -18,6 +20,5 @@ backend:
 frontend:
  - update password checking
  - integrate email verification
- - change profile picture
  - update navbar based on current page and login?
  - hide contact info when not logged in

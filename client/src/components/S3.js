@@ -59,6 +59,38 @@ export const S3_UPLOAD = async (signed, fileList, index) => {
     
 }
 
+export const S3_UPLOAD_SINGLE_FILE = (signed, file) => {
+    return new Promise(
+        async (resolve, reject) => {
+            const data = {
+                ...signed.fields,
+                'Content-Type': file.type,
+                file: file
+            }
+        
+            const formData = new FormData()
+            for (const name in data){
+                formData.append(name, data[name])
+            }
+        
+            axios.post(
+                signed.url,
+                formData
+            )
+                .then(
+                    () => {
+                        resolve("S3 Upload OK!")
+                    }
+                )
+                .catch (
+                    (err) => {
+                        reject(err)
+                    }
+                ) 
+        }
+    )
+}
+
 export const S3_DELETE = async (file) => {
     // send request to backend
     var S3 = new AWS.S3();
@@ -97,14 +129,14 @@ export const S3_DELETE_BY_KEY = async (key) => {
 
 
 
-export const S3_GET_SIGNED_POST = (file) => {
+export const S3_GET_SIGNED_POST = (file, dir) => {
     return new Promise(
         (resolve, reject) => {
             var S3 = new AWS.S3();
 
             S3.createPresignedPost({
                 Fields: {
-                    key: `${config.dirName}/${file.uid}`,
+                    key: `${dir}/${file.uid}`,
                 },
                 Expires: 30,
                 Bucket: config.bucketName,

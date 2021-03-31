@@ -55,7 +55,7 @@ const dividerLayout = {
     },
 }
 
-const CreatPostPage = ({user}) => {
+const CreatePostPage = ({user}) => {
     const [form] = Form.useForm();
 
     const [title, setTitle] = useState('')
@@ -79,7 +79,7 @@ const CreatPostPage = ({user}) => {
                 for(let index = 0; index < fileList.length; index ++){
                     const file = fileList[index]
                     try{
-                        const signed = await S3_GET_SIGNED_POST(file)
+                        const signed = await S3_GET_SIGNED_POST(file, 'ProductDetailPhotos')
                         await S3_UPLOAD(signed, fileList, index)
                         resolve()
                     }
@@ -353,4 +353,4 @@ const CreatPostPage = ({user}) => {
     )
 }
 
-export default CreatPostPage
+export default CreatePostPage

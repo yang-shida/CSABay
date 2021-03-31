@@ -101,7 +101,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                     for(let index = 0; index < fileList.length; index ++){
                         const file = fileList[index]
                         if(!originalPictureKeyArray.includes(`ProductDetailPhotos/${file.uid}`)){
-                            const signed = await S3_GET_SIGNED_POST(file)
+                            const signed = await S3_GET_SIGNED_POST(file, 'ProductDetailPhotos')
                             await S3_UPLOAD(signed, fileList, index)
                         }
                     }

@@ -96,22 +96,6 @@ const ImageUploader = ({maxNumberOfPictures, pictureKeyArray, setPictureKeyArray
         return false
     }
 
-    const handleUpload = async ({file, onError, onProgress, onSuccess}) => {
-        
-        // S3_GET_SIGNED_POST(file)
-        //     .then(
-        //         (signed) => {
-        //             S3_UPLOAD(signed, file, onError, onProgress, onSuccess)
-        //         }
-        //     )
-        //     .catch(
-        //         (err) => {
-        //             onError(err)
-        //         }
-        //     )
-        
-    }
-
     return (
         <div style={{textAlign: 'left'}}>
             <Upload
@@ -120,8 +104,9 @@ const ImageUploader = ({maxNumberOfPictures, pictureKeyArray, setPictureKeyArray
                 onPreview={handlePreview}
                 onChange={handleChange}
                 onRemove={handleRemove}
-                // customRequest={handleUpload}
                 beforeUpload={handleBeforeUpload}
+                // accept="image/*"
+                // maxCount={maxNumberOfPictures}
             >
                 {fileList.length >= maxNumberOfPictures ? null : uploadButton}
             </Upload>

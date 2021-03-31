@@ -2,7 +2,7 @@
   "posts1": [
     {
       "userID": "shidayzz@gmail.com",
-      "title": "Hello world edited",
+      "title": "Hello world edited 1",
       "description": "111xxx",
       "durationDays": 11,
       "zipcode": "30350",
@@ -44,8 +44,11 @@
       "wechatID": "as1",
       "password": "AAAsss123",
       "phoneNum": "92933330002",
-      "savedPosts": [],
-      "id": 1
+      "savedPosts": [
+        2
+      ],
+      "id": 1,
+      "profilePictureKey": "ProfilePictures/rc-upload-1617216251550-3"
     },
     {
       "firstName": "Shida",
@@ -61,6 +64,7 @@
         5,
         6
       ],
+      "profilePictureKey": "",
       "id": 2
     },
     {
@@ -76,6 +80,7 @@
         3,
         6
       ],
+      "profilePictureKey": "",
       "id": 3
     }
   ],

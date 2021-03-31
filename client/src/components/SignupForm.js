@@ -61,7 +61,8 @@ const SignupForm = () => {
             email: email.toLowerCase(),
             wechatID: wechatID.toLowerCase(),
             password: password,
-            phoneNum: phoneNum
+            phoneNum: phoneNum,
+            profilePictureKey: ""
         }
 
         const res = await fetch('http://localhost:8080/users', {
