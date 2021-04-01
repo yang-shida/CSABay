@@ -35,7 +35,7 @@ const App = () => {
               ((props)=>(
                 <>
                   <NavBar isAuthenticated={false} currentRoute={"home"} routerProps={props} setUserInfo={setUserInfo}/>
-                  <MainPage isAuthenticated={false} setUser={setUserInfo}></MainPage>
+                  <MainPage isAuthenticated={false} setUser={setUserInfo} routerProps={props}></MainPage>
                 </>
               ))
             }

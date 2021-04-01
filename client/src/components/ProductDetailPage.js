@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import { Divider, Row, Col, Image } from 'antd';
+import { Divider, Row, Col, Image, Popconfirm } from 'antd';
 import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-design/icons';
 
 import ContactInfoCard from './ContactInfoCard'
 
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
+import auth from '../auth/auth';
 
 // title | actions
 const headerContainerStyle = {
@@ -122,7 +123,11 @@ const dividerLayout = {
 
 
 
-const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, onClickEdit, onClickDelete}) => {
+const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, onClickEdit, onClickDelete, routerProps}) => {
+
+    const onConfirmToLogin = () => {
+        routerProps.history.push('./login')
+    }
 
     return (
         <div>
@@ -144,7 +149,16 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                         (
                             isFavorite?
                             <StarTwoTone style={actionIconStyle} key="favorite-post-yellow" twoToneColor="yellow" onClick={()=>onClickStar(post.id)}/>:
-                            <StarOutlined style={actionIconStyle} key="favorite-post-gray" onClick={()=>onClickStar(post.id)}/>
+                            auth.isAuthenticated()?
+                            <StarOutlined style={actionIconStyle} key="favorite-post-gray" onClick={()=>onClickStar(post.id)}/>:
+                            <Popconfirm
+                                title="You need to login to favorite a post. Do you want to login?"
+                                onConfirm={onConfirmToLogin}
+                                okText="Yes"
+                                cancelText="No"
+                            >
+                                <StarOutlined style={actionIconStyle} key="favorite-post-gray" />
+                            </Popconfirm>
                         )
                     }
                 </div>

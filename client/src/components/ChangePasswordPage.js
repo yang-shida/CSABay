@@ -58,7 +58,7 @@ const ChangePasswordPage = ({user, setUser}) => {
 
     const [form] = Form.useForm();
 
-    const [emailVerification, setEmailVerification] = useState('')
+    // const [emailVerification, setEmailVerification] = useState('')
     const [oldPassword, setOldPassword] = useState('')
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
@@ -67,9 +67,9 @@ const ChangePasswordPage = ({user, setUser}) => {
         if(oldPassword !== user.password){
             message.error('Your old password is incorrect.')
         }
-        else if(false /*check email verification*/){
-            message.error('Your email verification code is incorrect.')
-        }
+        // else if(false /*check email verification*/){
+        //     message.error('Your email verification code is incorrect.')
+        // }
         else{
             const newUser = {...user, password: password}
 
@@ -85,7 +85,7 @@ const ChangePasswordPage = ({user, setUser}) => {
     
             setUser({...user, password: data.password})
 
-            setEmailVerification('')
+            // setEmailVerification('')
             setOldPassword('')
             setPassword('')
             setConfirm('')
@@ -107,7 +107,7 @@ const ChangePasswordPage = ({user, setUser}) => {
                 name="change-password"
                 onFinish={onFinish}
             >
-
+{/* 
                 <Form.Item label="* Email Verification Code" >
                     <Row gutter={6}>
                         <Col span={20}>
@@ -125,13 +125,15 @@ const ChangePasswordPage = ({user, setUser}) => {
                             </Form.Item>
                         </Col>
                         <Col span={4}>
-                            {/* TODO: add onClick action to check if match database */}
+                            {
+                                // TODO: add onClick action to check if match database
+                            }
                             <Button>    
                                 Get Code
                             </Button>
                         </Col>
                     </Row>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item
                     name="old-password"

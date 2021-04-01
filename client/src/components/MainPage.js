@@ -1,5 +1,6 @@
-import { Modal } from 'antd';
+import { message, Modal } from 'antd';
 import { useEffect, useState } from 'react';
+import auth from '../auth/auth';
 
 import Cards from './Cards'
 
@@ -7,7 +8,7 @@ import ProductDetailPage from './ProductDetailPage'
 
 
 
-const MainPage = ({isAuthenticated=false, user, setUser}) => {
+const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 
     const [posts, setPosts] = useState([])
     const [isProductDetailVisible, setIsProductDetailVisible] = useState(false)
@@ -104,8 +105,8 @@ const MainPage = ({isAuthenticated=false, user, setUser}) => {
         <div>
             {
                 posts.length===0?
-                'No posts':
-                <Cards posts={posts} displayMyPost={false} favoriteIDs={isAuthenticated?user.savedPosts:[]} onClickStar={onClickStar} onClickCard={onClickCard}></Cards>
+                'There is no post now. Create the first one!':
+                <Cards posts={posts} displayMyPost={false} favoriteIDs={isAuthenticated?user.savedPosts:[]} onClickStar={onClickStar} onClickCard={onClickCard} routerProps={routerProps}></Cards>
             }
 
             <Modal 
@@ -115,7 +116,7 @@ const MainPage = ({isAuthenticated=false, user, setUser}) => {
                 footer={null}
                 width='70%'
             >
-                <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={isAuthenticated?user.savedPosts.includes(selectedPost.id):false} onClickStar={onClickStar} user={selectedPostUserInfo}/>
+                <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={isAuthenticated?user.savedPosts.includes(selectedPost.id):false} onClickStar={onClickStar} user={selectedPostUserInfo} routerProps={routerProps} />
             </Modal>
             
         </div>

@@ -1,7 +1,8 @@
 import React from 'react'
-import { Card, Col, Row, Avatar } from 'antd';
+import { Card, Col, Row, Avatar, Popconfirm } from 'antd';
 import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-design/icons';
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
+import auth from '../auth/auth';
 
 const { Meta } = Card;
 
@@ -37,7 +38,11 @@ const priceStyle = {
     float: 'left'
 };
 
-const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit, onClickCard}) => {
+const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit, onClickCard, routerProps}) => {
+
+    const onConfirmToLogin = () => {
+        routerProps.history.push('./login')
+    }
 
     return (
         <div>
@@ -60,7 +65,17 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                             [
                                                 favoriteIDs.includes(post.id)?
                                                 <StarTwoTone key="favorite-post-yellow" twoToneColor="yellow" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>:
-                                                <StarOutlined key="favorite-post-gray" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>
+                                                auth.isAuthenticated()?
+                                                <StarOutlined key="favorite-post-gray" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>:
+                                                <Popconfirm
+                                                    title="You need to login to favorite a post. Do you want to login?"
+                                                    onConfirm={(e) => {e.stopPropagation(); onConfirmToLogin()}}
+                                                    onCancel={(e)=>{e.stopPropagation();}}
+                                                    okText="Yes"
+                                                    cancelText="No"
+                                                >
+                                                    <StarOutlined key="favorite-post-gray" onClick={(e)=>{e.stopPropagation();}}/>
+                                                </Popconfirm>
                                             ]
                                         
                                     }
