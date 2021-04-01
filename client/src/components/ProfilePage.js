@@ -310,7 +310,7 @@ const ProfilePage = ({user, setUser}) => {
                         <Tooltip title="Edit Profile Picture" placement="top" >
                             {
                                 user.profilePictureKey===""?
-                                <Avatar size="default" style={profilePictureStyle}>{`${user.firstName.substring(0,1)}${user.lastName.substring(0,1)}`}</Avatar>:
+                                <Avatar size="default" src={'./default_profile_pic.jpg'} style={profilePictureStyle} />:
                                 <Avatar size="default" src={profilePictureURL} style={profilePictureStyle} />
                             }
                             

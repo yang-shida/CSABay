@@ -116,10 +116,10 @@ export const S3_DELETE_BY_KEY = async (key) => {
                 Key: key
             };
             S3.deleteObject(params, function(err, data) {
-                if (err) console.log(err, err.stack); // an error occurred
-                else     console.log(`Delete success: ${key}`)           // successful response
+                if (err) reject() // an error occurred
+                else     resolve()           // successful response
             });
-            resolve()
+            
 
             // confirm delete
         }

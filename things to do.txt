@@ -4,12 +4,13 @@ backend:
  - interact with AWS
     - receive request from client
     - generate get, put presigned URL OR delete request
-    - periodically delete pictures that is no longer in use
+    - periodically delete pictures that is no longer in use (maybe every month?)
       - listObjectsV2 or listObjects
       - post pictures, user profile pictures
  - email verification
  - sort and filter main page
  - password storage/encoding
+ - assign user a key when logged in
  - required DBs (collections):
     - users
     - posts
@@ -20,5 +21,10 @@ backend:
 frontend:
  - update password checking
  - integrate email verification
+   - block getcode button if no email entered
+   - cannot get code after 60s
  - update navbar based on current page and login?
  - hide contact info when not logged in
+ - main page filter/sort UI
+ - sign out
+ - get profile pic url in app.js then pass to navbar and profilep page

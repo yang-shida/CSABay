@@ -7,7 +7,7 @@ import ProductDetailPage from './ProductDetailPage'
 
 
 
-const MainPage = ({user, setUser}) => {
+const MainPage = ({isAuthenticated=false, user, setUser}) => {
 
     const [posts, setPosts] = useState([])
     const [isProductDetailVisible, setIsProductDetailVisible] = useState(false)
@@ -20,7 +20,6 @@ const MainPage = ({user, setUser}) => {
             const getPosts = async()=>{
                 const postsFromServer = await fetchPosts()
                 setPosts(postsFromServer)
-                console.log(postsFromServer)
             }
 
             getPosts()
@@ -106,7 +105,7 @@ const MainPage = ({user, setUser}) => {
             {
                 posts.length===0?
                 'No posts':
-                <Cards posts={posts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar} onClickCard={onClickCard}></Cards>
+                <Cards posts={posts} displayMyPost={false} favoriteIDs={isAuthenticated?user.savedPosts:[]} onClickStar={onClickStar} onClickCard={onClickCard}></Cards>
             }
 
             <Modal 
@@ -116,7 +115,7 @@ const MainPage = ({user, setUser}) => {
                 footer={null}
                 width='70%'
             >
-                <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={user.savedPosts.includes(selectedPost.id)} onClickStar={onClickStar} user={selectedPostUserInfo}/>
+                <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={isAuthenticated?user.savedPosts.includes(selectedPost.id):false} onClickStar={onClickStar} user={selectedPostUserInfo}/>
             </Modal>
             
         </div>

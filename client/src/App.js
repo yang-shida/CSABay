@@ -9,27 +9,13 @@ import MainPage from './components/MainPage'
 import CreatePostPage from './components/CreatePostPage'
 import ProfilePage from './components/ProfilePage'
 import {BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom'
+import LoginPage from './components/LoginPage';
+import auth from './auth/auth';
+import ProtectedRoute from './auth/ProtectedRoute'
 
 const App = () => {
+
   const [userInfo, setUserInfo] = useState();
-
-  useEffect(
-    ()=>{
-      const getUser = async() =>{
-        const userFromServer = await fetchUser(1)
-        setUserInfo(userFromServer)
-      }
-
-      getUser()
-      
-    }, []
-  )
-
-  const fetchUser = async(userID) =>{
-    const res = await fetch(`http://localhost:8080/users/${userID}`)
-    const data = await res.json()
-    return data
-  }
 
   return (
     <Router>
@@ -38,10 +24,30 @@ const App = () => {
           <Route
             path='/'
             exact render={
-              ()=>(
+              auth.isAuthenticated()?
+              ((props)=>(
                 <>
-                  {userInfo===undefined?"":<NavBar user={userInfo} currentRoute={"home"}/>}
-                  {userInfo===undefined?"":<MainPage user={userInfo} setUser={setUserInfo}></MainPage>}
+                  {userInfo===undefined?"":<NavBar isAuthenticated={true} user={userInfo} currentRoute={"home"} routerProps={props} setUserInfo={setUserInfo}/>}
+                  {userInfo===undefined?"":<MainPage isAuthenticated={true} user={userInfo} setUser={setUserInfo}></MainPage>}
+                </>
+              ))
+              :
+              ((props)=>(
+                <>
+                  <NavBar isAuthenticated={false} currentRoute={"home"} routerProps={props} setUserInfo={setUserInfo}/>
+                  <MainPage isAuthenticated={false} setUser={setUserInfo}></MainPage>
+                </>
+              ))
+            }
+          ></Route>
+
+          <Route
+            path='/login'
+            exact render={
+              (props)=>(
+                <>
+                  <NavBar isAuthenticated={false} currentRoute={"login"} routerProps={props} setUserInfo={setUserInfo}/>
+                  <LoginPage routerProps={props} setUserInfo={setUserInfo} />
                 </>
               )
             }
@@ -50,36 +56,63 @@ const App = () => {
           <Route
             path='/register'
             exact render={
-              ()=>(
+              (props)=>(
                 <>
-                  {userInfo===undefined?"":<NavBar user={userInfo} currentRoute={"register-page"}/>}
+                  <NavBar isAuthenticated={false} currentRoute={"register-page"} routerProps={props} setUserInfo={setUserInfo}/>
                   <SignupForm></SignupForm>
                 </>
               )
             }
           ></Route>
           
-          <Route
+          <ProtectedRoute
             path='/create-post'
             exact render={
-              ()=>(
+              (props)=>(
                 <>
-                  {userInfo===undefined?"":<NavBar user={userInfo} currentRoute={"create-post"}/>}
+                  {userInfo===undefined?"":<NavBar isAuthenticated={true} user={userInfo} currentRoute={"create-post"} routerProps={props} setUserInfo={setUserInfo}/>}
                   {userInfo===undefined?"":<CreatePostPage user={userInfo}/>}
                 </>
               )
             }
-          ></Route>
+          ></ProtectedRoute>
 
-          <Route
+          <ProtectedRoute
             path='/profile'
             exact render={
-              ()=>(
+              (props)=>(
                 <>
-                  {userInfo===undefined?"":<NavBar user={userInfo} currentRoute={"profile"}/>}
+                  {userInfo===undefined?"":<NavBar isAuthenticated={true} user={userInfo} currentRoute={"profile"} routerProps={props} setUserInfo={setUserInfo}/>}
                   {userInfo===undefined?"":<ProfilePage user={userInfo} setUser={setUserInfo}/>}
                   
                 </>
+              )
+            }
+          ></ProtectedRoute>
+
+          <Route
+            path="/missing-permission"
+            render={
+              (props) => (
+                <Result
+                  status="403"
+                  title="403"
+                  subTitle="Sorry, you are need to login to see this page."
+                  extra={[
+                    <Link to="/">
+                      <Button key="to-home" type="primary">
+                        Back Home
+                      </Button>
+                    </Link>
+                    ,
+                    <Link to="/login">
+                      <Button key="to-login" type="primary">
+                        Go to Login
+                      </Button>
+                    </Link>
+                    
+                  ]}
+                />
               )
             }
           ></Route>
@@ -87,7 +120,7 @@ const App = () => {
           <Route
             path="*"
             render={
-              () => (
+              (props) => (
                 <Result
                   status="404"
                   title="404"
