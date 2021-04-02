@@ -24,9 +24,6 @@ frontend:
  - integrate email verification
    - block getcode button if no email entered
    - cannot get code after 60s
- - update navbar based on current page and login?
  - hide contact info when not logged in
  - main page filter/sort UI
- - sign out
- - get profile pic url in app.js then pass to navbar and profilep page
  - post time x days ago

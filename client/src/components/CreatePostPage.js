@@ -11,10 +11,13 @@ import {
     Divider,
     InputNumber,
     message,
+    Select,
   } from 'antd';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ImageUploader from './ImageUploader'
+
+const { Option } = Select;
 
 const formItemLayout = {
     labelCol: {
@@ -61,6 +64,8 @@ const CreatePostPage = ({user}) => {
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [durationDays, setDurationDays] = useState('')
+    const [typeOfPost, setTypeOfPost] = useState('')
+
     const [zipcode, setZipcode] = useState('')
     const [price, setPrice] = useState('')
 
@@ -102,6 +107,7 @@ const CreatePostPage = ({user}) => {
                         title: title,
                         description: description,
                         durationDays: durationDays,
+                        typeOfPost: typeOfPost,
                         zipcode: zipcode,
                         price: price,
                         pictureKeyArray: pictureKeyArray,
@@ -141,6 +147,10 @@ const CreatePostPage = ({user}) => {
             )
 
 
+    }
+
+    const handleChange = (value) => {
+        setTypeOfPost(value)
     }
 
     return (
@@ -202,7 +212,7 @@ const CreatePostPage = ({user}) => {
                     label={
                         <span>
                             Post Duration (Days)&nbsp;
-                            <Tooltip title="Enter how many days you expect your post to stay active. The maximum duration is 30 days. After these many days, your post will be automatically deleted. You can renew the duration after posting if you need to post longer.">
+                            <Tooltip title="Enter how many days you expect your post to stay active. The maximum duration is 30 days. After these many days, your post will be automatically deleted. You can renew the duration after posting by editing and re-uploading your post if you need to post longer.">
                                 <QuestionCircleOutlined />
                             </Tooltip>
                         </span>
@@ -223,6 +233,31 @@ const CreatePostPage = ({user}) => {
                     }
                 >
                     <InputNumber placeholder="Enter a number between 1 and 30, see question mark for more detail" value={durationDays} onChange={(value) => setDurationDays(value)} style={{ width: '100%' }}/>
+                </Form.Item>
+
+                <Form.Item
+                    name= "type-of-post"
+                    label="Type of Your Post"
+                    rules={
+                        [
+                            {
+                                required: true,
+                                message: 'Please select the post type!',
+                            },
+                        ]
+                    }
+                >
+                    <Row justify='start'>
+                        <Col>
+                            <Select style={{ width: 120 }} onChange={handleChange}>
+                                <Option value="selling">Selling</Option>
+                                <Option value="buying">Buying</Option>
+                                <Option value="subleasing">Subleasing</Option>
+                                <Option value="other">Other</Option>
+                            </Select>
+                        </Col>
+                    </Row>
+                    
                 </Form.Item>
 
                 <Row justify='center'>
