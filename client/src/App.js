@@ -12,6 +12,7 @@ import {BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom'
 import LoginPage from './components/LoginPage';
 import auth from './auth/auth';
 import ProtectedRoute from './auth/ProtectedRoute'
+import ForgotPasswordPage from './components/ForgotPasswordPage';
 
 const App = () => {
 
@@ -54,11 +55,23 @@ const App = () => {
           ></Route>
 
           <Route
+            path='/forgot-password'
+            exact render={
+              (props)=>(
+                <>
+                  <NavBar isAuthenticated={false} currentRoute={"forgot-password"} routerProps={props} setUserInfo={setUserInfo}/>
+                  <ForgotPasswordPage routerProps={props} />
+                </>
+              )
+            }
+          ></Route>
+
+          <Route
             path='/register'
             exact render={
               (props)=>(
                 <>
-                  <NavBar isAuthenticated={false} currentRoute={"register-page"} routerProps={props} setUserInfo={setUserInfo}/>
+                  <NavBar isAuthenticated={false} currentRoute={"register"} routerProps={props} setUserInfo={setUserInfo}/>
                   <SignupForm></SignupForm>
                 </>
               )

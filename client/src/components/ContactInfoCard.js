@@ -1,5 +1,6 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { Card, Avatar } from 'antd';
+import {S3_GET} from './S3'
 
 const profilePictureStyle = {
     width: '90%',
@@ -29,13 +30,28 @@ const contactInfoStyle = {
 }
 
 const ContactInfoCard = ({user, post, isInfoVisible}) => {
+
+    const [profilePictureURL, setProfilePictureURL] = useState("")
+
+    useEffect(
+        () => {
+            if(user.profilePictureKey !== ""){
+                setProfilePictureURL(S3_GET(user.profilePictureKey))
+            }
+        }, [user]
+    )
+
     return (
         <div>
             <Card style={{ width: '100%', marginTop: 16 }} loading={!isInfoVisible} hoverable={true}>
                 <div style={contactInfoHeadingTextStyle}>
                     Contact Information
                 </div>
-                <Avatar size="default" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" style={profilePictureStyle}/>
+                {
+                    user.profilePictureKey===""?
+                    <Avatar size="default" src={'./default_profile_pic.jpg'} style={profilePictureStyle} />:
+                    <Avatar size="default" src={profilePictureURL} style={profilePictureStyle} />
+                }
                 <div style={contactInfoStyle}>
                     Name: {user.firstName} {user.lastName}
                 </div>

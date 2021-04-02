@@ -96,6 +96,9 @@ const NavBar = ({isAuthenticated=false, user, currentRoute, routerProps, setUser
                         <Menu.Item key="login">
                             <Link to='/login'>Login</Link>
                         </Menu.Item>
+                        <Menu.Item key="forgot-password">
+                            <Link to='/forgot-password'>Forgot Password</Link>
+                        </Menu.Item>
                         <Menu.Item key="register">
                             <Link to='/register'>Register</Link>
                         </Menu.Item>
