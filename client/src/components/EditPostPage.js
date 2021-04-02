@@ -11,11 +11,14 @@ import {
     InputNumber,
     Modal,
     message,
+    Select
   } from 'antd';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ImageUploader from './ImageUploader'
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY, S3_GET_OBJECT_TYPE} from './S3'
+
+const { Option } = Select;
 
 const formItemLayout = {
     labelCol: {
@@ -81,6 +84,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
     const [title, setTitle] = useState(post.title)
     const [description, setDescription] = useState(post.description)
     const [durationDays, setDurationDays] = useState(post.durationDays)
+    const [typeOfPost, setTypeOfPost] = useState(post.typeOfPost)
     const [zipcode, setZipcode] = useState(post.zipcode)
     const [price, setPrice] = useState(post.price)
 
@@ -135,6 +139,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                         title: title,
                         description: description,
                         durationDays: durationDays,
+                        typeOfPost: typeOfPost,
                         zipcode: zipcode,
                         price: price,
                         pictureKeyArray: pictureKeyArray,
@@ -166,6 +171,11 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
         
     }
 
+    const handleChange = (value) => {
+        setTypeOfPost(value)
+        form.setFieldsValue({"type-of-post": value})
+    }
+
     const onCloseEditPost = () => {
         setIsEditPostVisible(false)
     }
@@ -185,14 +195,15 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                     name="createPost"
                     onFinish={onFinish}
                     initialValues={{
-                        ["title"]: post.title,
-                        ["description"]: post.description,
-                        ["duration"]: post.durationDays,
-                        ["zipcode"]: post.zipcode,
-                        ["price"]: post.price,
-                        ["email"]: post.email,
-                        ["wechat-id"]: post.wechatID,
-                        ["phone"]: post.phoneNum
+                        "title": post.title,
+                        "description": post.description,
+                        "duration": post.durationDays,
+                        "type-of-post": post.typeOfPost,
+                        "zipcode": post.zipcode,
+                        "price": post.price,
+                        "email": post.email,
+                        "wechat-id": post.wechatID,
+                        "phone": post.phoneNum
                     }}
                 >
 
@@ -261,6 +272,32 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                         }
                     >
                         <InputNumber placeholder="Enter a number between 1 and 30, see question mark for more detail" value={durationDays} onChange={(value) => setDurationDays(value)} style={{ width: '100%' }}/>
+                    </Form.Item>
+
+                    <Form.Item
+                        name= "type-of-post"
+                        label="Type of Your Post"
+                        hasFeedback
+                        rules={
+                            [
+                                {
+                                    required: true,
+                                    message: 'Please select the post type!',
+                                },
+                            ]
+                        }
+                    >
+                        <Row justify='start'>
+                            <Col>
+                                <Select defaultValue={post.typeOfPost} style={{ width: 200 }} onChange={handleChange}>
+                                    <Option value="Selling">Selling</Option>
+                                    <Option value="Buying">Buying</Option>
+                                    <Option value="Subleasing">Subleasing</Option>
+                                    <Option value="Other">Other</Option>
+                                </Select>
+                            </Col>
+                        </Row>
+                        
                     </Form.Item>
 
                     <Row justify='center'>

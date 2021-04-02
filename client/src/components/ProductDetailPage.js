@@ -227,6 +227,9 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
 
                 <Col {...otherInfoLayout}>
                     <div style={otherInfoStyle}>
+                        {`Type of post: ${post.typeOfPost}`}
+                    </div>
+                    <div style={otherInfoStyle}>
                         {`Location: ${post.zipcode===''?'N/A':post.zipcode}`}
                     </div>
                     <div style={otherInfoStyle}>

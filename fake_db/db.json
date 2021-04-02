@@ -5,6 +5,7 @@
       "title": "Hello world edited 1",
       "description": "111xxx",
       "durationDays": 11,
+      "typeOfPost": "Selling",
       "zipcode": "30350",
       "price": 10.5,
       "pictureKeyArray": [
@@ -22,6 +23,7 @@
       "title": "Selling my cat",
       "description": "she eats a lot",
       "durationDays": 30,
+      "typeOfPost": "Selling",
       "zipcode": "33647-3132",
       "price": 0.01,
       "pictureKeyArray": [
@@ -39,6 +41,7 @@
       "title": "Just a random post",
       "description": "1231",
       "durationDays": 12,
+      "typeOfPost": "Buying",
       "zipcode": "33647-3132",
       "price": 10,
       "pictureKeyArray": [
@@ -56,6 +59,7 @@
       "title": "post from user 2",
       "description": "hello",
       "durationDays": 12,
+      "typeOfPost": "Subleasing",
       "zipcode": "11332",
       "price": 12,
       "pictureKeyArray": [
@@ -66,6 +70,20 @@
       "wechatID": "xxyy",
       "phoneNum": "",
       "id": 4
+    },
+    {
+      "userID": "shidayzz@gmail.com",
+      "title": "Test other post",
+      "description": "123131",
+      "durationDays": 22,
+      "typeOfPost": "Other",
+      "zipcode": "32607",
+      "price": 111,
+      "pictureKeyArray": [],
+      "email": "shidayang@ufl.edu",
+      "wechatID": "as1",
+      "phoneNum": "9292354428",
+      "id": 5
     }
   ],
   "users": [

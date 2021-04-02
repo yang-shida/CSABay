@@ -92,6 +92,7 @@ const CreatePostPage = ({user}) => {
                         reject()
                     }
                 }
+                resolve()
             }
         )
     }
@@ -151,6 +152,7 @@ const CreatePostPage = ({user}) => {
 
     const handleChange = (value) => {
         setTypeOfPost(value)
+        form.setFieldsValue({"type-of-post": value})
     }
 
     return (
@@ -162,9 +164,9 @@ const CreatePostPage = ({user}) => {
                 name="createPost"
                 onFinish={onFinish}
                 initialValues={{
-                    ["email"]: user.email,
-                    ["wechat-id"]: user.wechatID,
-                    ["phone"]: user.phoneNum
+                    "email": user.email,
+                    "wechat-id": user.wechatID,
+                    "phone": user.phoneNum
                 }}
             >
 
@@ -238,6 +240,7 @@ const CreatePostPage = ({user}) => {
                 <Form.Item
                     name= "type-of-post"
                     label="Type of Your Post"
+                    hasFeedback
                     rules={
                         [
                             {
@@ -249,11 +252,11 @@ const CreatePostPage = ({user}) => {
                 >
                     <Row justify='start'>
                         <Col>
-                            <Select style={{ width: 120 }} onChange={handleChange}>
-                                <Option value="selling">Selling</Option>
-                                <Option value="buying">Buying</Option>
-                                <Option value="subleasing">Subleasing</Option>
-                                <Option value="other">Other</Option>
+                            <Select style={{ width: 200 }} onChange={handleChange}>
+                                <Option value="Selling">Selling</Option>
+                                <Option value="Buying">Buying</Option>
+                                <Option value="Subleasing">Subleasing</Option>
+                                <Option value="Other">Other</Option>
                             </Select>
                         </Col>
                     </Row>
