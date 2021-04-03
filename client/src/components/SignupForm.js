@@ -7,6 +7,7 @@ import {
   Row,
   Col,
   Button,
+  message
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {PasswordInput} from 'antd-password-input-strength'
@@ -88,6 +89,7 @@ const SignupForm = () => {
             firstName: firstName,
             lastName: lastName,
             email: email.toLowerCase(),
+            emailVerification: emailVerification,
             wechatID: wechatID.toLowerCase(),
             pwd: pwd,
             phoneNum: phoneNum,
@@ -101,24 +103,36 @@ const SignupForm = () => {
         //    },
         //    body: JSON.stringify(newUser),
         //})
-        axios.post(base_ + '/SignupForm', newUser).then((response) => {
-            console.log(response)
+        axios.post(base_ + '/add-user', newUser).then((response) => {
+            if(response.data.code === 0){
+                message.success("Account created!")
+                setFirstName('')
+                setLastName('')
+                setUsername('')
+                setEmail('')
+                setEmailVerification('')
+                setWechatID('')
+                setPwd('')
+                setConfirm('')
+                setPhoneNum('')
+        
+                form.resetFields();
+            }
+            else {
+                if(typeof(response.data.message)==="string"){
+                    message.error(response.data.message)
+                }
+                else{
+                    message.error("Something is wrong!")
+                    console.log(response.data.message)
+                }
+                
+            }
         }, (error)=> {
             console.log(error)
         });
 
-
-        setFirstName('')
-        setLastName('')
-        setUsername('')
-        setEmail('')
-        setEmailVerification('')
-        setWechatID('')
-        setPwd('')
-        setConfirm('')
-        setPhoneNum('')
-
-        form.resetFields();
+        
 
         // Go to login page
     }
