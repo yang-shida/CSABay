@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
   Form,
@@ -43,6 +43,27 @@ const tailFormItemLayout = {
     },
 }
 
+// https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+function useInterval(callback, delay) {
+    const savedCallback = useRef();
+
+    // Remember the latest callback.
+    useEffect(() => {
+        savedCallback.current = callback;
+    }, [callback]);
+
+    // Set up the interval.
+    useEffect(() => {
+        function tick() {
+            savedCallback.current();
+        }
+        if (delay !== null) {
+            let id = setInterval(tick, delay);
+            return () => clearInterval(id);
+        }
+    }, [delay]);
+}
+
 const SignupForm = () => {
     const [form] = Form.useForm();
 
@@ -55,6 +76,11 @@ const SignupForm = () => {
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
     const [phoneNum, setPhoneNum] = useState('')
+
+    const GET_CODE_WAITING = 30
+    const [isGetCodeButtonWaiting, setIsGetCodeButtonWaiting] = useState(false)
+    const [getCodeButtonWaitingTime, setGetCodeButtonWaitingTime] = useState(GET_CODE_WAITING)
+    const [delay, setDelay] = useState(null)
 
 
     const onFinish = async () =>{
@@ -95,6 +121,33 @@ const SignupForm = () => {
         form.resetFields();
 
         // Go to login page
+    }
+
+    const emailValidator = (rule, value) => {
+		if (!value || /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.[a-zA-Z]{2,4}$/.test(value)) {
+			return Promise.resolve();
+		}
+		return Promise.reject('Please enter a valid email address!');
+	}
+
+    useInterval(
+        () => {
+            if(getCodeButtonWaitingTime>=1){
+                setGetCodeButtonWaitingTime(getCodeButtonWaitingTime-1)
+            }
+            else{
+                setGetCodeButtonWaitingTime(GET_CODE_WAITING)
+                setIsGetCodeButtonWaiting(false)
+                setDelay(null)
+            }
+        }, delay
+    )
+
+    const onClickGetCode = () => {
+        // request code from backend
+        // if backend receives the request
+        setIsGetCodeButtonWaiting(true)
+        setDelay(1000)
     }
 
     return (
@@ -156,8 +209,7 @@ const SignupForm = () => {
                     label="E-mail"
                     rules={[
                         {
-                            type: 'email',
-                            message: 'Please input a valid E-mail!'
+                            validator: emailValidator
                         },
                         {
                             required: true,
@@ -185,9 +237,18 @@ const SignupForm = () => {
                             </Form.Item>
                         </Col>
                         <Col span={4}>
-                            {/* TODO: add onClick action to check if match database */}
-                            <Button>    
-                                Get Code
+                            <Button 
+                                disabled={
+                                    !(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.[a-zA-Z]{2,4}$/.test(form.getFieldValue('email'))) || isGetCodeButtonWaiting
+                                }
+                                onClick={onClickGetCode}
+                            >    
+                                {
+                                    isGetCodeButtonWaiting?
+                                    `${getCodeButtonWaitingTime} s`:
+                                    "Get Code"
+                                }
+                                
                             </Button>
                         </Col>
                     </Row>
