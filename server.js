@@ -10,9 +10,14 @@ app.use(express.json());
 
 //connect to mongoose
 //FIX THIS -- VERY INSECURE
-mongoose.connect("mongodb+srv://admin:password69@csabaycluster.dumzv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
+mongoose.connect("mongodb+srv://admin:gogators@csacluster.fqmy1.mongodb.net/CSABay_?retryWrites=true&w=majority", {
+    useNewUrlParser:true,
+    useUnifiedTopology:true,
+    useCreateIndex:true,
+    useFindAndModify:false
+});
 
-//require route
+//require routes
 app.use("/", require("./routes/user_route"))
 
 app.listen(3001, function() {

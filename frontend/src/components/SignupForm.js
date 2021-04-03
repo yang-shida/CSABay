@@ -84,7 +84,7 @@ const SignupForm = () => {
     const [email, setEmail] = useState('')
     const [emailVerification, setEmailVerification] = useState('')
     const [wechatID, setWechatID] = useState('')
-    const [password, setPassword] = useState('')
+    const [pw, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
     const [phoneNum, setPhoneNum] = useState('')
 
@@ -96,27 +96,33 @@ const SignupForm = () => {
             username: username,
             email: email,
             wechatID: wechatID,
-            password: password,
+            pw: pw,
             phoneNum: phoneNum
         }
 
-    const res = await fetch('http://localhost:8080/users', {
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify(newUser),
-    })
-
     //using the real db
-    function handleSubmit(event) {
-        event.preventDefault();
-        const newUser = {
-            username: form.username,
-            pw: form.password
-        }
-        axios.post('http://localhost:3001/SignupForm');
-    }
+    //const res = await axios({
+    //    method: 'post',
+    //    url: 'http://localhost:3001/SignupForm',
+    //    headers: {
+    //        'Content-type': 'application/json'
+    //    },
+    //    body: JSON.stringify(newUser),
+    //    data: {
+    //        username: newUser.firstName,
+    //        pw: 'candjald'
+    //    },
+    //})
+    //.then((response) => {
+    //    console.log(response)
+    //}, (error)=> {
+    //    console.log(error)
+    //});
+    axios.post('http://localhost:3001/SignupForm', newUser).then((response) => {
+        console.log(response)
+    }, (error)=> {
+        console.log(error)
+    });
 
         setFirstName('')
         setLastName('')
@@ -278,7 +284,7 @@ const SignupForm = () => {
                     hasFeedback
                 >
                     <PasswordInput 
-                        value={password}
+                        value={pw}
                         onChange={(e) => setPassword(e.target.value)}
                         settings={{
                             colorScheme: {
@@ -305,7 +311,7 @@ const SignupForm = () => {
                         },
                         () => ({
                             validator(_, value) {
-                            if (!value || password === value) {
+                            if (!value || pw === value) {
                                 return Promise.resolve();
                             }
 
