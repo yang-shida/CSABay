@@ -13,7 +13,6 @@ backend:
  - required DBs (collections):
     - users
     - posts
-    - passwords
  - cookie parser
  - if user not logged in, don't send contact info in post
 
