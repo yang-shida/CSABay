@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
   Form,
   Input,
@@ -9,6 +10,8 @@ import {
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {PasswordInput} from 'antd-password-input-strength'
+
+base_ = "http://localhost:3001";
 
 const formItemLayout = {
     labelCol: {
@@ -65,13 +68,19 @@ const SignupForm = () => {
             profilePictureKey: ""
         }
 
-        const res = await fetch('http://localhost:8080/users', {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(newUser),
-        })
+        //const res = await fetch('http://localhost:8080/users', {
+        //    method: 'POST',
+        //    headers: {
+        //        'Content-type': 'application/json'
+        //    },
+        //    body: JSON.stringify(newUser),
+        //})
+        axios.post(base_ + '/SignupForm', newUser).then((response) => {
+            console.log(response)
+        }, (error)=> {
+            console.log(error)
+        });
+
 
         setFirstName('')
         setLastName('')
