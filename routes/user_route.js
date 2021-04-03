@@ -5,7 +5,7 @@ const User = require("../models/User");
 //post new user
 router.route("/SignupForm").post((req, res)=> {
     const username = req.body.username;
-    const pw = req.body.pw;
+    const pwd = req.body.pwd;
     const firstname = req.body.firstname;
     const lastname = req.body.lastname;
     const email = req.body.email;
@@ -14,7 +14,7 @@ router.route("/SignupForm").post((req, res)=> {
 
     const u = new User({
         username, 
-        pw,
+        pwd,
         firstname,
         lastname,
         email,

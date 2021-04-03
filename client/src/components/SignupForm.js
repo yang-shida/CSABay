@@ -73,7 +73,7 @@ const SignupForm = () => {
     const [email, setEmail] = useState('')
     const [emailVerification, setEmailVerification] = useState('')
     const [wechatID, setWechatID] = useState('')
-    const [password, setPassword] = useState('')
+    const [pwd, setPwd] = useState('')
     const [confirm, setConfirm] = useState('')
     const [phoneNum, setPhoneNum] = useState('')
 
@@ -89,7 +89,7 @@ const SignupForm = () => {
             lastName: lastName,
             email: email.toLowerCase(),
             wechatID: wechatID.toLowerCase(),
-            password: password,
+            pwd: pwd,
             phoneNum: phoneNum,
             profilePictureKey: ""
         }
@@ -114,7 +114,7 @@ const SignupForm = () => {
         setEmail('')
         setEmailVerification('')
         setWechatID('')
-        setPassword('')
+        setPwd('')
         setConfirm('')
         setPhoneNum('')
 
@@ -303,8 +303,8 @@ const SignupForm = () => {
                     hasFeedback
                 >
                     <PasswordInput 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        value={pwd}
+                        onChange={(e) => setPwd(e.target.value)}
                         settings={{
                             colorScheme: {
                                 levels: ["#ff4033", "#fe940d", "#ffd908", "#cbe11d", "#6ecc3a"],
@@ -330,7 +330,7 @@ const SignupForm = () => {
                         },
                         () => ({
                             validator(_, value) {
-                            if (!value || password === value) {
+                            if (!value || pwd === value) {
                                 return Promise.resolve();
                             }
 
