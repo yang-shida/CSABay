@@ -10,12 +10,12 @@ backend:
  - email verification
  - sort and filter main page
  - password storage/encoding
- - assign user a key when logged in
  - required DBs (collections):
     - users
     - posts
     - passwords
  - cookie parser
+ - if user not logged in, don't send contact info in post
 
 
 
@@ -26,4 +26,5 @@ frontend:
    - cannot get code after 60s
  - hide contact info when not logged in
  - main page filter/sort UI
+ - page main page (Pagination)
  - post time x days ago
