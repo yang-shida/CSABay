@@ -3,13 +3,9 @@ import {
   Form,
   Input,
   Tooltip,
-  Cascader,
-  Select,
   Row,
   Col,
-  Checkbox,
   Button,
-  AutoComplete,
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {PasswordInput} from 'antd-password-input-strength'
@@ -32,36 +28,6 @@ const formItemLayout = {
       },
     },
 };
-
-const emailVerificationLayout = {
-    labelCol: {
-        xs: {
-          span: 24,
-        },
-        sm: {
-          span: 8,
-        },
-      },
-      wrapperCol: {
-        xs: {
-          span: 22,
-        },
-        sm: {
-          span: 6,
-        },
-      },
-}
-
-const emailVerificationButtonLayout = {
-    wrapperCol: {
-        xs: {
-            span: 1,
-        },
-        sm: {
-            span: 1, 
-        },
-    },
-}
 
 const tailFormItemLayout = {
     wrapperCol: {
@@ -92,20 +58,20 @@ const SignupForm = () => {
         const newUser = {
             firstName: firstName,
             lastName: lastName,
-            username: username,
-            email: email,
-            wechatID: wechatID,
+            email: email.toLowerCase(),
+            wechatID: wechatID.toLowerCase(),
             password: password,
-            phoneNum: phoneNum
+            phoneNum: phoneNum,
+            profilePictureKey: ""
         }
 
-    const res = await fetch('http://localhost:8080/users', {
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify(newUser),
-    })
+        const res = await fetch('http://localhost:8080/users', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(newUser),
+        })
 
         setFirstName('')
         setLastName('')
@@ -143,7 +109,7 @@ const SignupForm = () => {
                     ]
                     }
                 >
-                    <Input onChange={(e) => setFirstName(e.target.value)}/>
+                    <Input value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
                 </Form.Item>
 
                 <Form.Item
@@ -193,7 +159,7 @@ const SignupForm = () => {
                     <Input value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </Form.Item>
 
-                <Form.Item label="Verify Email">
+                <Form.Item label="* Email Verification Code">
                     <Row gutter={6}>
                         <Col span={20}>
                             <Form.Item
@@ -206,7 +172,7 @@ const SignupForm = () => {
                                     }
                                 ]}
                             >
-                                <Input />
+                                <Input placeholder="Enter your email verification code" value={emailVerification} onChange={(e) => setEmailVerification(e.target.value)}/>
                             </Form.Item>
                         </Col>
                         <Col span={4}>
