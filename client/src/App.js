@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.less';
 import {useState, useEffect} from 'react'
-import { Result, Button } from 'antd';
+import { Result, Button, message } from 'antd';
 
 import NavBar from './components/NavBar'
 import SignupForm from './components/SignupForm'
@@ -13,10 +13,43 @@ import LoginPage from './components/LoginPage';
 import auth from './auth/auth';
 import ProtectedRoute from './auth/ProtectedRoute'
 import ForgotPasswordPage from './components/ForgotPasswordPage';
+import axios from 'axios';
+
+const base_ = "http://localhost:3001";
 
 const App = () => {
 
   const [userInfo, setUserInfo] = useState();
+
+  useEffect(
+    () => {
+      if(!auth.isAuthenticated()){
+        axios.get(base_ + '/get-user-info')
+          .then(
+            (res) => {
+              console.log(res.data)
+              if(res.data.code===1){
+                console.log(res.data.message)
+              }
+              else{
+                auth.login(
+                  () => {
+                    setUserInfo(res.data.data)
+                  }
+                )
+                
+              }
+            }
+          )
+          .catch(
+            (err) => {
+              message.error("Something went wrong!")
+              console.log(err)
+            }
+          )
+      }
+    }, []
+  )
 
   return (
     <Router>

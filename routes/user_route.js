@@ -1,6 +1,8 @@
+const { response } = require("express");
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const hidePwdAndID = {pwd: 0, _id: 0}
 
 //post new user
 router.route("/add-user").post((req, res)=> {
@@ -30,7 +32,7 @@ router.route("/add-user").post((req, res)=> {
         .then(
             (data) => {
                 console.log(data)
-                res.send({
+                return response.json({
                     code: 0
                 })
             }
@@ -39,13 +41,13 @@ router.route("/add-user").post((req, res)=> {
             (err) => {
                 console.log(err)
                 if(err.code === 11000){
-                    res.send({
+                    return response.json({
                         code: 1,
                         message: "Email already exists!"
                     })
                 }
                 else{
-                    res.send({
+                    return response.json({
                         code: 1,
                         message: err // TODO: research for different error types and replace message with meaningful string that describes the error
                     })
@@ -64,9 +66,9 @@ router.route("/user-login").post(
 
         User.findOne({email: email}).exec(
             (err, doc) => {
-                if(!!err){
+                if(err){
                     console.log(err)
-                    response.send(
+                    return response.json(
                         {
                             code: 1,
                             message: "Something went wrong on our end."
@@ -74,7 +76,7 @@ router.route("/user-login").post(
                     )
                 }
                 if(!doc){
-                    response.send(
+                    return response.json(
                         {
                             code: 1,
                             message: "User not found!"
@@ -82,7 +84,7 @@ router.route("/user-login").post(
                     )
                 }
                 else if(doc.pwd !== pwd){
-                    response.send(
+                    return response.json(
                         {
                             code: 1,
                             message: "Password incorrect!"
@@ -104,6 +106,51 @@ router.route("/user-login").post(
                                 profilePictureKey: doc.profilePictureKey,
                                 savedPosts: doc.savedPosts
                             }
+                        }
+                    )
+                }
+            }
+        )
+    }
+)
+
+router.route("/get-user-info").get(
+    (request, response) => {
+        const userID = request.cookies.userid
+        if(!userID){
+            return response.json(
+                {
+                    code: 1,
+                    message: "User not authenticated!"
+                }
+            )
+        }
+
+        User.findOne({_id: userID}, hidePwdAndID).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else{
+                    return response.json(
+                        {
+                            code: 0,
+                            message: "User authenticated!",
+                            data: doc
                         }
                     )
                 }
