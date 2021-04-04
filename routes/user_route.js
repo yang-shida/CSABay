@@ -57,6 +57,61 @@ router.route("/add-user").post((req, res)=> {
     
 })
 
+router.route("/user-login").post(
+    (request, response) => {
+        const email = request.body.email;
+        const pwd = request.body.pwd;
+
+        User.findOne({email: email}).exec(
+            (err, doc) => {
+                if(!!err){
+                    console.log(err)
+                    response.send(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    response.send(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else if(doc.pwd !== pwd){
+                    response.send(
+                        {
+                            code: 1,
+                            message: "Password incorrect!"
+                        }
+                    )
+                }
+                else{
+                    response.cookie('userid', doc._id);
+                    return response.json(
+                        {
+                            code: 0,
+                            message: "Login success!",
+                            data: {
+                                firstName: doc.firstName,
+                                lastName: doc.lastName,
+                                email: doc.email,
+                                wechatID: doc.wechatID,
+                                phoneNum: doc.phoneNum,
+                                profilePictureKey: doc.profilePictureKey,
+                                savedPosts: doc.savedPosts
+                            }
+                        }
+                    )
+                }
+            }
+        )
+    }
+)
+
 //edit user -- get and post
 
 //get user information

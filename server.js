@@ -3,10 +3,12 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
+var cookieParser = require('cookie-parser')
 
 //set up app
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 //connect to mongoose
 //FIX THIS -- VERY INSECURE

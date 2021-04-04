@@ -123,12 +123,13 @@ const SignupForm = () => {
                     message.error(response.data.message)
                 }
                 else{
-                    message.error("Something is wrong!")
+                    message.error("Something went wrong!")
                     console.log(response.data.message)
                 }
                 
             }
         }, (error)=> {
+            message.error("Something went wrong!")
             console.log(error)
         });
 
