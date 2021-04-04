@@ -199,7 +199,7 @@ const ProfilePage = ({user, setUser}) => {
     const deletePost = async (postID) => {
         const postToDelete = await fetchPost(postID)
         for(const key in postToDelete.pictureKeyArray){
-            S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
+            await S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
         }
         await fetch(`http://localhost:8080/posts1/${postID}`, {
             method: 'DELETE',

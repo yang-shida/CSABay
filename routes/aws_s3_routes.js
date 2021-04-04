@@ -85,4 +85,78 @@ router.route("/s3-get-signed-post").post(
     }
 )
 
+router.route("/s3-get-object-type").post(
+    (request, response) => {
+        const key = request.body.key 
+        var params = {
+            Bucket: config.bucketName, 
+            Key: key
+        };
+        S3.headObject(params, function(err, data) {
+            if (err) {
+                console.log(err)
+                return response.json(
+                    {
+                        code: 1,
+                        message: "Fail to get object type"
+                    }
+                )
+            }
+            else {
+                return response.json(
+                    {
+                        code: 0,
+                        type: data.ContentType
+                    }
+                )
+            }    
+            /*
+            data = {
+            AcceptRanges: "bytes", 
+            ContentLength: 3191, 
+            ContentType: "image/jpeg", 
+            ETag: "\"6805f2cfc46c0f04559748bb039d69ae\"", 
+            LastModified: <Date Representation>, 
+            Metadata: {
+            }, 
+            VersionId: "null"
+            }
+            */
+        });
+    }
+)
+
+router.route("/s3-delete-by-key").post(
+    (request, response) => {
+        const key = request.body.key 
+        var params = {
+            Bucket: config.bucketName, 
+            Key: key
+        };
+        S3.deleteObject(params, function(err, data) {
+            if (err) {
+                return response.json(
+                    {
+                        code: 1,
+                        message: "Fail to delete object"
+                    }
+                )
+            }
+            else{
+                return response.json(
+                    {
+                        code: 0
+                    }
+                )
+            }
+        });
+    }
+)
+
+router.route("/s3-").post(
+    (request, response) => {
+        
+    }
+)
+
 module.exports = router;

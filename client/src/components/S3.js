@@ -109,36 +109,51 @@ export const S3_UPLOAD_SINGLE_FILE = (signed, file) => {
 }
 
 export const S3_DELETE = async (file) => {
-    // send request to backend
-    var S3 = new AWS.S3();
-    var params = {
-        Bucket: config.bucketName, 
-        Key: `ProductDetailPhotos/${file.uid}`
-    };
-    S3.deleteObject(params, function(err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else     console.log(`Delete success: ProductDetailPhotos/${file.uid}`)           // successful response
-    });
-
-    // confirm delete
+    return new Promise(
+        (resolve, reject) => {
+            axios.post(base_ + '/s3-delete-by-key', {key: `ProductDetailPhotos/${file.uid}`})
+                .then(
+                    (res) => {
+                        if(res.data.code === 1){
+                            console.log(res.data.message)
+                            reject(res.data.message)
+                        }
+                        else{
+                            resolve()
+                        }
+                    }
+                )
+                .catch(
+                    (err) => {
+                        console.log(err)
+                        reject("Fail to delete object")
+                    }
+                )
+        }
+    )
 }
 
 export const S3_DELETE_BY_KEY = async (key) => {
     return new Promise(
         (resolve, reject) => {
-            // send request to backend
-            var S3 = new AWS.S3();
-            var params = {
-                Bucket: config.bucketName, 
-                Key: key
-            };
-            S3.deleteObject(params, function(err, data) {
-                if (err) reject() // an error occurred
-                else     resolve()           // successful response
-            });
-            
-
-            // confirm delete
+            axios.post(base_ + '/s3-delete-by-key', {key: key})
+                .then(
+                    (res) => {
+                        if(res.data.code === 1){
+                            console.log(res.data.message)
+                            reject(res.data.message)
+                        }
+                        else{
+                            resolve()
+                        }
+                    }
+                )
+                .catch(
+                    (err) => {
+                        console.log(err)
+                        reject("Fail to delete object")
+                    }
+                )
         }
     )
     
@@ -175,31 +190,24 @@ export const S3_GET_SIGNED_POST = (file, dir) => {
 export const S3_GET_OBJECT_TYPE = (key) => {
     return new Promise(
         (resolve, reject) => {
-            var S3 = new AWS.S3();
-            var params = {
-                Bucket: config.bucketName, 
-                Key: key
-            };
-            S3.headObject(params, function(err, data) {
-                if (err) {
-                    reject(err)
-                }
-                else {
-                    resolve(data.ContentType)
-                }    
-                /*
-                data = {
-                AcceptRanges: "bytes", 
-                ContentLength: 3191, 
-                ContentType: "image/jpeg", 
-                ETag: "\"6805f2cfc46c0f04559748bb039d69ae\"", 
-                LastModified: <Date Representation>, 
-                Metadata: {
-                }, 
-                VersionId: "null"
-                }
-                */
-            });
+            axios.post(base_ + '/s3-get-object-type', {key: key})
+                .then(
+                    (res) => {
+                        if(res.data.code === 1){
+                            console.log(res.data.message)
+                            reject(res.data.message)
+                        }
+                        else{
+                            resolve(res.data.type)
+                        }
+                    }
+                )
+                .catch(
+                    (err) => {
+                        console.log(err)
+                        reject("Fail to get object type")
+                    }
+                )
         }
     )
 }
