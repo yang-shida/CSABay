@@ -1,15 +1,16 @@
 const mongoose = require("mongoose");
 
 const userSchema = {
-    firstName: { type:String },
-    lastName: { type:String },
+    firstName: { type:String, required: true },
+    lastName: { type:String, required: true },
     _ID: mongoose.ObjectId,
     email: { 
         type:String,
-        unique: true
+        unique: true,
+        required: true
     }, 
     wechatID: { type:String },
-    pwd: { type:String },
+    pwd: { type:String, required: true },
     phoneNum: { type:Number }, // or { type:String }?
     savedPosts: [mongoose.ObjectId],
     profilePictureKey: { type:String }

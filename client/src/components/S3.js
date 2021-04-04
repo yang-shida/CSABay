@@ -1,13 +1,14 @@
 // import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY} from './S3'
 
+import { responsiveArray } from 'antd/lib/_util/responsiveObserve';
 import AWS from 'aws-sdk';
 import axios from "axios";
 
 export const MAX_CONTENT_LEN = 10485760
+const base_ = "http://localhost:3001";
 
 const config = {
     bucketName: 'csabayphotos',
-    dirName: 'ProductDetailPhotos', /* optional */
     region: 'us-east-2',
     accessKeyId: 'AKIA2SGQI5JKBX7R45YB',
     secretAccessKey: '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',
@@ -19,10 +20,26 @@ AWS.config.update({
     secretAccessKey: config.secretAccessKey
 });
 
-export const S3_GET = (key) => {
-    var S3 = new AWS.S3();
-    var params = {Bucket: config.bucketName, Key: key, Expires: 60};
-    var url = S3.getSignedUrl('getObject', params);
+export const S3_GET = async (key) => {
+    const url = await axios.post(base_ + '/s3-get-url', {key: key})
+        .then(
+            (res) => {
+                if(res.data.code===1){
+                    console.log(res.data.message)
+                    return ''
+                }
+                else{
+                    return res.data.url
+                }
+            }
+        )
+        .catch(
+            (err) => {
+                console.log(err)
+                return ''
+            }
+        )
+
     return url
 }
 
@@ -132,30 +149,24 @@ export const S3_DELETE_BY_KEY = async (key) => {
 export const S3_GET_SIGNED_POST = (file, dir) => {
     return new Promise(
         (resolve, reject) => {
-            var S3 = new AWS.S3();
-
-            S3.createPresignedPost({
-                Fields: {
-                    key: `${dir}/${file.uid}`,
-                },
-                Expires: 30,
-                Bucket: config.bucketName,
-                Conditions: [
-                    ["starts-with", "$Content-Type", "image/"],
-                    ["content-length-range", 0, MAX_CONTENT_LEN+1000000]
-                ]
-            }, (err, signed) => {
-                if(err){
-                    console.log("Fail to create pre-signed post")
-                    console.log(err)
-                    reject(err)
-                }
-                if(signed){
-                    console.log("Created pre-signed post")
-                    console.log(signed)
-                    resolve(signed)
-                }
-            })
+            axios.post(base_ + '/s3-get-url', {file: file, dir: dir})
+                .then(
+                    (res) => {
+                        if(res.data.code === 1){
+                            console.log(res.data.message)
+                            reject(res.data.message)
+                        }
+                        else{
+                            resolve(res.data.signed)
+                        }
+                    }
+                )
+                .catch(
+                    (err) => {
+                        console.log(err)
+                        reject("Fail to create pre-signed post")
+                    }
+                )
         }
     )
 

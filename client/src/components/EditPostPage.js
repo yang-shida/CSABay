@@ -59,14 +59,19 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                 await S3_GET_OBJECT_TYPE(post.pictureKeyArray[key])
                     .then(
                         (type) => {
-                            var temp = {
-                                uid: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
-                                name: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
-                                status: 'done',
-                                url: S3_GET(post.pictureKeyArray[key]),
-                                type: type
-                            }
-                            array = [...array, temp]
+                            S3_GET(post.pictureKeyArray[key])
+                                .then(
+                                    (url) => {
+                                        var temp = {
+                                            uid: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
+                                            name: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
+                                            status: 'done',
+                                            url: url,
+                                            type: type
+                                        }
+                                        array = [...array, temp]
+                                    }
+                                )
                         }
                     )
                     .catch(

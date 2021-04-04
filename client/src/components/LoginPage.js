@@ -59,7 +59,6 @@ const LoginPage = ({routerProps, setUserInfo}) => {
                         auth.login(
                             () => {
                                 setUserInfo(res.data.data)
-                                console.log(res.data.data)
                                 routerProps.history.push("/")
                             }
                         )

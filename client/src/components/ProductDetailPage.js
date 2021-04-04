@@ -129,6 +129,28 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
         routerProps.history.push('./login')
     }
 
+    const [pictureUrlArray, setPictureUrlArray] = useState([])
+    
+
+    useEffect(
+        async () => {
+            if(post.pictureKeyArray.length === 0){
+                setPictureUrlArray([])
+            }
+            else{
+                for(const key in post.pictureKeyArray){
+                    const currentKey = post.pictureKeyArray[key]
+                    await S3_GET(currentKey).then(
+                        (url) => {
+                            setPictureUrlArray(prevState=>([...prevState, url]))
+                        }
+                    )
+                }
+            }
+            
+        }, [post]
+    )
+
     return (
         <div>
             <div style={headerContainerStyle}>
@@ -184,21 +206,21 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                     </div>
                     <Image.PreviewGroup>
                         {
-                            post.pictureKeyArray.length===0?
+                            pictureUrlArray.length===0?
                             <Image
                                 width="250px"
                                 height="250px"
                                 style={{objectFit: 'contain', padding: '10px'}}
                                 src='../no_image.jpg'
                             />:
-                            post.pictureKeyArray.map(
-                                (key, index) => (
+                            pictureUrlArray.map(
+                                (url, index) => (
                                     <Image
                                         key={index}
                                         width="250px"
                                         height="250px"
                                         style={{objectFit: 'contain', padding: '10px'}}
-                                        src={S3_GET(key)}
+                                        src={url}
                                     />
                                 )
                             )

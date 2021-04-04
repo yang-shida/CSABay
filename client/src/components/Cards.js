@@ -1,8 +1,9 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Card, Col, Row, Avatar, Popconfirm } from 'antd';
 import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-design/icons';
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
 import auth from '../auth/auth';
+import { CostExplorer } from 'aws-sdk';
 
 const { Meta } = Card;
 
@@ -44,11 +45,33 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
         routerProps.history.push('./login')
     }
 
+    const [postsWithCoverUrl, setPostsWithCoverUrl] = useState([])
+
+    useEffect(
+        async () => {
+            var temp = []
+            for(const post in posts){
+                const currentPost = posts[post]
+                if(posts[post].pictureKeyArray.length>0){
+                    await S3_GET(posts[post].pictureKeyArray[0]).then(
+                        (url) => {
+                            temp = [...temp, {...currentPost, coverUrl: url}]
+                        }
+                    )
+                }
+                else{
+                    temp = [...temp, {...currentPost, coverUrl: ''}]
+                }
+            }
+            setPostsWithCoverUrl(temp)
+        }, [posts]
+    )
+
     return (
         <div>
             <Row>
                 {
-                    posts.map(
+                    postsWithCoverUrl.map(
                         (post) => (
                             <Col key={post.id} style={{margin: '20px 15px'}}>
                                 <Card
@@ -84,7 +107,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                             <img
                                                 style={{height: '100%', width: '100%', objectFit: 'cover'}}
                                                 alt="example"
-                                                src={post.pictureKeyArray.length===0?'../no_image.jpg':S3_GET(post.pictureKeyArray[0])}
+                                                src={post.pictureKeyArray.length===0?'../no_image.jpg':post.coverUrl}
                                             />
                                         </div>
                                     }

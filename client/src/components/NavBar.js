@@ -24,7 +24,12 @@ const NavBar = ({isAuthenticated=false, user, currentRoute, routerProps, setUser
     useEffect(
         () => {
             if(isAuthenticated && user.profilePictureKey !== ""){
-                setProfilePictureURL(S3_GET(user.profilePictureKey))
+                S3_GET(user.profilePictureKey)
+                    .then(
+                        (url) => {
+                            setProfilePictureURL(url)
+                        }
+                    )
             }
         }, [user]
     )

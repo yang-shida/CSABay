@@ -21,6 +21,7 @@ mongoose.connect("mongodb+srv://admin:gogators@csacluster.fqmy1.mongodb.net/CSAB
 
 //require routes
 app.use("/", require("./routes/user_route"))
+app.use("/", require("./routes/aws_s3_routes"))
 
 app.listen(3001, function() {
     console.log("express server works");

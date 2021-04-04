@@ -5,15 +5,15 @@ const User = require("../models/User");
 const hidePwdAndID = {pwd: 0, _id: 0}
 
 //post new user
-router.route("/add-user").post((req, res)=> {
-    const pwd = req.body.pwd;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-    const email = req.body.email;
-    const emailVerification = req.body.emailVerification;
-    const wechatID = req.body.wechatID;
-    const phoneNum = req.body.phoneNum;
-    const profilePictureKey = req.body.profilePictureKey;
+router.route("/add-user").post((request, response)=> {
+    const pwd = request.body.pwd;
+    const firstName = request.body.firstName;
+    const lastName = request.body.lastName;
+    const email = request.body.email;
+    const emailVerification = request.body.emailVerification;
+    const wechatID = request.body.wechatID;
+    const phoneNum = request.body.phoneNum;
+    const profilePictureKey = request.body.profilePictureKey;
 
     // TODO: check if email verification code match, delete after verifying
 
