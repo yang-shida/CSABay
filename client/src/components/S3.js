@@ -21,7 +21,7 @@ AWS.config.update({
 });
 
 export const S3_GET = async (key) => {
-    const url = await axios.post(base_ + '/s3-get-url', {key: key}, {withCredentials: false})
+    const url = await axios.post(base_ + '/s3-get-url', {key: key})
         .then(
             (res) => {
                 if(res.data.code===1){
