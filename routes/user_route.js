@@ -207,13 +207,129 @@ router.route("/update-user-info").put(
     }
 )
 
-//edit user -- get and post
+router.route("/change-password").put(
+    (request, response) => {
+        const userID = request.cookies.userid
+        const pwds = request.body
+        console.log(pwds)
+        if(!userID){
+            return response.json(
+                {
+                    code: 1,
+                    message: "User not authenticated!"
+                }
+            )
+        }
 
-//get user information
+        User.findOne({_id: userID}).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else if(doc.pwd !== pwds.oldPwd){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Old password incorrect!"
+                        }
+                    )
+                }
+                else{
+                    User.findOneAndUpdate({_id: userID}, {pwd: pwds.pwd}, {returnOriginal: false}).exec(
+                        (err, doc) => {
+                            if(err){
+                                console.log(err)
+                                return response.json(
+                                    {
+                                        code: 1,
+                                        message: "Something went wrong on our end."
+                                    }
+                                )
+                            }
+                            if(!doc){
+                                return response.json(
+                                    {
+                                        code: 1,
+                                        message: "User not found!"
+                                    }
+                                )
+                            }
+                            else{
+                                console.log(doc)
+                                return response.json(
+                                    {
+                                        code: 0,
+                                        message: "Password updated!"
+                                    }
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        )
 
-//get favorites information
+        
+    }
+)
 
-//get posts information?
+router.route("/forgot-password").put(
+    (request, response) => {
+        const {email, emailVerification, pwd} = request.body
+        console.log(email, emailVerification, pwd)
 
+        // get email verification code in DB based on email
+
+        // check if match
+
+        // if match
+        User.findOneAndUpdate({email: email}, {pwd: pwd}, {returnOriginal: false}).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else{
+                    console.log(doc)
+                    return response.json(
+                        {
+                            code: 0,
+                            message: "Password updated!"
+                        }
+                    )
+                }
+            }
+        )
+
+
+    }
+)
 
 module.exports = router;
