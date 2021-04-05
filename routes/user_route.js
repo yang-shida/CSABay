@@ -92,7 +92,7 @@ router.route("/user-login").post(
                     )
                 }
                 else{
-                    response.cookie('userid', doc._id);
+                    response.cookie('userid', doc._id, {sameSite: 'lax'});
                     return response.json(
                         {
                             code: 0,
