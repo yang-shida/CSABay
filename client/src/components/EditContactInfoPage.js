@@ -64,21 +64,11 @@ const EditContactInfoPage = ({user, setUser}) => {
     const onFinish = async () =>{
         const newUser = {wechatID: wechatID, phoneNum: phoneNum}
 
-        // const res = await fetch(`http://localhost:8080/users/${user.id}`, {
-        //     method: 'PUT',
-        //     headers: {
-        //         'Content-type': 'application/json'
-        //     },
-        //     body: JSON.stringify(newUser),
-        // })
-
-        // const data = await res.json()
-
         axios.put(base_ + '/update-user-info', {newUser: newUser})
             .then(
                 (res) => {
                     if(res.data.code===1){
-                        message.error(`Failed to update the contact info: ${res.data.message}`)
+                        message.error(`Fail to update the contact info: ${res.data.message}`)
                     }
                     else{
                         const data = res.data.data
@@ -95,7 +85,7 @@ const EditContactInfoPage = ({user, setUser}) => {
             .catch(
                 (err) => {
                     console.log(err)
-                    message.error('Failed to update the contact info.')
+                    message.error('Fail to update the contact info.')
                 }
             )
 

@@ -21,7 +21,7 @@ AWS.config.update({
 });
 
 export const S3_GET = async (key) => {
-    const url = await axios.post(base_ + '/s3-get-url', {key: key})
+    const url = await axios.post(base_ + '/s3-get-url', {key: key}, {withCredentials: false})
         .then(
             (res) => {
                 if(res.data.code===1){
@@ -59,7 +59,8 @@ export const S3_UPLOAD = async (signed, fileList, index) => {
         
             axios.post(
                 signed.url,
-                formData
+                formData,
+                {withCredentials: false}
             )
                 .then(
                     () => {
@@ -92,7 +93,8 @@ export const S3_UPLOAD_SINGLE_FILE = (signed, file) => {
         
             axios.post(
                 signed.url,
-                formData
+                formData,
+                {withCredentials: false}
             )
                 .then(
                     () => {
@@ -101,6 +103,7 @@ export const S3_UPLOAD_SINGLE_FILE = (signed, file) => {
                 )
                 .catch (
                     (err) => {
+                        console.log(err)
                         reject(err)
                     }
                 ) 
@@ -164,7 +167,7 @@ export const S3_DELETE_BY_KEY = async (key) => {
 export const S3_GET_SIGNED_POST = (file, dir) => {
     return new Promise(
         (resolve, reject) => {
-            axios.post(base_ + '/s3-get-url', {file: file, dir: dir})
+            axios.post(base_ + '/s3-get-signed-post', {file: file, dir: dir})
                 .then(
                     (res) => {
                         if(res.data.code === 1){

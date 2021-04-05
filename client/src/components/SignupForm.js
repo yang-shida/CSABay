@@ -96,13 +96,6 @@ const SignupForm = () => {
             profilePictureKey: ""
         }
 
-        //const res = await fetch('http://localhost:8080/users', {
-        //    method: 'POST',
-        //    headers: {
-        //        'Content-type': 'application/json'
-        //    },
-        //    body: JSON.stringify(newUser),
-        //})
         axios.post(base_ + '/add-user', newUser).then((response) => {
             if(response.data.code === 0){
                 message.success("Account created!")

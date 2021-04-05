@@ -159,6 +159,50 @@ router.route("/get-user-info").get(
     }
 )
 
+router.route("/get-user-info-by-id").get(
+    (request, response) => {
+        const userID = request.body.userID
+        if(!userID){
+            return response.json(
+                {
+                    code: 1,
+                    message: "Did not receive UserID!"
+                }
+            )
+        }
+
+        User.findOne({_id: userID}, hidePwdAndID).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else{
+                    return response.json(
+                        {
+                            code: 0,
+                            data: doc
+                        }
+                    )
+                }
+            }
+        )
+    }
+)
+
 router.route("/update-user-info").put(
     (request, response) => {
         const userID = request.cookies.userid

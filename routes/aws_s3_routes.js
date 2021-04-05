@@ -153,10 +153,10 @@ router.route("/s3-delete-by-key").post(
     }
 )
 
-router.route("/s3-").post(
-    (request, response) => {
+// router.route("/s3-").post(
+//     (request, response) => {
         
-    }
-)
+//     }
+// )
 
 module.exports = router;
