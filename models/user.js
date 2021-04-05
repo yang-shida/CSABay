@@ -11,7 +11,7 @@ const userSchema = {
     }, 
     wechatID: { type:String },
     pwd: { type:String, required: true },
-    phoneNum: { type:Number }, // or { type:String }?
+    phoneNum: { type:String },
     savedPosts: [mongoose.ObjectId],
     profilePictureKey: { type:String }
 }

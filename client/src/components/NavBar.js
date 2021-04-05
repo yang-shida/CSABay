@@ -41,9 +41,10 @@ const NavBar = ({isAuthenticated=false, user, currentRoute, routerProps, setUser
     const onLogoutConfirm = () => {
         auth.logout(
             () => {
-                routerProps.history.push('/')
                 setIsConfirmLogoutVisible(false)
                 setUserInfo()
+                document.cookie = "userid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                routerProps.history.push('/')
             }
         )
     }

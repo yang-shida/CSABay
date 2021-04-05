@@ -6,9 +6,22 @@ const mongoose = require("mongoose");
 var cookieParser = require('cookie-parser')
 
 //set up app
-app.use(cors());
+var corsOptions = {
+	origin: 'http://localhost:3000',
+	credentials : true
+}
+  
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
+app.use(function (req, res, next) {
+	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000 ');
+	res.setHeader(
+		'Access-Control-Allow-Headers',
+		'Origin, X-Requested-With, Content-Type, Accept'
+	);
+	next();
+});
 
 //connect to mongoose
 //FIX THIS -- VERY INSECURE

@@ -1,4 +1,4 @@
-const { response } = require("express");
+const { response, Router, request } = require("express");
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
@@ -150,6 +150,54 @@ router.route("/get-user-info").get(
                         {
                             code: 0,
                             message: "User authenticated!",
+                            data: doc
+                        }
+                    )
+                }
+            }
+        )
+    }
+)
+
+router.route("/update-user-info").put(
+    (request, response) => {
+        const userID = request.cookies.userid
+        const newUser = request.body.newUser
+        console.log(newUser)
+        if(!userID){
+            return response.json(
+                {
+                    code: 1,
+                    message: "User not authenticated!"
+                }
+            )
+        }
+
+        User.findOneAndUpdate({_id: userID}, newUser, {returnOriginal: false}).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else{
+                    console.log(doc)
+                    return response.json(
+                        {
+                            code: 0,
+                            message: "User updated!",
                             data: doc
                         }
                     )

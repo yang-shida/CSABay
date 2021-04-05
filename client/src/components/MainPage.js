@@ -106,7 +106,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
             {
                 posts.length===0?
                 'There is no post now. Create the first one!':
-                <Cards posts={posts} displayMyPost={false} favoriteIDs={isAuthenticated?user.savedPosts:[]} onClickStar={onClickStar} onClickCard={onClickCard} routerProps={routerProps}></Cards>
+                <Cards posts={posts} displayMyPost={false} favoriteIDs={isAuthenticated?user.savedPosts:[]} onClickStar={onClickStar} onClickCard={onClickCard} routerProps={routerProps} isAuth={isAuthenticated}></Cards>
             }
 
             <Modal 

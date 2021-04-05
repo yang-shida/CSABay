@@ -123,7 +123,7 @@ const dividerLayout = {
 
 
 
-const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, onClickEdit, onClickDelete, routerProps}) => {
+const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, onClickEdit, onClickDelete, routerProps, isAuth}) => {
 
     const onConfirmToLogin = () => {
         routerProps.history.push('./login')
@@ -171,7 +171,7 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                         (
                             isFavorite?
                             <StarTwoTone style={actionIconStyle} key="favorite-post-yellow" twoToneColor="yellow" onClick={()=>onClickStar(post.id)}/>:
-                            auth.isAuthenticated()?
+                            isAuth?
                             <StarOutlined style={actionIconStyle} key="favorite-post-gray" onClick={()=>onClickStar(post.id)}/>:
                             <Popconfirm
                                 title="You need to login to favorite a post. Do you want to login?"

@@ -360,21 +360,21 @@ const SignupForm = () => {
                 <Form.Item
                     name="phone"
                     label="Phone Number"
-                    rules={[
-                        ()=>({
-                            validator(_, value){
-                                if(value==='' || value===undefined){
-                                    return Promise.resolve();
-                                }
-                                else if(!(/^\d+$/.test(value))){
-                                    return Promise.reject('Phone number should only contain numbers!');
-                                }
-                                else{
-                                    return Promise.resolve();
-                                }
-                            }
-                        })
-                    ]}
+                    // rules={[
+                    //     ()=>({
+                    //         validator(_, value){
+                    //             if(value==='' || value===undefined){
+                    //                 return Promise.resolve();
+                    //             }
+                    //             else if(!(/^\d+$/.test(value))){
+                    //                 return Promise.reject('Phone number should only contain numbers!');
+                    //             }
+                    //             else{
+                    //                 return Promise.resolve();
+                    //             }
+                    //         }
+                    //     })
+                    // ]}
                 >
                     <Input value={phoneNum} onChange={(e) => setPhoneNum(e.target.value)}/>
                 </Form.Item>

@@ -20,20 +20,25 @@ const base_ = "http://localhost:3001";
 const App = () => {
 
   const [userInfo, setUserInfo] = useState();
+  const [isAuth, setIsAuth] = useState(auth.isAuthenticated())
 
   useEffect(
     () => {
+      console.log("do auth")
       if(!auth.isAuthenticated()){
+        console.log("need auth")
         axios.get(base_ + '/get-user-info')
           .then(
             (res) => {
               console.log(res.data)
               if(res.data.code===1){
                 console.log(res.data.message)
+                setIsAuth(false)
               }
               else{
                 auth.login(
                   () => {
+                    setIsAuth(true)
                     setUserInfo(res.data.data)
                   }
                 )
@@ -45,10 +50,14 @@ const App = () => {
             (err) => {
               message.error("Something went wrong!")
               console.log(err)
+              setIsAuth(false)
             }
           )
       }
-    }, []
+      else{
+        setIsAuth(true)
+      }
+    }, [userInfo]
   )
 
   return (
@@ -58,7 +67,7 @@ const App = () => {
           <Route
             path='/'
             exact render={
-              auth.isAuthenticated()?
+              isAuth?
               ((props)=>(
                 <>
                   {userInfo===undefined?"":<NavBar isAuthenticated={true} user={userInfo} currentRoute={"home"} routerProps={props} setUserInfo={setUserInfo}/>}
@@ -112,6 +121,7 @@ const App = () => {
           ></Route>
           
           <ProtectedRoute
+            isAuth={setIsAuth}
             path='/create-post'
             exact render={
               (props)=>(
@@ -124,6 +134,7 @@ const App = () => {
           ></ProtectedRoute>
 
           <ProtectedRoute
+            isAuth={setIsAuth}
             path='/profile'
             exact render={
               (props)=>(
@@ -145,13 +156,13 @@ const App = () => {
                   title="403"
                   subTitle="Sorry, you are need to login to see this page."
                   extra={[
-                    <Link to="/">
+                    <Link to="/" key={0}>
                       <Button key="to-home" type="primary">
                         Back Home
                       </Button>
                     </Link>
                     ,
-                    <Link to="/login">
+                    <Link to="/login" key={1}>
                       <Button key="to-login" type="primary">
                         Go to Login
                       </Button>

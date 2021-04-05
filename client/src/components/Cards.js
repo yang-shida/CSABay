@@ -39,7 +39,7 @@ const priceStyle = {
     float: 'left'
 };
 
-const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit, onClickCard, routerProps}) => {
+const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit, onClickCard, routerProps, isAuth}) => {
 
     const onConfirmToLogin = () => {
         routerProps.history.push('./login')
@@ -88,7 +88,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                             [
                                                 favoriteIDs.includes(post.id)?
                                                 <StarTwoTone key="favorite-post-yellow" twoToneColor="yellow" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>:
-                                                auth.isAuthenticated()?
+                                                isAuth?
                                                 <StarOutlined key="favorite-post-gray" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>:
                                                 <Popconfirm
                                                     title="You need to login to favorite a post. Do you want to login?"

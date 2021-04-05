@@ -364,7 +364,7 @@ const ProfilePage = ({user, setUser}) => {
                     currentMenuKey==1?
                     <Cards posts={myPosts} displayMyPost={true} onClickDelete={onClickDelete} onClickEdit={onClickEdit} onClickCard={onClickCard}></Cards>:
                     currentMenuKey==2?
-                    <Cards posts={mySavedPosts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}  onClickCard={onClickCard}></Cards>:
+                    <Cards posts={mySavedPosts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}  onClickCard={onClickCard} isAuth={true}></Cards>:
                     currentMenuKey==3?
                     <ChangePasswordPage user={user} setUser={setUser}/>:
                     <EditContactInfoPage user={user} setUser={setUser} />
