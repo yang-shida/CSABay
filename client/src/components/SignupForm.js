@@ -96,13 +96,6 @@ const SignupForm = () => {
             profilePictureKey: ""
         }
 
-        //const res = await fetch('http://localhost:8080/users', {
-        //    method: 'POST',
-        //    headers: {
-        //        'Content-type': 'application/json'
-        //    },
-        //    body: JSON.stringify(newUser),
-        //})
         axios.post(base_ + '/add-user', newUser).then((response) => {
             if(response.data.code === 0){
                 message.success("Account created!")
@@ -123,12 +116,13 @@ const SignupForm = () => {
                     message.error(response.data.message)
                 }
                 else{
-                    message.error("Something is wrong!")
+                    message.error("Something went wrong!")
                     console.log(response.data.message)
                 }
                 
             }
         }, (error)=> {
+            message.error("Something went wrong!")
             console.log(error)
         });
 
@@ -359,21 +353,21 @@ const SignupForm = () => {
                 <Form.Item
                     name="phone"
                     label="Phone Number"
-                    rules={[
-                        ()=>({
-                            validator(_, value){
-                                if(value==='' || value===undefined){
-                                    return Promise.resolve();
-                                }
-                                else if(!(/^\d+$/.test(value))){
-                                    return Promise.reject('Phone number should only contain numbers!');
-                                }
-                                else{
-                                    return Promise.resolve();
-                                }
-                            }
-                        })
-                    ]}
+                    // rules={[
+                    //     ()=>({
+                    //         validator(_, value){
+                    //             if(value==='' || value===undefined){
+                    //                 return Promise.resolve();
+                    //             }
+                    //             else if(!(/^\d+$/.test(value))){
+                    //                 return Promise.reject('Phone number should only contain numbers!');
+                    //             }
+                    //             else{
+                    //                 return Promise.resolve();
+                    //             }
+                    //         }
+                    //     })
+                    // ]}
                 >
                     <Input value={phoneNum} onChange={(e) => setPhoneNum(e.target.value)}/>
                 </Form.Item>

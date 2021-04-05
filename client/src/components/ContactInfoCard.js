@@ -36,7 +36,12 @@ const ContactInfoCard = ({user, post, isInfoVisible}) => {
     useEffect(
         () => {
             if(user.profilePictureKey !== ""){
-                setProfilePictureURL(S3_GET(user.profilePictureKey))
+                S3_GET(user.profilePictureKey)
+                    .then(
+                        (url) => {
+                            setProfilePictureURL(url)
+                        }
+                    )
             }
         }, [user]
     )

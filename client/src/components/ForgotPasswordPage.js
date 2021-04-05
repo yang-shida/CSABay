@@ -9,6 +9,7 @@ import {
     message,
   } from 'antd';
 import {PasswordInput} from 'antd-password-input-strength'
+import axios from 'axios';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const formItemLayout =  { 
@@ -41,6 +42,8 @@ const tailFormItemLayout = {
     },
 };
 
+const base_ = "http://localhost:3001";
+
 const ForgotPasswordPage = () => {
     const [form] = Form.useForm();
 
@@ -54,24 +57,34 @@ const ForgotPasswordPage = () => {
         const body = {
             email: email,
             emailVerification: emailVerification,
-            password: password
+            pwd: password
         }
 
         // set body to backend (forget-password)
-
-        // check res code
-
-        if(false /*check email verification*/){
-            message.error('Your email verification code is incorrect.')
-        }
-        else{
-            setEmailVerification('')
-            setPassword('')
-            setConfirm('')
-            message.success('Successfully changed your password!')
-    
-            form.resetFields();
-        }
+        axios.put(base_ + '/forgot-password', body)
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(res.data.message)
+                    }
+                    else{
+                        setEmail('')
+                        setEmailVerification('')
+                        setPassword('')
+                        setConfirm('')
+                        message.success(res.data.message)
+                
+                        form.resetFields();
+                        
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    message.error("Something went wrong!")
+                    console.log(err)
+                }
+            )
     }
 
     return (

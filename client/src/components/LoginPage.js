@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
 import auth from '../auth/auth'
+import axios from 'axios';
 import {Link} from 'react-router-dom'
 
 const formItemLayout =  { 
@@ -34,29 +35,46 @@ const tailFormItemLayout = {
     },
 };
 
+const base_ = "http://localhost:3001";
+
 const LoginPage = ({routerProps, setUserInfo}) => {
     const [form] = Form.useForm();
     const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-
-    const fetchUser = async(userID) =>{
-        const res = await fetch(`http://localhost:8080/users/${userID}`)
-        const data = await res.json()
-        return data
-    }
+    const [pwd, setPwd] = useState('')
 
     const onFinish = async () => {
-        // check if username exists, then check is password patches
-        const userFromServer = await fetchUser(1)
-        auth.login(
-            () => {
-                setUserInfo(userFromServer)
-                routerProps.history.push("/")
-            }
-        )
+        const userInfo = {
+            email: email.toLocaleLowerCase(),
+            pwd: pwd
+        }
+
+        axios.post(base_ + '/user-login', userInfo)
+            .then(
+                (res) => {
+                    if(res.data.code === 1){
+                        message.error(res.data.message)
+                    }
+                    else{
+                        message.success("Login success!")
+                        auth.login(
+                            () => {
+                                setUserInfo(res.data.data)
+                                routerProps.history.push("/")
+                            }
+                        )
+                    }
+                    
+                }
+            )
+            .catch(
+                (err) => {
+                    message.error("Something went wrong!")
+                    console.log(err)
+                }
+            )
 
         setEmail('');
-        setPassword('');
+        setPwd('');
         form.resetFields();
     }
 
@@ -96,7 +114,7 @@ const LoginPage = ({routerProps, setUserInfo}) => {
                         },
                     ]}
                 >
-                    <Input.Password value={password} onChange={(e) => setPassword(e.target.value)}/>
+                    <Input.Password value={pwd} onChange={(e) => setPwd(e.target.value)}/>
                     
                 </Form.Item>
 

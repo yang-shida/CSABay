@@ -9,7 +9,9 @@ import ImgCrop from 'antd-img-crop'
 
 
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY, S3_UPLOAD_SINGLE_FILE} from './S3'
+import axios from 'axios';
 
+const base_ = "http://localhost:3001";
 const { Sider } = Layout;
 
 const profileContainerStyle = {
@@ -106,7 +108,12 @@ const ProfilePage = ({user, setUser}) => {
     useEffect(
         () => {
             if(user.profilePictureKey !== ""){
-                setProfilePictureURL(S3_GET(user.profilePictureKey))
+                S3_GET(user.profilePictureKey)
+                    .then(
+                        (url) => {
+                            setProfilePictureURL(url)
+                        }
+                    )
             }
         }, [user]
     )
@@ -194,7 +201,7 @@ const ProfilePage = ({user, setUser}) => {
     const deletePost = async (postID) => {
         const postToDelete = await fetchPost(postID)
         for(const key in postToDelete.pictureKeyArray){
-            S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
+            await S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
         }
         await fetch(`http://localhost:8080/posts1/${postID}`, {
             method: 'DELETE',
@@ -261,27 +268,47 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const handleProfilePictureUpload = async ({file}) => {
-        console.log("upload profile picture: ", file)
-        try{
-            const signed = await S3_GET_SIGNED_POST(file, 'ProfilePictures')
-            await S3_UPLOAD_SINGLE_FILE(signed, file)
-            message.success("Profile picture updated!")
-            const newUser = {...user, profilePictureKey: `ProfilePictures/${file.uid}`}
-            const res = await fetch(`http://localhost:8080/users/${user.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(newUser),
-            })
-    
-            const data = await res.json()
-    
-            setUser({...user, profilePictureKey: data.profilePictureKey})
-        }
-        catch{
-            message.error("Fail to update profile picture!")
-        }
+        S3_GET_SIGNED_POST(file, 'ProfilePictures')
+        .then(
+            (signed) => {
+                S3_UPLOAD_SINGLE_FILE(signed, file)
+                    .then(
+                        () => {
+                            const newUser = {profilePictureKey: `ProfilePictures/${file.uid}`}
+                            axios.put(base_ + '/update-user-info', {newUser: newUser})
+                                .then(
+                                    (res) => {
+                                        if(res.data.code===1){
+                                            message.error(`Fail to update profile picture: ${res.data.message}`)
+                                        }
+                                        else{
+                                            message.success("Profile picture updated!")
+                                            const data = res.data.data
+                                            setUser({...user, profilePictureKey: data.profilePictureKey})
+                                        }
+                                    }
+                                )
+                                .catch(
+                                    (err) => {
+                                        console.log(err)
+                                        message.error("Fail to update profile picture!")
+                                    }
+                                )
+                            
+                        }
+                    )
+                    .catch(
+                        (err) => {
+                            message.error("Fail to update profile picture!")
+                        }
+                    )
+            }
+        )
+        .catch(
+            (err_message) => {
+                message.error(err_message)
+            }
+        )
     }
 
     return (
@@ -359,7 +386,7 @@ const ProfilePage = ({user, setUser}) => {
                     currentMenuKey==1?
                     <Cards posts={myPosts} displayMyPost={true} onClickDelete={onClickDelete} onClickEdit={onClickEdit} onClickCard={onClickCard}></Cards>:
                     currentMenuKey==2?
-                    <Cards posts={mySavedPosts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}  onClickCard={onClickCard}></Cards>:
+                    <Cards posts={mySavedPosts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}  onClickCard={onClickCard} isAuth={true}></Cards>:
                     currentMenuKey==3?
                     <ChangePasswordPage user={user} setUser={setUser}/>:
                     <EditContactInfoPage user={user} setUser={setUser} />

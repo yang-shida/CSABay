@@ -1,17 +1,19 @@
+const { response, Router, request } = require("express");
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const hidePwdAndID = {pwd: 0, _id: 0}
 
 //post new user
-router.route("/add-user").post((req, res)=> {
-    const pwd = req.body.pwd;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-    const email = req.body.email;
-    const emailVerification = req.body.emailVerification;
-    const wechatID = req.body.wechatID;
-    const phoneNum = req.body.phoneNum;
-    const profilePictureKey = req.body.profilePictureKey;
+router.route("/add-user").post((request, response)=> {
+    const pwd = request.body.pwd;
+    const firstName = request.body.firstName;
+    const lastName = request.body.lastName;
+    const email = request.body.email;
+    const emailVerification = request.body.emailVerification;
+    const wechatID = request.body.wechatID;
+    const phoneNum = request.body.phoneNum;
+    const profilePictureKey = request.body.profilePictureKey;
 
     // TODO: check if email verification code match, delete after verifying
 
@@ -30,7 +32,7 @@ router.route("/add-user").post((req, res)=> {
         .then(
             (data) => {
                 console.log(data)
-                res.send({
+                return response.json({
                     code: 0
                 })
             }
@@ -39,13 +41,13 @@ router.route("/add-user").post((req, res)=> {
             (err) => {
                 console.log(err)
                 if(err.code === 11000){
-                    res.send({
+                    return response.json({
                         code: 1,
                         message: "Email already exists!"
                     })
                 }
                 else{
-                    res.send({
+                    return response.json({
                         code: 1,
                         message: err // TODO: research for different error types and replace message with meaningful string that describes the error
                     })
@@ -57,13 +59,321 @@ router.route("/add-user").post((req, res)=> {
     
 })
 
-//edit user -- get and post
+router.route("/user-login").post(
+    (request, response) => {
+        const email = request.body.email;
+        const pwd = request.body.pwd;
 
-//get user information
+        User.findOne({email: email}).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else if(doc.pwd !== pwd){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Password incorrect!"
+                        }
+                    )
+                }
+                else{
+                    response.cookie('userid', doc._id);
+                    return response.json(
+                        {
+                            code: 0,
+                            message: "Login success!",
+                            data: {
+                                firstName: doc.firstName,
+                                lastName: doc.lastName,
+                                email: doc.email,
+                                wechatID: doc.wechatID,
+                                phoneNum: doc.phoneNum,
+                                profilePictureKey: doc.profilePictureKey,
+                                savedPosts: doc.savedPosts
+                            }
+                        }
+                    )
+                }
+            }
+        )
+    }
+)
 
-//get favorites information
+router.route("/get-user-info").get(
+    (request, response) => {
+        const userID = request.cookies.userid
+        if(!userID){
+            return response.json(
+                {
+                    code: 1,
+                    message: "User not authenticated!"
+                }
+            )
+        }
 
-//get posts information?
+        User.findOne({_id: userID}, hidePwdAndID).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else{
+                    return response.json(
+                        {
+                            code: 0,
+                            message: "User authenticated!",
+                            data: doc
+                        }
+                    )
+                }
+            }
+        )
+    }
+)
 
+router.route("/get-user-info-by-id").get(
+    (request, response) => {
+        const userID = request.body.userID
+        if(!userID){
+            return response.json(
+                {
+                    code: 1,
+                    message: "Did not receive UserID!"
+                }
+            )
+        }
+
+        User.findOne({_id: userID}, hidePwdAndID).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else{
+                    return response.json(
+                        {
+                            code: 0,
+                            data: doc
+                        }
+                    )
+                }
+            }
+        )
+    }
+)
+
+router.route("/update-user-info").put(
+    (request, response) => {
+        const userID = request.cookies.userid
+        const newUser = request.body.newUser
+        console.log(newUser)
+        if(!userID){
+            return response.json(
+                {
+                    code: 1,
+                    message: "User not authenticated!"
+                }
+            )
+        }
+
+        User.findOneAndUpdate({_id: userID}, newUser, {returnOriginal: false}).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else{
+                    console.log(doc)
+                    return response.json(
+                        {
+                            code: 0,
+                            message: "User updated!",
+                            data: doc
+                        }
+                    )
+                }
+            }
+        )
+    }
+)
+
+router.route("/change-password").put(
+    (request, response) => {
+        const userID = request.cookies.userid
+        const pwds = request.body
+        console.log(pwds)
+        if(!userID){
+            return response.json(
+                {
+                    code: 1,
+                    message: "User not authenticated!"
+                }
+            )
+        }
+
+        User.findOne({_id: userID}).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else if(doc.pwd !== pwds.oldPwd){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Old password incorrect!"
+                        }
+                    )
+                }
+                else{
+                    User.findOneAndUpdate({_id: userID}, {pwd: pwds.pwd}, {returnOriginal: false}).exec(
+                        (err, doc) => {
+                            if(err){
+                                console.log(err)
+                                return response.json(
+                                    {
+                                        code: 1,
+                                        message: "Something went wrong on our end."
+                                    }
+                                )
+                            }
+                            if(!doc){
+                                return response.json(
+                                    {
+                                        code: 1,
+                                        message: "User not found!"
+                                    }
+                                )
+                            }
+                            else{
+                                console.log(doc)
+                                return response.json(
+                                    {
+                                        code: 0,
+                                        message: "Password updated!"
+                                    }
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        )
+
+        
+    }
+)
+
+router.route("/forgot-password").put(
+    (request, response) => {
+        const {email, emailVerification, pwd} = request.body
+        console.log(email, emailVerification, pwd)
+
+        // get email verification code in DB based on email
+
+        // check if match
+
+        // if match
+        User.findOneAndUpdate({email: email}, {pwd: pwd}, {returnOriginal: false}).exec(
+            (err, doc) => {
+                if(err){
+                    console.log(err)
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Something went wrong on our end."
+                        }
+                    )
+                }
+                if(!doc){
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "User not found!"
+                        }
+                    )
+                }
+                else{
+                    console.log(doc)
+                    return response.json(
+                        {
+                            code: 0,
+                            message: "Password updated!"
+                        }
+                    )
+                }
+            }
+        )
+
+
+    }
+)
 
 module.exports = router;

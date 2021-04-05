@@ -3,9 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import axios from 'axios';
 
 import CreatePostPage from './components/CreatePostPage'
 import NavBar from './components/NavBar'
+
+axios.defaults.withCredentials = true
 
 ReactDOM.render(
   // <React.StrictMode>
