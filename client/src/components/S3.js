@@ -167,7 +167,7 @@ export const S3_DELETE_BY_KEY = async (key) => {
 export const S3_GET_SIGNED_POST = (file, dir) => {
     return new Promise(
         (resolve, reject) => {
-            axios.post(base_ + '/s3-get-signed-post', {file: file, dir: dir})
+            axios.post(base_ + '/s3-get-signed-post', {fileUid: file.uid, dir: dir})
                 .then(
                     (res) => {
                         if(res.data.code === 1){

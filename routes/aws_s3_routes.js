@@ -49,10 +49,10 @@ router.route("/s3-get-url").post(
 
 router.route("/s3-get-signed-post").post(
     (request, response) => {
-        const {file, dir} = request.body 
+        const {fileUid, dir} = request.body 
         S3.createPresignedPost({
             Fields: {
-                key: `${dir}/${file.uid}`,
+                key: `${dir}/${fileUid}`,
             },
             Expires: 30,
             Bucket: config.bucketName,

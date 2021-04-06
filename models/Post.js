@@ -3,20 +3,21 @@ const mongoose = require("mongoose");
 const postSchema = {
     _ID: mongoose.ObjectId,
     userID: {
-        type: mongoose.ObjectId
+        type: mongoose.ObjectId,
+        required: true
     },
-    title: {type: String},
-    description: {type: String},
-    durationDays: {type: Number},
-    typeOfPost: {type: String},
-    zipcode: {type: Number},
-    price: {type: Number},
-    pictureKeyArray: [{type: String}],
+    title: {type: String, required: true },
+    description: {type: String, required: true},
+    durationDays: {type: Number, required: true},
+    typeOfPost: {type: String, required: true},
+    zipcode: {type: String, default: ''},
+    price: mongoose.Schema.Types.Mixed,
+    pictureKeyArray: [String],
     email: {type: String},
     wechatID: {type: String},
     phoneNum: {type: String},
-    createdTimestamp: {type: Date},
-    modifiedTimestamp: {type: Date}
+    createdTimestamp: {type: Date, required: true},
+    modifiedTimestamp: {type: Date, required: true}
 }
 
 const Post = mongoose.model("Post", postSchema);

@@ -84,6 +84,19 @@
       "wechatID": "as1",
       "phoneNum": "9292354428",
       "id": 5
+    },
+    {
+      "title": "ddd",
+      "description": "aaa",
+      "durationDays": 1,
+      "typeOfPost": "Selling",
+      "zipcode": "",
+      "price": "",
+      "pictureKeyArray": [],
+      "email": "123a@456.com",
+      "wechatID": "as112133",
+      "phoneNum": "929233333",
+      "id": 6
     }
   ],
   "users": [

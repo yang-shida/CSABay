@@ -16,6 +16,9 @@ import {
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ImageUploader from './ImageUploader'
+import axios from 'axios';
+
+const base_ = "http://localhost:3001";
 
 const { Option } = Select;
 
@@ -104,7 +107,6 @@ const CreatePostPage = ({user}) => {
             .then(
                 async () => {
                     const newPost = {
-                        userID: user.email.toLowerCase(),
                         title: title,
                         description: description,
                         durationDays: durationDays,
@@ -116,29 +118,40 @@ const CreatePostPage = ({user}) => {
                         wechatID: wechatID.toLowerCase(),
                         phoneNum: phoneNum
                     }
-            
-                    const res = await fetch('http://localhost:8080/posts1', {
-                        method: 'POST',
-                        headers: {
-                            'Content-type': 'application/json'
-                        },
-                        body: JSON.stringify(newPost),
-                    })
-            
-                    setTitle('')
-                    setDescription('')
-                    setDurationDays('')
-                    setZipcode('')
-                    setPrice('')
-                    setPictureKeyArray([])
-                    setFileList([])
-                    setEmail(user.email)
-                    setWechatID(user.wechatID)
-                    setPhoneNum(user.phoneNum)
-            
-                    form.resetFields();
 
-                    message.success({content: "Post Created!", key: "updatable", duration: 2})
+                    axios.post(base_ + '/add-post', {newPost: newPost})
+                        .then(
+                            (res) => {
+                                if(res.data.code===1){
+                                    message.error({content: `Fail to create post: ${res.data.message}`, key: "updatable", duration: 2})
+                                }
+                                else{
+                                    setTitle('')
+                                    setDescription('')
+                                    setDurationDays('')
+                                    setTypeOfPost('')
+                                    setZipcode('')
+                                    setPrice('')
+                                    setPictureKeyArray([])
+                                    setFileList([])
+                                    setEmail(user.email)
+                                    setWechatID(user.wechatID)
+                                    setPhoneNum(user.phoneNum)
+                            
+                                    form.resetFields();
+
+                                    message.success({content: "Post Created!", key: "updatable", duration: 2})
+                                }
+                            }
+                        )
+                        .catch(
+                            (err) => {
+                                console.log(err)
+                                message.error({content: "Fail to create post", key: "updatable", duration: 2})
+                            }
+                        )
+            
+                    
                 }
             )
             .catch(
