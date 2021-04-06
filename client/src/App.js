@@ -24,15 +24,11 @@ const App = () => {
 
   useEffect(
     () => {
-      console.log("do auth")
       if(!auth.isAuthenticated()){
-        console.log("need auth")
         axios.get(base_ + '/get-user-info')
           .then(
             (res) => {
-              console.log(res.data)
               if(res.data.code===1){
-                console.log(res.data.message)
                 setIsAuth(false)
               }
               else{

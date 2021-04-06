@@ -48,25 +48,42 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
     const [postsWithCoverUrl, setPostsWithCoverUrl] = useState([])
 
     useEffect(
-        async () => {
+        () => {
             let isSubscribed = true
-            var temp = []
-            for(const post in posts){
-                const currentPost = posts[post]
-                if(posts[post].pictureKeyArray.length>0){
-                    await S3_GET(posts[post].pictureKeyArray[0]).then(
-                        (url) => {
-                            temp = [...temp, {...currentPost, coverUrl: url}]
+
+            const func = async () => {
+                var temp = []
+                var count = posts.length
+                for(const post in posts){
+                    const currentPost = posts[post]
+                    if(posts[post].pictureKeyArray.length>0){
+                        await S3_GET(posts[post].pictureKeyArray[0]).then(
+                            (url) => {
+                                temp = [...temp, {...currentPost, coverUrl: url}]
+                                count--
+                                if(count === 0){
+                                    if(isSubscribed){
+                                        setPostsWithCoverUrl(temp)
+                                    }
+                                }
+                            }
+                        )
+                    }
+                    else{
+                        temp = [...temp, {...currentPost, coverUrl: ''}]
+                        count--
+                        if(count === 0){
+                            if(isSubscribed){
+                                setPostsWithCoverUrl(temp)
+                            }
                         }
-                    )
+                    }
                 }
-                else{
-                    temp = [...temp, {...currentPost, coverUrl: ''}]
-                }
+                
             }
-            if(isSubscribed){
-                setPostsWithCoverUrl(temp)
-            }
+
+            func()
+            
             
             return (
                 () => {
@@ -82,7 +99,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                 {
                     postsWithCoverUrl.map(
                         (post) => (
-                            <Col key={post.id} style={{margin: '20px 15px'}}>
+                            <Col key={post._id} style={{margin: '20px 15px'}}>
                                 <Card
                                     hoverable={true}
                                     bordered={false}
@@ -91,14 +108,14 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                         displayMyPost?
                                             [
                                                 <EditOutlined key="edit-post" onClick={(e)=>{e.stopPropagation();onClickEdit(post);}} />,
-                                                <DeleteOutlined key="delete-post" onClick={(e)=>{e.stopPropagation();onClickDelete(post.id);}} />
+                                                <DeleteOutlined key="delete-post" onClick={(e)=>{e.stopPropagation();onClickDelete(post._id);}} />
                                             ]
                                             :
                                             [
-                                                favoriteIDs.includes(post.id)?
-                                                <StarTwoTone key="favorite-post-yellow" twoToneColor="yellow" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>:
+                                                favoriteIDs.includes(post._id)?
+                                                <StarTwoTone key="favorite-post-yellow" twoToneColor="yellow" onClick={(e)=>{e.stopPropagation();onClickStar(post._id);}}/>:
                                                 isAuth?
-                                                <StarOutlined key="favorite-post-gray" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>:
+                                                <StarOutlined key="favorite-post-gray" onClick={(e)=>{e.stopPropagation();onClickStar(post._id);}}/>:
                                                 <Popconfirm
                                                     title="You need to login to favorite a post. Do you want to login?"
                                                     onConfirm={(e) => {e.stopPropagation(); onConfirmToLogin()}}
@@ -124,7 +141,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                 >
                                     <div style={locationPriceContainerStyle}>
                                         <div style={priceStyle}>
-                                            {`\$${post.price?post.price:' N/A'}`}
+                                            {`\$${post.price}`}
                                         </div>
                                         <div style={locationStyle}>
                                             {'Gainesville, FL 32607'}
@@ -135,7 +152,13 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                         style={{marginLeft: '0px'}}
                                         avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
                                         title={post.title}
-                                        description={'5 days ago'}
+                                        description={
+                                            Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/3600)==0?
+                                            `${Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/60)} minutes ago`:
+                                            Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/3600/24)==0?
+                                            `${Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/3600)} hours ago`:
+                                            `${Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/3600/24)} days ago`
+                                        }
                                     />
                                 </Card>
                             </Col>

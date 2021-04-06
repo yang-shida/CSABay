@@ -254,7 +254,6 @@ router.route("/change-password").put(
     (request, response) => {
         const userID = request.cookies.userid
         const pwds = request.body
-        console.log(pwds)
         if(!userID){
             return response.json(
                 {

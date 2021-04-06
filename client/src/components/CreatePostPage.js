@@ -70,7 +70,7 @@ const CreatePostPage = ({user}) => {
     const [typeOfPost, setTypeOfPost] = useState('')
 
     const [zipcode, setZipcode] = useState('')
-    const [price, setPrice] = useState('')
+    const [price, setPrice] = useState(0)
 
     const [pictureKeyArray, setPictureKeyArray] = useState([])
     const [fileList, setFileList] = useState([])
@@ -84,18 +84,23 @@ const CreatePostPage = ({user}) => {
     const uploadAllPictures = () => {
         return new Promise(
             async (resolve, reject) => {
+                var count = fileList.length
                 for(let index = 0; index < fileList.length; index ++){
                     const file = fileList[index]
                     try{
                         const signed = await S3_GET_SIGNED_POST(file, 'ProductDetailPhotos')
                         await S3_UPLOAD(signed, fileList, index)
-                        resolve()
+                        count--
+                        if(count===0){
+                            resolve()
+                        }
+                        
                     }
                     catch{
                         reject()
                     }
                 }
-                resolve()
+                // resolve()
             }
         )
     }
@@ -179,7 +184,8 @@ const CreatePostPage = ({user}) => {
                 initialValues={{
                     "email": user.email,
                     "wechat-id": user.wechatID,
-                    "phone": user.phoneNum
+                    "phone": user.phoneNum,
+                    "price": price
                 }}
             >
 
@@ -332,10 +338,27 @@ const CreatePostPage = ({user}) => {
                     }
                 >
                     <InputNumber 
-                        formatter={value => `$ ${value}`}
+                        formatter={
+                            value => {
+                                return (value==0?
+                                "$ 0":
+                                `$ ${value}`)
+                            }
+                        }
                         style={{ width: '100%' }}
                         value={price} 
-                        onChange={(value) => setPrice(value)}
+                        onChange={
+                            (value) => {
+                                if(value==null){
+                                    setPrice(0)
+                                }
+                                else{
+                                    setPrice(value)
+                                }
+                                
+                            }
+                        }
+                        placeholder="$ 0"
                     />
                 </Form.Item>
 

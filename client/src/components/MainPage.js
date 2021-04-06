@@ -6,7 +6,7 @@ import Cards from './Cards'
 
 import ProductDetailPage from './ProductDetailPage'
 
-
+const base_ = "http://localhost:3001";
 
 const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 
@@ -19,12 +19,31 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
         () => {
             let isSubscribed = true
             const getPosts = async()=>{
-                fetchPosts()
+                axios.get(base_ + '/get-post-by-time?startIndex=0&numberOfPosts=20&order=new')
                     .then(
-                        (postsFromServer) => {
-                            if (isSubscribed){
-                                setPosts(postsFromServer)
+                        (res) => {
+                            console.log(res)
+                            if(res.data.code===1){
+                                message.error(res.data.message)
+                                if (isSubscribed){
+                                    setPosts([])
+                                }
                             }
+                            else{
+                                if (isSubscribed){
+                                    setPosts(res.data.data)
+                                }
+                            }
+                            
+                        }
+                    )
+                    .catch(
+                        (err) => {
+                            console.log(err)
+                            if (isSubscribed){
+                                setPosts([])
+                            }
+                            message.error("Something went wrong")
                         }
                     )
                 
@@ -41,55 +60,52 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
         }, []
     )
 
-    const fetchUser = async(userID) =>{
-        const res = await fetch(`http://localhost:8080/users?email=${userID.toLowerCase()}`)
-        const data = await res.json()
-        return data[0]
-    }
-
-    const fetchPosts = async () => {
-        const res = await fetch('http://localhost:8080/posts1')
-        const data = await res.json()
-        
-        return data
-    }
-
     const addSavedPosts = async (postID) => {
-        const updatedUser = {...user, savedPosts: [...user.savedPosts, postID].sort((a, b) => a - b)}
+        const updatedUser = {savedPosts: [...user.savedPosts, postID]}
 
-        const res = await fetch(`http://localhost:8080/users/${user.id}`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(updatedUser),
-            }
-        )
-
-        const data = await res.json()
-
-        setUser(updatedUser)
+        axios.put(base_ + '/update-user-info', {newUser: updatedUser})
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(`Fail to update saved posts: ${res.data.message}`)
+                    }
+                    else{
+                        setUser({...user, savedPosts: res.data.data})
+                        message.success("Post saved!")
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    message.error('Fail to update saved posts.')
+                }
+            )
     }
 
     const deleteSavedPosts = async (postID) => {
         var updatedSavedPosts = user.savedPosts
-        updatedSavedPosts.splice(user.savedPosts.indexOf(postID),1).sort((a, b) => a - b)
-        const updatedUser = {...user, savedPosts: updatedSavedPosts}
+        updatedSavedPosts.splice(user.savedPosts.indexOf(postID),1)
+        const updatedUser = {savedPosts: updatedSavedPosts}
 
-        const res = await fetch(`http://localhost:8080/users/${user.id}`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(updatedUser),
-            }
-        )
-
-        const data = await res.json()
-
-        setUser(updatedUser)
+        axios.put(base_ + '/update-user-info', {newUser: updatedUser})
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(`Fail to update saved posts: ${res.data.message}`)
+                    }
+                    else{
+                        setUser({...user, savedPosts: res.data.data})
+                        message.success("Post unsaved!")
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    message.error('Fail to update saved posts.')
+                }
+            )
     }
 
     const onClickStar = (postID) => {
@@ -103,8 +119,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 
     const onClickCard = async (post, e) => {
         setSelectedPost(post)
-        const userFromServer = await fetchUser(post.userID)
-        setSelectedPostUserInfo(userFromServer)
+        setSelectedPostUserInfo(post.simplifiedUserInfo)
         setIsProductDetailVisible(true)
     }
 

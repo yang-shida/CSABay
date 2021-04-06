@@ -80,8 +80,13 @@ const ProfilePage = ({user, setUser}) => {
         () => {
 
             const getMyPosts = async()=>{
-                const postsFromServer = await fetchMyPosts()
-                setMyPosts(postsFromServer)
+                fetchMyPosts()
+                    .then(
+                        (postsFromServer) => {
+                            setMyPosts(postsFromServer)
+                        }
+                    )
+                
             }
 
             getMyPosts()
@@ -119,32 +124,52 @@ const ProfilePage = ({user, setUser}) => {
     )
 
     const fetchMyPosts = async () => {
-        const res = await fetch(`http://localhost:8080/posts1?userID=${user.email.toLowerCase()}`)
-        if(res.status===404){
-            return 'User Not Found'
-        }
-        else{
-            const data = await res.json()
-            return data
-        }
+        const postsFromServer = await axios.get(base_ + '/get-post-by-user')
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(res.data.message)
+                        return []
+                    }
+                    else{
+                        return res.data.data
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    message.error('Fail to fetch user posts.')
+                    console.log(err)
+                    return []
+                }
+            )
+
+        return postsFromServer
         
     }
 
     const fetchPost = async (postID) => {
-        const res = await fetch(`http://localhost:8080/posts1/${postID}`)
-        if(res.status===404){
-            return 'Post Not Found'
-        }
-        else{
-            const data = await res.json()
-            return data
-        }
-    }
+        const postFromServer = axios.get(base_ + `/get-post-by-id?postID=${postID}`)
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(res.data.message)
+                        return {}
+                    }
+                    else{
+                        return res.data.data
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    message.error('Fail to fetch the post.')
+                    console.log(err)
+                    return {}
+                }
+            )
 
-    const fetchUser = async(email) =>{
-        const res = await fetch(`http://localhost:8080/users?email=${email.toLowerCase()}`)
-        const data = await res.json()
-        return data[0]
+        return postFromServer
     }
 
     const onSelectMenu = async (selectedKeys) => {
@@ -152,41 +177,51 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const addSavedPosts = async (postID) => {
-        const updatedUser = {...user, savedPosts: [...user.savedPosts, postID].sort((a, b) => a - b)}
+        const updatedUser = {savedPosts: [...user.savedPosts, postID]}
 
-        const res = await fetch(`http://localhost:8080/users/${user.id}`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(updatedUser),
-            }
-        )
-
-        const data = await res.json()
-
-        setUser(updatedUser)
+        axios.put(base_ + '/update-user-info', {newUser: updatedUser})
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(`Fail to update saved posts: ${res.data.message}`)
+                    }
+                    else{
+                        setUser({...user, savedPosts: res.data.data})
+                        message.success("Post saved!")
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    message.error('Fail to update saved posts.')
+                }
+            )
     }
 
     const deleteSavedPosts = async (postID) => {
         var updatedSavedPosts = user.savedPosts
-        updatedSavedPosts.splice(user.savedPosts.indexOf(postID),1).sort((a, b) => a - b)
-        const updatedUser = {...user, savedPosts: updatedSavedPosts}
+        updatedSavedPosts.splice(user.savedPosts.indexOf(postID),1)
+        const updatedUser = {savedPosts: updatedSavedPosts}
 
-        const res = await fetch(`http://localhost:8080/users/${user.id}`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(updatedUser),
-            }
-        )
-
-        const data = await res.json()
-
-        setUser(updatedUser)
+        axios.put(base_ + '/update-user-info', {newUser: updatedUser})
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(`Fail to update saved posts: ${res.data.message}`)
+                    }
+                    else{
+                        setUser({...user, savedPosts: res.data.data})
+                        message.success("Post unsaved!")
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    message.error('Fail to update saved posts.')
+                }
+            )
     }
 
     const onClickStar = (postID) => {
@@ -203,10 +238,24 @@ const ProfilePage = ({user, setUser}) => {
         for(const key in postToDelete.pictureKeyArray){
             await S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
         }
-        await fetch(`http://localhost:8080/posts1/${postID}`, {
-            method: 'DELETE',
-        })
-        setMyPosts(myPosts.filter((post) => post.id !== postID))
+        axios.delete(base_ + `/delete-single-post?postID=${postID}`)
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.err(res.data.message)
+                    }
+                    else{
+                        setMyPosts(myPosts.filter((post) => post._id !== postID))
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    message.error("Fail to delete post")
+                }
+            )
+        
         
     }
 
@@ -243,8 +292,7 @@ const ProfilePage = ({user, setUser}) => {
 
     const onClickCard = async (post, e) => {
         setSelectedPost(post)
-        const userFromServer = await fetchUser(post.userID)
-        setSelectedPostUserInfo(userFromServer)
+        setSelectedPostUserInfo(post.simplifiedUserInfo)
         setIsProductDetailVisible(true)
     }
 
@@ -400,7 +448,7 @@ const ProfilePage = ({user, setUser}) => {
                 footer={null}
                 width='70%'
             >
-                <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost.id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={selectedPostUserInfo}/>
+                <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost._id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={selectedPostUserInfo}/>
             
                 <Modal title="Delete Warning" visible={isDeleteModalVisible && isProductDetailVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
                     <p>Are you sure you want to delete this post?</p>

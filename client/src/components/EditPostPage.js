@@ -17,6 +17,7 @@ import {
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ImageUploader from './ImageUploader'
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY, S3_GET_OBJECT_TYPE} from './S3'
+import axios from 'axios';
 
 const { Option } = Select;
 
@@ -48,6 +49,8 @@ const dividerLayout = {
     },
 }
 
+const base_ = "http://localhost:3001";
+
 const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
 
     const [fileList, setFileList] = useState([])
@@ -55,6 +58,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
     useEffect(
         async () => {
             var array = []
+            var count = post.pictureKeyArray.length
             for(const key in post.pictureKeyArray){
                 await S3_GET_OBJECT_TYPE(post.pictureKeyArray[key])
                     .then(
@@ -62,25 +66,31 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                             S3_GET(post.pictureKeyArray[key])
                                 .then(
                                     (url) => {
-                                        var temp = {
+                                        array = [...array, {
                                             uid: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
                                             name: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
                                             status: 'done',
                                             url: url,
                                             type: type
+                                        }]
+                                        count--
+                                        if(count===0){
+                                            console.log("arr: ", array)
+                                            setFileList(array)
                                         }
-                                        array = [...array, temp]
                                     }
+
                                 )
                         }
                     )
                     .catch(
                         (err) => {
                             console.log(err)
+                            setFileList(array)
                         }
                     )
             }
-            setFileList(array)
+            
         },[]
     )
 
@@ -107,14 +117,19 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
         return new Promise(
             async (resolve, reject) => {
                 try{
+                    var count = fileList.length
                     for(let index = 0; index < fileList.length; index ++){
                         const file = fileList[index]
                         if(!originalPictureKeyArray.includes(`ProductDetailPhotos/${file.uid}`)){
                             const signed = await S3_GET_SIGNED_POST(file, 'ProductDetailPhotos')
                             await S3_UPLOAD(signed, fileList, index)
                         }
+                        count--
+                        if(count===0){
+                            resolve()
+                        }
                     }
-                    resolve()
+                    
                 }
                 catch{
                     reject()
@@ -153,17 +168,23 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                         phoneNum: phoneNum
                     }
 
-                    const res = await fetch(`http://localhost:8080/posts1/${post.id}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-type': 'application/json'
-                        },
-                        body: JSON.stringify(updatedPost),
-                    })
-
-                    message.success({content: "Post updated!", key: "updatable", duration: 2})
-
-                    // setIsEditPostVisible(false)
+                    axios.put(base_ + '/update-post', {updatedPost: updatedPost})
+                        .then(
+                            (res) => {
+                                if(res.data.code===1){
+                                    message.error({content: res.data.message, key: "updatable", duration: 2})
+                                }
+                                else{
+                                    message.success({content: "Post updated!", key: "updatable", duration: 2})
+                                }
+                            }
+                        )
+                        .catch(
+                            (err) => {
+                                console.log(err)
+                                message.error({content: "Fail to update post", key: "updatable", duration: 2})
+                            }
+                        )
                 }
             )
             .catch(
@@ -361,10 +382,26 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                         }
                     >
                         <InputNumber 
-                            formatter={value => `$ ${value}`}
+                            formatter={
+                                value => {
+                                    return (value==0?
+                                    "$ 0":
+                                    `$ ${value}`)
+                                }
+                            }
                             style={{ width: '100%' }}
                             value={price} 
-                            onChange={(value) => setPrice(value)}
+                            onChange={
+                                (value) => {
+                                    if(value==null){
+                                        setPrice(0)
+                                    }
+                                    else{
+                                        setPrice(value)
+                                    }
+                                    
+                                }
+                            }
                         />
                     </Form.Item>
 

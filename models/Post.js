@@ -11,7 +11,7 @@ const postSchema = {
     durationDays: {type: Number, required: true},
     typeOfPost: {type: String, required: true},
     zipcode: {type: String, default: ''},
-    price: mongoose.Schema.Types.Mixed,
+    price: {type: Number, default: 0},
     pictureKeyArray: [String],
     email: {type: String},
     wechatID: {type: String},

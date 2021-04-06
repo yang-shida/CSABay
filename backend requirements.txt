@@ -187,10 +187,11 @@ The services I need
         - description:
             - get posts by time
         - request:
-            - URL format: backend_URL/get-posts-by-time?startIndex=x&numberOfPosts=y&order=z 
+            - URL format: backend_URL/typeOfPost=t&get-posts-by-time?startIndex=x&numberOfPosts=y&order=z 
                 - order can have two values:
                     - new: get the newest y posts starting from index x
                     - old: get the oldest y posts starting from index x
+                - typeOfPost could be Subleasing, Selling, Buying, Other
         - actions:
             - fetch posts from database based on the URL parameters
             - fetch simplified user info based on post.userID
@@ -204,10 +205,11 @@ The services I need
         - description:
             - get posts by price
         - request:
-            - URL format: backend_URL/get-posts-by-price?startIndex=x&numberOfPosts=y&order=z 
+            - URL format: backend_URL/typeOfPost=t&get-posts-by-price?startIndex=x&numberOfPosts=y&order=z 
                 - order can have two values:
                     - high: get the most expensive y posts starting from index x
                     - low: get the cheapest y posts starting from index x
+                - typeOfPost could be Subleasing, Selling, Buying, Other
         - actions:
             - fetch posts from database based on the URL parameters
             - fetch simplified user info based on post.userID
