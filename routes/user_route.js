@@ -1,4 +1,3 @@
-const { response, Router, request } = require("express");
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
@@ -92,7 +91,7 @@ router.route("/user-login").post(
                     )
                 }
                 else{
-                    response.cookie('userid', doc._id);
+                    response.cookie('userid', doc._id, {sameSite: 'lax'});
                     return response.json(
                         {
                             code: 0,

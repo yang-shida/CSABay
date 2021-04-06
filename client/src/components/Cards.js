@@ -49,6 +49,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
 
     useEffect(
         async () => {
+            let isSubscribed = true
             var temp = []
             for(const post in posts){
                 const currentPost = posts[post]
@@ -63,7 +64,15 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                     temp = [...temp, {...currentPost, coverUrl: ''}]
                 }
             }
-            setPostsWithCoverUrl(temp)
+            if(isSubscribed){
+                setPostsWithCoverUrl(temp)
+            }
+            
+            return (
+                () => {
+                    isSubscribed = false
+                }
+            )
         }, [posts]
     )
 

@@ -1,6 +1,6 @@
 import { message, Modal } from 'antd';
 import { useEffect, useState } from 'react';
-import auth from '../auth/auth';
+import axios from 'axios';
 
 import Cards from './Cards'
 
@@ -17,13 +17,26 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 
     useEffect(
         () => {
-
+            let isSubscribed = true
             const getPosts = async()=>{
-                const postsFromServer = await fetchPosts()
-                setPosts(postsFromServer)
+                fetchPosts()
+                    .then(
+                        (postsFromServer) => {
+                            if (isSubscribed){
+                                setPosts(postsFromServer)
+                            }
+                        }
+                    )
+                
             }
 
             getPosts()
+
+            return (
+                () => {
+                    isSubscribed = false
+                }
+            )
 
         }, []
     )
