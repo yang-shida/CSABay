@@ -5,6 +5,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 var cookieParser = require('cookie-parser')
 
+const PORT = process.env.PORT || 3001
+
 //set up app
 var corsOptions = {
 	origin: 'http://localhost:3000',
@@ -37,6 +39,10 @@ app.use("/", require("./routes/user_route"))
 app.use("/", require("./routes/aws_s3_routes"))
 app.use("/", require("./routes/post_route"))
 
-app.listen(3001, function() {
+if(process.env.NODE_ENV === 'production') {
+	app.use(express.static('client/build'))
+}
+
+app.listen(PORT, function() {
     console.log("express server works");
 })
