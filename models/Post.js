@@ -3,16 +3,20 @@ const mongoose = require("mongoose");
 const postSchema = {
     _ID: mongoose.ObjectId,
     userID: {
-        type: String, //tostring of userid -- idk how to fix this
-        unique: true
+        type: mongoose.ObjectId
     },
-    pictures: [String],
-    cardPictureIndex: {type: Number},
     title: {type: String},
-    price: {type: Number},
-    profilePicture: {type: String},
+    description: {type: String},
+    durationDays: {type: Number},
+    typeOfPost: {type: String},
     zipcode: {type: Number},
-    description: {type: String}
+    price: {type: Number},
+    pictureKeyArray: [{type: String}],
+    email: {type: String},
+    wechatID: {type: String},
+    phoneNum: {type: String},
+    createdTimestamp: {type: Date},
+    modifiedTimestamp: {type: Date}
 }
 
 const Post = mongoose.model("Post", postSchema);
