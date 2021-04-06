@@ -165,14 +165,14 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                         (
                             [
                                 <EditOutlined style={actionIconStyle} key="edit-post" onClick={()=>onClickEdit(post)} />,
-                                <DeleteOutlined style={actionIconStyle} key="delete-post" onClick={()=>onClickDelete(post.id)} />
+                                <DeleteOutlined style={actionIconStyle} key="delete-post" onClick={()=>onClickDelete(post._id)} />
                             ]
                         ):
                         (
                             isFavorite?
-                            <StarTwoTone style={actionIconStyle} key="favorite-post-yellow" twoToneColor="yellow" onClick={()=>onClickStar(post.id)}/>:
+                            <StarTwoTone style={actionIconStyle} key="favorite-post-yellow" twoToneColor="yellow" onClick={()=>onClickStar(post._id)}/>:
                             isAuth?
-                            <StarOutlined style={actionIconStyle} key="favorite-post-gray" onClick={()=>onClickStar(post.id)}/>:
+                            <StarOutlined style={actionIconStyle} key="favorite-post-gray" onClick={()=>onClickStar(post._id)}/>:
                             <Popconfirm
                                 title="You need to login to favorite a post. Do you want to login?"
                                 onConfirm={onConfirmToLogin}

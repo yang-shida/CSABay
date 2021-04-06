@@ -93,9 +93,10 @@ const ProfilePage = ({user, setUser}) => {
 
             const getMySavedPosts = async()=>{
                 var temp=[]
+                console.log(user.savedPosts)
                 for(var i=0; i<user.savedPosts.length; i++){
                     const fetchedPost = await fetchPost(user.savedPosts[i])
-                    if(fetchedPost==='Post Not Found'){
+                    if(fetchedPost==="Post not found"){
                         deleteSavedPosts(user.savedPosts[i])
                     }
                     else{
@@ -154,7 +155,13 @@ const ProfilePage = ({user, setUser}) => {
                 (res) => {
                     if(res.data.code===1){
                         message.error(res.data.message)
-                        return {}
+                        if(res.data.message=="Post not found"){
+                            return "Post not found"
+                        }
+                        else{
+                            return {}
+                        }
+                        
                     }
                     else{
                         return res.data.data
@@ -186,7 +193,7 @@ const ProfilePage = ({user, setUser}) => {
                         message.error(`Fail to update saved posts: ${res.data.message}`)
                     }
                     else{
-                        setUser({...user, savedPosts: res.data.data})
+                        setUser({...user, savedPosts: res.data.data.savedPosts})
                         message.success("Post saved!")
                     }
                 }
@@ -211,7 +218,7 @@ const ProfilePage = ({user, setUser}) => {
                         message.error(`Fail to update saved posts: ${res.data.message}`)
                     }
                     else{
-                        setUser({...user, savedPosts: res.data.data})
+                        setUser({...user, savedPosts: res.data.data.savedPosts})
                         message.success("Post unsaved!")
                     }
                 }
@@ -292,6 +299,7 @@ const ProfilePage = ({user, setUser}) => {
 
     const onClickCard = async (post, e) => {
         setSelectedPost(post)
+        console.log(post)
         setSelectedPostUserInfo(post.simplifiedUserInfo)
         setIsProductDetailVisible(true)
     }
@@ -448,7 +456,7 @@ const ProfilePage = ({user, setUser}) => {
                 footer={null}
                 width='70%'
             >
-                <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost._id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={selectedPostUserInfo}/>
+                <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost._id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={currentMenuKey==1?user:selectedPostUserInfo}/>
             
                 <Modal title="Delete Warning" visible={isDeleteModalVisible && isProductDetailVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
                     <p>Are you sure you want to delete this post?</p>

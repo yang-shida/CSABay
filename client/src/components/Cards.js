@@ -54,6 +54,9 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
             const func = async () => {
                 var temp = []
                 var count = posts.length
+                if(posts.length===0){
+                    setPostsWithCoverUrl(temp)
+                }
                 for(const post in posts){
                     const currentPost = posts[post]
                     if(posts[post].pictureKeyArray.length>0){

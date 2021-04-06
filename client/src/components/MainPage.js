@@ -70,7 +70,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                         message.error(`Fail to update saved posts: ${res.data.message}`)
                     }
                     else{
-                        setUser({...user, savedPosts: res.data.data})
+                        setUser({...user, savedPosts: res.data.data.savedPosts})
                         message.success("Post saved!")
                     }
                 }
@@ -95,7 +95,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                         message.error(`Fail to update saved posts: ${res.data.message}`)
                     }
                     else{
-                        setUser({...user, savedPosts: res.data.data})
+                        setUser({...user, savedPosts: res.data.data.savedPosts})
                         message.success("Post unsaved!")
                     }
                 }
@@ -144,7 +144,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                 footer={null}
                 width='70%'
             >
-                <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={isAuthenticated?user.savedPosts.includes(selectedPost.id):false} onClickStar={onClickStar} user={selectedPostUserInfo} routerProps={routerProps} />
+                <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={isAuthenticated?user.savedPosts.includes(selectedPost._id):false} onClickStar={onClickStar} user={selectedPostUserInfo} routerProps={routerProps} />
             </Modal>
             
         </div>

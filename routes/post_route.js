@@ -355,7 +355,7 @@ router.route('/get-post-by-id').get(
         let params = new URLSearchParams(paramsStr)
         const postID = params.get('postID')
         
-        Post.findOne({_id: postID}, null, {sort:{modifiedTimestamp: order=='new'?'desc':'asc'}, skip: Number(startIndex), limit: Number(numberOfPosts)}).exec(
+        Post.findOne({_id: postID}, null, {sort:{modifiedTimestamp:'desc'}}).exec(
             (err, doc) => {
                 if(err){
                     console.log(err)
@@ -369,8 +369,8 @@ router.route('/get-post-by-id').get(
                 if(!doc){
                     return response.json(
                         {
-                            code: 0,
-                            data: []
+                            code: 1,
+                            message: "Post not found"
                         }
                     )
                 }
@@ -400,7 +400,7 @@ router.route('/get-post-by-id').get(
                                             )
                                         }
                                         else{
-                                            postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: doc}]
+                                            postsWithUserInfo = {...currentPost, simplifiedUserInfo: doc}
                                             resolve(postsWithUserInfo)
                                         }
                                     }
