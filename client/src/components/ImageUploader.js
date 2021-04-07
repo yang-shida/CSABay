@@ -86,8 +86,6 @@ const ImageUploader = ({maxNumberOfPictures, pictureKeyArray, setPictureKeyArray
     }
 
     const handleRemove = (file) => {
-        console.log("removing: ", file.uid)
-        console.log(pictureKeyArray[0].substring(pictureKeyArray[0].lastIndexOf('/') + 1))
         setPictureKeyArray(pictureKeyArray.filter(key => key.substring(key.lastIndexOf('/') + 1)!==file.uid))
     }
 

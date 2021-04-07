@@ -94,7 +94,6 @@ const ProfilePage = ({user, setUser}) => {
 
             const getMySavedPosts = async()=>{
                 var temp=[]
-                console.log(user.savedPosts)
                 for(var i=0; i<user.savedPosts.length; i++){
                     const fetchedPost = await fetchPost(user.savedPosts[i])
                     if(fetchedPost==="Post not found"){
@@ -300,7 +299,6 @@ const ProfilePage = ({user, setUser}) => {
 
     const onClickCard = async (post, e) => {
         setSelectedPost(post)
-        console.log(post)
         setSelectedPostUserInfo(post.simplifiedUserInfo)
         setIsProductDetailVisible(true)
     }
@@ -386,7 +384,7 @@ const ProfilePage = ({user, setUser}) => {
                     }
                 }}
                 onCollapse={(collapsed, type) => {
-                    console.log(collapsed, type);
+                    
                 }}
             >
                 <ImgCrop quality={1} modalTitle="Crop Your Profile Picture" modalOK="Confirm">

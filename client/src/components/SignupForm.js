@@ -118,7 +118,6 @@ const SignupForm = () => {
                 }
                 else{
                     message.error("Something went wrong!")
-                    console.log(response.data.message)
                 }
                 
             }

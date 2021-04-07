@@ -22,7 +22,6 @@ router.route("/add-post").post(
         newPost.save()
             .then(
                 (data) => {
-                    console.log(data)
                     return response.json({
                         code: 0
                     })
@@ -76,7 +75,6 @@ router.route('/update-post').put(
                     )
                 }
                 else if(doc.userID != userID){
-                    console.log(doc.userID, userID)
                     return response.json(
                         {
                             code: 1,
@@ -105,7 +103,6 @@ router.route('/update-post').put(
                                 )
                             }
                             else{
-                                console.log(doc)
                                 return response.json(
                                     {
                                         code: 0,
@@ -294,8 +291,6 @@ router.route('/get-post-by-price').get(
                                 var postsWithUserInfo = []
                                 for (const post in doc) {
                                     const currentPost = doc[post]._doc
-                                    console.log(doc[post]._doc)
-                                    // console.log(currentPost)
                                     await User.findOne({_id: currentPost.userID}, {_id: 0, firstName: 1, lastName: 1, profilePictureKey: 1}, null,
                                         (err, doc) => {
                                             if(err){
@@ -331,7 +326,6 @@ router.route('/get-post-by-price').get(
                     addUserInfo()
                         .then(
                             (postsWithUserInfo) => {
-                                // console.log("final array: ", postsWithUserInfo)
                                 return response.json(
                                     {
                                         code: 0,
@@ -410,7 +404,6 @@ router.route('/get-post-by-id').get(
                     addUserInfo()
                         .then(
                             (postsWithUserInfo) => {
-                                console.log(postsWithUserInfo.length)
                                 return response.json(
                                     {
                                         code: 0,

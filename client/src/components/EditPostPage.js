@@ -76,7 +76,6 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                                         }]
                                         count--
                                         if(count===0){
-                                            console.log("arr: ", array)
                                             setFileList(array)
                                         }
                                     }

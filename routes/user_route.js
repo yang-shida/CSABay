@@ -30,7 +30,6 @@ router.route("/add-user").post((request, response)=> {
     u.save()
         .then(
             (data) => {
-                console.log(data)
                 return response.json({
                     code: 0
                 })
@@ -206,7 +205,6 @@ router.route("/update-user-info").put(
     (request, response) => {
         const userID = request.cookies.userid
         const newUser = request.body.newUser
-        console.log(newUser)
         if(!userID){
             return response.json(
                 {
@@ -236,7 +234,6 @@ router.route("/update-user-info").put(
                     )
                 }
                 else{
-                    console.log(doc)
                     return response.json(
                         {
                             code: 0,
@@ -311,7 +308,6 @@ router.route("/change-password").put(
                                 )
                             }
                             else{
-                                console.log(doc)
                                 return response.json(
                                     {
                                         code: 0,
@@ -332,7 +328,6 @@ router.route("/change-password").put(
 router.route("/forgot-password").put(
     (request, response) => {
         const {email, emailVerification, pwd} = request.body
-        console.log(email, emailVerification, pwd)
 
         // get email verification code in DB based on email
 
@@ -359,7 +354,6 @@ router.route("/forgot-password").put(
                     )
                 }
                 else{
-                    console.log(doc)
                     return response.json(
                         {
                             code: 0,

@@ -26,7 +26,6 @@ export const S3_GET = async (key) => {
         .then(
             (res) => {
                 if(res.data.code===1){
-                    console.log(res.data.message)
                     return ''
                 }
                 else{
@@ -119,7 +118,6 @@ export const S3_DELETE = async (file) => {
                 .then(
                     (res) => {
                         if(res.data.code === 1){
-                            console.log(res.data.message)
                             reject(res.data.message)
                         }
                         else{
@@ -144,7 +142,6 @@ export const S3_DELETE_BY_KEY = async (key) => {
                 .then(
                     (res) => {
                         if(res.data.code === 1){
-                            console.log(res.data.message)
                             reject(res.data.message)
                         }
                         else{
@@ -172,7 +169,6 @@ export const S3_GET_SIGNED_POST = (file, dir) => {
                 .then(
                     (res) => {
                         if(res.data.code === 1){
-                            console.log(res.data.message)
                             reject(res.data.message)
                         }
                         else{
@@ -198,7 +194,6 @@ export const S3_GET_OBJECT_TYPE = (key) => {
                 .then(
                     (res) => {
                         if(res.data.code === 1){
-                            console.log(res.data.message)
                             reject(res.data.message)
                         }
                         else{

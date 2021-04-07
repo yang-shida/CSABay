@@ -23,7 +23,6 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                 axios.get(base_ + '/api/get-post-by-time?startIndex=0&numberOfPosts=20&order=new')
                     .then(
                         (res) => {
-                            console.log(res)
                             if(res.data.code===1){
                                 message.error(res.data.message)
                                 if (isSubscribed){

@@ -62,7 +62,6 @@ router.route("/s3-get-signed-post").post(
             ]
         }, (err, signed) => {
             if(err){
-                console.log("Fail to create pre-signed post")
                 console.log(err)
                 return response.json(
                     {
@@ -72,8 +71,6 @@ router.route("/s3-get-signed-post").post(
                 )
             }
             else if(signed){
-                console.log("Created pre-signed post")
-                console.log(signed)
                 return response.json(
                     {
                         code: 0,
