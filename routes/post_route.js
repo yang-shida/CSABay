@@ -2,8 +2,8 @@ const { resolve, reject } = require("bluebird");
 const { response, Router, request } = require("express");
 const express = require("express");
 const router = express.Router();
-const Post = require("../models/post");
-const User = require("../models/user");
+const Post = require("../models/Post");
+const User = require("../models/User");
 
 router.route("/add-post").post(
     (request, response)=> {
