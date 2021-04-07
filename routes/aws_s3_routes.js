@@ -10,7 +10,7 @@ var AWS = require('aws-sdk');
 const { response, request } = require("express");
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User");
+const User = require("../models/user");
 var S3 = new AWS.S3({
     region: config.region,
     accessKeyId: config.accessKeyId,

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User");
+const User = require("../models/user");
 const hidePwdAndID = {pwd: 0, _id: 0}
 
 //post new user

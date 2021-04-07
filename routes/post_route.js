@@ -3,7 +3,7 @@ const { response, Router, request } = require("express");
 const express = require("express");
 const router = express.Router();
 const Post = require("../models/post");
-const User = require("../models/User");
+const User = require("../models/user");
 
 router.route("/add-post").post(
     (request, response)=> {
