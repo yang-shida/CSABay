@@ -5,6 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"nodemon server.js\" \"npm run client\" ",
     "build": "cd client && npm run build",
     "install-client": "cd client && npm install",
     "heroku-postbuild": "npm run install-client && npm run build",
@@ -23,6 +25,7 @@
   "keywords": [],
   "dependencies": {
     "aws-sdk": "^2.879.0",
+    "concurrently": "^6.0.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",

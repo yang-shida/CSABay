@@ -49,7 +49,8 @@ const dividerLayout = {
     },
 }
 
-const base_ = "http://localhost:3001";
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
 

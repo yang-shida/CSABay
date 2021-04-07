@@ -11,7 +11,8 @@ import ImgCrop from 'antd-img-crop'
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY, S3_UPLOAD_SINGLE_FILE} from './S3'
 import axios from 'axios';
 
-const base_ = "http://localhost:3001";
+// const base_ = "http://localhost:3001";
+const base_ = ""
 const { Sider } = Layout;
 
 const profileContainerStyle = {

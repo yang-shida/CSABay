@@ -35,7 +35,8 @@ const tailFormItemLayout = {
     },
 };
 
-const base_ = "http://localhost:3001";
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const LoginPage = ({routerProps, setUserInfo}) => {
     const [form] = Form.useForm();

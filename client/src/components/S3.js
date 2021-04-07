@@ -5,7 +5,8 @@ import AWS from 'aws-sdk';
 import axios from "axios";
 
 export const MAX_CONTENT_LEN = 10485760
-const base_ = "http://localhost:3001";
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const config = {
     bucketName: 'csabayphotos',

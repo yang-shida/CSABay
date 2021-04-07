@@ -42,7 +42,8 @@ const tailFormItemLayout = {
     },
 };
 
-const base_ = "http://localhost:3001";
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const ForgotPasswordPage = () => {
     const [form] = Form.useForm();

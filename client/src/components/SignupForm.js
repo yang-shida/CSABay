@@ -12,7 +12,8 @@ import {
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {PasswordInput} from 'antd-password-input-strength'
 
-const base_ = "http://localhost:3001";
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const formItemLayout = {
     labelCol: {

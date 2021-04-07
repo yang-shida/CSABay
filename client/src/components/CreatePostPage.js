@@ -18,7 +18,8 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import ImageUploader from './ImageUploader'
 import axios from 'axios';
 
-const base_ = "http://localhost:3001";
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const { Option } = Select;
 

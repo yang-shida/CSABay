@@ -6,7 +6,8 @@ import Cards from './Cards'
 
 import ProductDetailPage from './ProductDetailPage'
 
-const base_ = "http://localhost:3001";
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 

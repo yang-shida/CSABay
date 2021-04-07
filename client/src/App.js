@@ -15,7 +15,8 @@ import ProtectedRoute from './auth/ProtectedRoute'
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import axios from 'axios';
 
-const base_ = "http://localhost:3001";
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const App = () => {
 
