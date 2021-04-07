@@ -130,7 +130,9 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                             resolve()
                         }
                     }
-                    
+                    if(count===0){
+                        resolve()
+                    }
                 }
                 catch{
                     reject()

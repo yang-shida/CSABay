@@ -200,8 +200,6 @@ router.route('/get-post-by-time').get(
                         return new Promise(
                             async (resolve, reject) => {
                                 var postsWithUserInfo = []
-                                console.log("------------")
-                                console.log(doc.length)
                                 var count = doc.length;
                                 for(const post of doc) {
                                     const currentPost = post._doc
@@ -242,7 +240,6 @@ router.route('/get-post-by-time').get(
                     addUserInfo()
                         .then(
                             (postsWithUserInfo) => {
-                                console.log(postsWithUserInfo.length)
                                 return response.json(
                                     {
                                         code: 0,

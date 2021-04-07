@@ -5,7 +5,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 var cookieParser = require('cookie-parser')
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 5000
 
 //set up app
 var corsOptions = {
@@ -13,11 +13,11 @@ var corsOptions = {
 	credentials : true
 }
   
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(function (req, res, next) {
-	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000 ');
+	res.setHeader('Access-Control-Allow-Origin', '*');
 	res.setHeader(
 		'Access-Control-Allow-Headers',
 		'Origin, X-Requested-With, Content-Type, Accept'
