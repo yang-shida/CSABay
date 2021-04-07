@@ -41,6 +41,12 @@ app.use("/api", require("./routes/post_route"))
 
 if(process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'))
+	app.use((req, res, next) => {
+		if (req.url.startsWith('/api/')) {
+			return next();
+		}
+		return res.sendFile(path.resolve('build/index.html'));
+	});
 }
 
 app.listen(PORT, function() {
