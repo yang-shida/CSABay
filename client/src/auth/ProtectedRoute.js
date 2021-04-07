@@ -9,9 +9,11 @@ const ProtectedRoute = ({isAuth, render: RenderComponents, ...rest}) => {
             render={
                 props => {
                     if (isAuth) {
+                        console.log("auth")
                         return <RenderComponents {...props} />;
                     } 
                     else {
+                        console.log("not auth")
                         return (
                             <Redirect
                             to={{

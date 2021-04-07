@@ -118,7 +118,7 @@ const App = () => {
           ></Route>
           
           <ProtectedRoute
-            isAuth={setIsAuth}
+            isAuth={isAuth}
             path='/create-post'
             exact render={
               (props)=>(
@@ -131,7 +131,7 @@ const App = () => {
           ></ProtectedRoute>
 
           <ProtectedRoute
-            isAuth={setIsAuth}
+            isAuth={isAuth}
             path='/profile'
             exact render={
               (props)=>(
