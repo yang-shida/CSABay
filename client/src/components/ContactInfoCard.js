@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { Card, Avatar } from 'antd';
 import {S3_GET} from './S3'
+import default_profile_pic from '../img/default_profile_pic.jpg'
 
 const profilePictureStyle = {
     width: '90%',
@@ -54,7 +55,7 @@ const ContactInfoCard = ({user, post, isInfoVisible}) => {
                 </div>
                 {
                     user.profilePictureKey===""?
-                    <Avatar size="default" src={'./default_profile_pic.jpg'} style={profilePictureStyle} />:
+                    <Avatar size="default" src={default_profile_pic} style={profilePictureStyle} />:
                     <Avatar size="default" src={profilePictureURL} style={profilePictureStyle} />
                 }
                 <div style={contactInfoStyle}>

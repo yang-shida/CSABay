@@ -6,7 +6,7 @@ import EditContactInfoPage from './EditContactInfoPage'
 import ProductDetailPage from './ProductDetailPage'
 import EditPostPage from './EditPostPage'
 import ImgCrop from 'antd-img-crop'
-
+import default_profile_pic from '../img/default_profile_pic.jpg'
 
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY, S3_UPLOAD_SINGLE_FILE} from './S3'
 import axios from 'axios';
@@ -392,7 +392,7 @@ const ProfilePage = ({user, setUser}) => {
                         <Tooltip title="Edit Profile Picture" placement="top" >
                             {
                                 user.profilePictureKey===""?
-                                <Avatar size="default" src={'./default_profile_pic.jpg'} style={profilePictureStyle} />:
+                                <Avatar size="default" src={default_profile_pic} style={profilePictureStyle} />:
                                 <Avatar size="default" src={profilePictureURL} style={profilePictureStyle} />
                             }
                             

@@ -4,6 +4,7 @@ import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-de
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
 import auth from '../auth/auth';
 import { CostExplorer } from 'aws-sdk';
+import no_image from '../img/no_image.jpg'
 
 const { Meta } = Card;
 
@@ -136,7 +137,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                             <img
                                                 style={{height: '100%', width: '100%', objectFit: 'cover'}}
                                                 alt="example"
-                                                src={post.pictureKeyArray.length===0?'../no_image.jpg':post.coverUrl}
+                                                src={post.pictureKeyArray.length===0?no_image:post.coverUrl}
                                             />
                                         </div>
                                     }

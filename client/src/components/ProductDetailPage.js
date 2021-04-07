@@ -5,6 +5,7 @@ import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-de
 import ContactInfoCard from './ContactInfoCard'
 
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
+import no_image from '../img/no_image.jpg'
 import auth from '../auth/auth';
 
 // title | actions
@@ -211,7 +212,7 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                                 width="250px"
                                 height="250px"
                                 style={{objectFit: 'contain', padding: '10px'}}
-                                src='../no_image.jpg'
+                                src={no_image}
                             />:
                             pictureUrlArray.map(
                                 (url, index) => (
