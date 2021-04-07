@@ -70,7 +70,7 @@ const ChangePasswordPage = ({user, setUser}) => {
 
         const pwds = {pwd: password, oldPwd: oldPassword}
 
-        axios.put(base_ + '/change-password', pwds)
+        axios.put(base_ + '/api/change-password', pwds)
             .then(
                 (res) => {
                     if(res.data.code===1){

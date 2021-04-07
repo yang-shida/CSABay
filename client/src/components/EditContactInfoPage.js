@@ -65,7 +65,7 @@ const EditContactInfoPage = ({user, setUser}) => {
     const onFinish = async () =>{
         const newUser = {wechatID: wechatID, phoneNum: phoneNum}
 
-        axios.put(base_ + '/update-user-info', {newUser: newUser})
+        axios.put(base_ + '/api/update-user-info', {newUser: newUser})
             .then(
                 (res) => {
                     if(res.data.code===1){

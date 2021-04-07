@@ -169,7 +169,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                         phoneNum: phoneNum
                     }
 
-                    axios.put(base_ + '/update-post', {updatedPost: updatedPost})
+                    axios.put(base_ + '/api/update-post', {updatedPost: updatedPost})
                         .then(
                             (res) => {
                                 if(res.data.code===1){

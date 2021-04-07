@@ -26,7 +26,7 @@ const App = () => {
   useEffect(
     () => {
       if(!auth.isAuthenticated()){
-        axios.get(base_ + '/get-user-info')
+        axios.get(base_ + '/api/get-user-info')
           .then(
             (res) => {
               if(res.data.code===1){

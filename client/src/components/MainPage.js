@@ -20,7 +20,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
         () => {
             let isSubscribed = true
             const getPosts = async()=>{
-                axios.get(base_ + '/get-post-by-time?startIndex=0&numberOfPosts=20&order=new')
+                axios.get(base_ + '/api/get-post-by-time?startIndex=0&numberOfPosts=20&order=new')
                     .then(
                         (res) => {
                             console.log(res)
@@ -64,7 +64,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
     const addSavedPosts = async (postID) => {
         const updatedUser = {savedPosts: [...user.savedPosts, postID]}
 
-        axios.put(base_ + '/update-user-info', {newUser: updatedUser})
+        axios.put(base_ + '/api/update-user-info', {newUser: updatedUser})
             .then(
                 (res) => {
                     if(res.data.code===1){
@@ -89,7 +89,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
         updatedSavedPosts.splice(user.savedPosts.indexOf(postID),1)
         const updatedUser = {savedPosts: updatedSavedPosts}
 
-        axios.put(base_ + '/update-user-info', {newUser: updatedUser})
+        axios.put(base_ + '/api/update-user-info', {newUser: updatedUser})
             .then(
                 (res) => {
                     if(res.data.code===1){

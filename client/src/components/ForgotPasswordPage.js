@@ -62,7 +62,7 @@ const ForgotPasswordPage = () => {
         }
 
         // set body to backend (forget-password)
-        axios.put(base_ + '/forgot-password', body)
+        axios.put(base_ + '/api/forgot-password', body)
             .then(
                 (res) => {
                     if(res.data.code===1){

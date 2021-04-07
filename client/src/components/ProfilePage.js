@@ -126,7 +126,7 @@ const ProfilePage = ({user, setUser}) => {
     )
 
     const fetchMyPosts = async () => {
-        const postsFromServer = await axios.get(base_ + '/get-post-by-user')
+        const postsFromServer = await axios.get(base_ + '/api/get-post-by-user')
             .then(
                 (res) => {
                     if(res.data.code===1){
@@ -151,7 +151,7 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const fetchPost = async (postID) => {
-        const postFromServer = axios.get(base_ + `/get-post-by-id?postID=${postID}`)
+        const postFromServer = axios.get(base_ + `/api/get-post-by-id?postID=${postID}`)
             .then(
                 (res) => {
                     if(res.data.code===1){
@@ -187,7 +187,7 @@ const ProfilePage = ({user, setUser}) => {
     const addSavedPosts = async (postID) => {
         const updatedUser = {savedPosts: [...user.savedPosts, postID]}
 
-        axios.put(base_ + '/update-user-info', {newUser: updatedUser})
+        axios.put(base_ + '/api/update-user-info', {newUser: updatedUser})
             .then(
                 (res) => {
                     if(res.data.code===1){
@@ -212,7 +212,7 @@ const ProfilePage = ({user, setUser}) => {
         updatedSavedPosts.splice(user.savedPosts.indexOf(postID),1)
         const updatedUser = {savedPosts: updatedSavedPosts}
 
-        axios.put(base_ + '/update-user-info', {newUser: updatedUser})
+        axios.put(base_ + '/api/update-user-info', {newUser: updatedUser})
             .then(
                 (res) => {
                     if(res.data.code===1){
@@ -246,7 +246,7 @@ const ProfilePage = ({user, setUser}) => {
         for(const key in postToDelete.pictureKeyArray){
             await S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
         }
-        axios.delete(base_ + `/delete-single-post?postID=${postID}`)
+        axios.delete(base_ + `/api/delete-single-post?postID=${postID}`)
             .then(
                 (res) => {
                     if(res.data.code===1){
@@ -332,7 +332,7 @@ const ProfilePage = ({user, setUser}) => {
                     .then(
                         () => {
                             const newUser = {profilePictureKey: `ProfilePictures/${file.uid}`}
-                            axios.put(base_ + '/update-user-info', {newUser: newUser})
+                            axios.put(base_ + '/api/update-user-info', {newUser: newUser})
                                 .then(
                                     (res) => {
                                         if(res.data.code===1){

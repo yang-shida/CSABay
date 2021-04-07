@@ -35,9 +35,9 @@ mongoose.connect("mongodb+srv://admin:gogators@csacluster.fqmy1.mongodb.net/CSAB
 });
 
 //require routes
-app.use("/", require("./routes/user_route"))
-app.use("/", require("./routes/aws_s3_routes"))
-app.use("/", require("./routes/post_route"))
+app.use("/api", require("./routes/user_route"))
+app.use("/api", require("./routes/aws_s3_routes"))
+app.use("/api", require("./routes/post_route"))
 
 if(process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'))

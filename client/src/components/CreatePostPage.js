@@ -125,7 +125,7 @@ const CreatePostPage = ({user}) => {
                         phoneNum: phoneNum
                     }
 
-                    axios.post(base_ + '/add-post', {newPost: newPost})
+                    axios.post(base_ + '/api/add-post', {newPost: newPost})
                         .then(
                             (res) => {
                                 if(res.data.code===1){

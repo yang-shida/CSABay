@@ -22,7 +22,7 @@ AWS.config.update({
 });
 
 export const S3_GET = async (key) => {
-    const url = await axios.post(base_ + '/s3-get-url', {key: key})
+    const url = await axios.post(base_ + '/api/s3-get-url', {key: key})
         .then(
             (res) => {
                 if(res.data.code===1){
@@ -115,7 +115,7 @@ export const S3_UPLOAD_SINGLE_FILE = (signed, file) => {
 export const S3_DELETE = async (file) => {
     return new Promise(
         (resolve, reject) => {
-            axios.post(base_ + '/s3-delete-by-key', {key: `ProductDetailPhotos/${file.uid}`})
+            axios.post(base_ + '/api/s3-delete-by-key', {key: `ProductDetailPhotos/${file.uid}`})
                 .then(
                     (res) => {
                         if(res.data.code === 1){
@@ -140,7 +140,7 @@ export const S3_DELETE = async (file) => {
 export const S3_DELETE_BY_KEY = async (key) => {
     return new Promise(
         (resolve, reject) => {
-            axios.post(base_ + '/s3-delete-by-key', {key: key})
+            axios.post(base_ + '/api/s3-delete-by-key', {key: key})
                 .then(
                     (res) => {
                         if(res.data.code === 1){
@@ -168,7 +168,7 @@ export const S3_DELETE_BY_KEY = async (key) => {
 export const S3_GET_SIGNED_POST = (file, dir) => {
     return new Promise(
         (resolve, reject) => {
-            axios.post(base_ + '/s3-get-signed-post', {fileUid: file.uid, dir: dir})
+            axios.post(base_ + '/api/s3-get-signed-post', {fileUid: file.uid, dir: dir})
                 .then(
                     (res) => {
                         if(res.data.code === 1){
@@ -194,7 +194,7 @@ export const S3_GET_SIGNED_POST = (file, dir) => {
 export const S3_GET_OBJECT_TYPE = (key) => {
     return new Promise(
         (resolve, reject) => {
-            axios.post(base_ + '/s3-get-object-type', {key: key})
+            axios.post(base_ + '/api/s3-get-object-type', {key: key})
                 .then(
                     (res) => {
                         if(res.data.code === 1){

@@ -49,7 +49,7 @@ const LoginPage = ({routerProps, setUserInfo}) => {
             pwd: pwd
         }
 
-        axios.post(base_ + '/user-login', userInfo)
+        axios.post(base_ + '/api/user-login', userInfo)
             .then(
                 (res) => {
                     if(res.data.code === 1){

@@ -97,7 +97,7 @@ const SignupForm = () => {
             profilePictureKey: ""
         }
 
-        axios.post(base_ + '/add-user', newUser).then((response) => {
+        axios.post(base_ + '/api/add-user', newUser).then((response) => {
             if(response.data.code === 0){
                 message.success("Account created!")
                 setFirstName('')
