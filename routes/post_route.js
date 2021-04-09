@@ -301,34 +301,47 @@ router.route('/get-post-by-price').get(
                                 var postsWithUserInfo = []
                                 for (const post in doc) {
                                     const currentPost = doc[post]._doc
-                                    await User.findOne({_id: currentPost.userID}, {_id: 0, firstName: 1, lastName: 1, profilePictureKey: 1}, null,
-                                        (err, doc) => {
-                                            if(err){
-                                                console.log(err)
-                                                reject(
-                                                    {
-                                                        code: 1,
-                                                        message: "Something went wrong on our end."
+                                    if(request.cookies.userid){
+                                        await User.findOne({_id: currentPost.userID}, {_id: 0, firstName: 1, lastName: 1, profilePictureKey: 1}, null,
+                                            (err, doc) => {
+                                                if(err){
+                                                    console.log(err)
+                                                    reject(
+                                                        {
+                                                            code: 1,
+                                                            message: "Something went wrong on our end."
+                                                        }
+                                                    )
+                                                }
+                                                if(!doc){
+                                                    reject(
+                                                        {
+                                                            code: 1,
+                                                            message: "Poster does not exist!"
+                                                        }
+                                                    )
+                                                }
+                                                else{
+                                                    postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: doc}]
+                                                    count--
+                                                    if(count==0){ 
+                                                        resolve(postsWithUserInfo)
                                                     }
-                                                )
-                                            }
-                                            if(!doc){
-                                                reject(
-                                                    {
-                                                        code: 1,
-                                                        message: "Poster does not exist!"
-                                                    }
-                                                )
-                                            }
-                                            else{
-                                                postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: doc}]
-                                                count--
-                                                if(count==0){ 
-                                                    resolve(postsWithUserInfo)
                                                 }
                                             }
+                                        )
+                                    }
+                                    else{
+                                        currentPost.email = 'Hidden'
+                                        currentPost.phoneNum = 'Hidden'
+                                        currentPost.wechatID = 'Hidden'
+                                        postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: {firstName: 'Hidden', lastName: 'Hidden', profilePictureKey: ''}}]
+                                        count--
+                                        if(count==0){ 
+                                            resolve(postsWithUserInfo)
                                         }
-                                    )
+                                    }
+                                    
                                 }
                                 if(count==0){
                                     resolve(postsWithUserInfo)
