@@ -197,9 +197,9 @@ router.route('/get-post-by-time').get(
                         return new Promise(
                             async (resolve, reject) => {
                                 var postsWithUserInfo = []
-                                var count = doc.length;
-                                for(const post of doc) {
-                                    const currentPost = post._doc
+                                var count = doc.length
+                                for (const post in doc) {
+                                    const currentPost = doc[post]._doc
                                     await User.findOne({_id: currentPost.userID}, {_id: 0, firstName: 1, lastName: 1, profilePictureKey: 1}, null,
                                         (err, doc) => {
                                             if(err){
@@ -222,13 +222,17 @@ router.route('/get-post-by-time').get(
                                             else{
                                                 postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: doc}]
                                                 count--
-                                                if(count == 0){
+                                                if(count==0){
                                                     resolve(postsWithUserInfo)
                                                 }
                                             }
                                         }
                                     )
                                 }
+                                if(count==0){
+                                    resolve(postsWithUserInfo)
+                                }
+                                
                             }
                         )
                         
@@ -243,6 +247,11 @@ router.route('/get-post-by-time').get(
                                         data: postsWithUserInfo
                                     }
                                 )
+                            }
+                        )
+                        .catch(
+                            (err) => {
+                                return response.json(err)
                             }
                         )
                 }
@@ -265,7 +274,7 @@ router.route('/get-post-by-price').get(
         const order = params.get('order')
         const typeOfPost = params.get('typeOfPost')
         
-        Post.find(typeOfPost?{typeOfPost: typeOfPost}:{}, null, {sort:{modifiedTimestamp: order=='high'?'desc':'asc'}, skip: Number(startIndex), limit: Number(numberOfPosts)}).exec(
+        Post.find(typeOfPost?{typeOfPost: typeOfPost}:{}, null, {sort:{price: order=='high'?'desc':'asc', modifiedTimestamp: 'desc'}, skip: Number(startIndex), limit: Number(numberOfPosts)}).exec(
             (err, doc) => {
                 if(err){
                     console.log(err)
@@ -288,6 +297,7 @@ router.route('/get-post-by-price').get(
                     const addUserInfo = () => {
                         return new Promise(
                             async (resolve, reject) => {
+                                var count = doc.length
                                 var postsWithUserInfo = []
                                 for (const post in doc) {
                                     const currentPost = doc[post]._doc
@@ -312,12 +322,18 @@ router.route('/get-post-by-price').get(
                                             }
                                             else{
                                                 postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: doc}]
+                                                count--
+                                                if(count==0){ 
+                                                    resolve(postsWithUserInfo)
+                                                }
                                             }
                                         }
                                     )
                                 }
+                                if(count==0){
+                                    resolve(postsWithUserInfo)
+                                }
                                 
-                                resolve(postsWithUserInfo)
                             }
                         )
                         
@@ -332,6 +348,11 @@ router.route('/get-post-by-price').get(
                                         data: postsWithUserInfo
                                     }
                                 )
+                            }
+                        )
+                        .catch(
+                            (err) => {
+                                return response.json(err)
                             }
                         )
                 }

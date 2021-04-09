@@ -387,7 +387,7 @@ const ProfilePage = ({user, setUser}) => {
                     
                 }}
             >
-                <ImgCrop quality={1} modalTitle="Crop Your Profile Picture" modalOK="Confirm">
+                <ImgCrop quality={0.4} modalTitle="Crop Your Profile Picture" modalOK="Confirm">
                     <Upload customRequest={handleProfilePictureUpload} beforeUpload={handleProfilePictureBeforeUpload} fileList={[]}>
                         <Tooltip title="Edit Profile Picture" placement="top" >
                             {
