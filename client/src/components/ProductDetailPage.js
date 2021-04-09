@@ -210,7 +210,7 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                             cancelText="No"
                         >
                             <Button style={{width: '100%', height: '100%', borderColor: 'transparent'}}>
-                                <ContactInfoCard user={user} post={post} isInfoVisible={true}/>
+                                <ContactInfoCard user={user} post={post} isInfoVisible={false}/>
                             </Button>
                         </Popconfirm>
                     }

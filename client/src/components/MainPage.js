@@ -223,7 +223,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
         setSortState(value)
         message.loading({content: "Loading posts", key: "updatable", duration: 0})
         setDisableFilterSorter(true)
-        axios.get(base_ + `/api/${value.includes('time')?'get-post-by-time':'get-post-by-price'}?${typeFilter=='All'?'':`typeOfPost=${value}&`}startIndex=0&numberOfPosts=100&order=${value.substr(value.lastIndexOf('-')+1)}`)
+        axios.get(base_ + `/api/${value.includes('time')?'get-post-by-time':'get-post-by-price'}?${typeFilter=='All'?'':`typeOfPost=${typeFilter}&`}startIndex=0&numberOfPosts=100&order=${value.substr(value.lastIndexOf('-')+1)}`)
             .then(
                 (res) => {
                     console.log(res)
