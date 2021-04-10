@@ -27,8 +27,9 @@ const App = () => {
   useEffect(
     () => {
       setIsBusy(true)
-      message.loading({content: "Authenticating...", key: "authMessage", duration: 0})
+      
       if(!auth.isAuthenticated()){
+        message.loading({content: "Authenticating...", key: "authMessage", duration: 0})
         axios.get(base_ + '/api/get-user-info')
           .then(
             (res) => {
@@ -63,7 +64,6 @@ const App = () => {
       else{
         setIsAuth(true)
         setIsBusy(false)
-        message.success({content: "Logged in!", key: "authMessage"})
       }
     }, [userInfo]
   )

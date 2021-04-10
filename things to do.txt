@@ -20,6 +20,4 @@ backend:
 
 frontend:
  - integrate email verification
- - hide contact info when not logged in
- - main page filter/sort UI
  - page main page (Pagination)
