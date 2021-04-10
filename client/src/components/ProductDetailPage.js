@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Divider, Row, Col, Image, Popconfirm } from 'antd';
+import { Divider, Row, Col, Image, Popconfirm, Button } from 'antd';
 import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-design/icons';
 
 import ContactInfoCard from './ContactInfoCard'
@@ -139,6 +139,7 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                 setPictureUrlArray([])
             }
             else{
+                setPictureUrlArray([])
                 for(const key in post.pictureKeyArray){
                     const currentKey = post.pictureKeyArray[key]
                     await S3_GET(currentKey).then(
@@ -199,7 +200,20 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
 
             <Row gutter='16'>
                 <Col {...contactInfoLayout}>
-                    <ContactInfoCard user={user} post={post} isInfoVisible={true}/>
+                    {
+                        isAuth?
+                        <ContactInfoCard user={user} post={post} isInfoVisible={true}/>:
+                        <Popconfirm
+                            title="You need to login to see the contact info. Do you want to login?"
+                            onConfirm={onConfirmToLogin}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button style={{width: '100%', height: '100%', borderColor: 'transparent'}}>
+                                <ContactInfoCard user={user} post={post} isInfoVisible={false}/>
+                            </Button>
+                        </Popconfirm>
+                    }
                 </Col>
                 <Col {...pictureWallLayout}>
                     <div style={headingTextStyle}>

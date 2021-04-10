@@ -196,39 +196,56 @@ router.route('/get-post-by-time').get(
                     const addUserInfo = () => {
                         return new Promise(
                             async (resolve, reject) => {
+                                var count = doc.length
                                 var postsWithUserInfo = []
-                                var count = doc.length;
-                                for(const post of doc) {
-                                    const currentPost = post._doc
-                                    await User.findOne({_id: currentPost.userID}, {_id: 0, firstName: 1, lastName: 1, profilePictureKey: 1}, null,
-                                        (err, doc) => {
-                                            if(err){
-                                                console.log(err)
-                                                reject(
-                                                    {
-                                                        code: 1,
-                                                        message: "Something went wrong on our end."
+                                for (const post in doc) {
+                                    const currentPost = doc[post]._doc
+                                    if(request.cookies.userid){
+                                        await User.findOne({_id: currentPost.userID}, {_id: 0, firstName: 1, lastName: 1, profilePictureKey: 1}, null,
+                                            (err, doc) => {
+                                                if(err){
+                                                    console.log(err)
+                                                    reject(
+                                                        {
+                                                            code: 1,
+                                                            message: "Something went wrong on our end."
+                                                        }
+                                                    )
+                                                }
+                                                if(!doc){
+                                                    reject(
+                                                        {
+                                                            code: 1,
+                                                            message: "Poster does not exist!"
+                                                        }
+                                                    )
+                                                }
+                                                else{
+                                                    postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: doc}]
+                                                    count--
+                                                    if(count==0){ 
+                                                        resolve(postsWithUserInfo)
                                                     }
-                                                )
-                                            }
-                                            if(!doc){
-                                                reject(
-                                                    {
-                                                        code: 1,
-                                                        message: "Poster does not exist!"
-                                                    }
-                                                )
-                                            }
-                                            else{
-                                                postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: doc}]
-                                                count--
-                                                if(count == 0){
-                                                    resolve(postsWithUserInfo)
                                                 }
                                             }
+                                        )
+                                    }
+                                    else{
+                                        currentPost.email = 'Hidden'
+                                        currentPost.phoneNum = 'Hidden'
+                                        currentPost.wechatID = 'Hidden'
+                                        postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: {firstName: 'Hidden', lastName: 'Hidden', profilePictureKey: ''}}]
+                                        count--
+                                        if(count==0){ 
+                                            resolve(postsWithUserInfo)
                                         }
-                                    )
+                                    }
+                                    
                                 }
+                                if(count==0){
+                                    resolve(postsWithUserInfo)
+                                }
+                                
                             }
                         )
                         
@@ -243,6 +260,11 @@ router.route('/get-post-by-time').get(
                                         data: postsWithUserInfo
                                     }
                                 )
+                            }
+                        )
+                        .catch(
+                            (err) => {
+                                return response.json(err)
                             }
                         )
                 }
@@ -265,7 +287,7 @@ router.route('/get-post-by-price').get(
         const order = params.get('order')
         const typeOfPost = params.get('typeOfPost')
         
-        Post.find(typeOfPost?{typeOfPost: typeOfPost}:{}, null, {sort:{modifiedTimestamp: order=='high'?'desc':'asc'}, skip: Number(startIndex), limit: Number(numberOfPosts)}).exec(
+        Post.find(typeOfPost?{typeOfPost: typeOfPost}:{}, null, {sort:{price: order=='high'?'desc':'asc', modifiedTimestamp: 'desc'}, skip: Number(startIndex), limit: Number(numberOfPosts)}).exec(
             (err, doc) => {
                 if(err){
                     console.log(err)
@@ -288,36 +310,56 @@ router.route('/get-post-by-price').get(
                     const addUserInfo = () => {
                         return new Promise(
                             async (resolve, reject) => {
+                                var count = doc.length
                                 var postsWithUserInfo = []
                                 for (const post in doc) {
                                     const currentPost = doc[post]._doc
-                                    await User.findOne({_id: currentPost.userID}, {_id: 0, firstName: 1, lastName: 1, profilePictureKey: 1}, null,
-                                        (err, doc) => {
-                                            if(err){
-                                                console.log(err)
-                                                reject(
-                                                    {
-                                                        code: 1,
-                                                        message: "Something went wrong on our end."
+                                    if(request.cookies.userid){
+                                        await User.findOne({_id: currentPost.userID}, {_id: 0, firstName: 1, lastName: 1, profilePictureKey: 1}, null,
+                                            (err, doc) => {
+                                                if(err){
+                                                    console.log(err)
+                                                    reject(
+                                                        {
+                                                            code: 1,
+                                                            message: "Something went wrong on our end."
+                                                        }
+                                                    )
+                                                }
+                                                if(!doc){
+                                                    reject(
+                                                        {
+                                                            code: 1,
+                                                            message: "Poster does not exist!"
+                                                        }
+                                                    )
+                                                }
+                                                else{
+                                                    postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: doc}]
+                                                    count--
+                                                    if(count==0){ 
+                                                        resolve(postsWithUserInfo)
                                                     }
-                                                )
+                                                }
                                             }
-                                            if(!doc){
-                                                reject(
-                                                    {
-                                                        code: 1,
-                                                        message: "Poster does not exist!"
-                                                    }
-                                                )
-                                            }
-                                            else{
-                                                postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: doc}]
-                                            }
+                                        )
+                                    }
+                                    else{
+                                        currentPost.email = 'Hidden'
+                                        currentPost.phoneNum = 'Hidden'
+                                        currentPost.wechatID = 'Hidden'
+                                        postsWithUserInfo = [...postsWithUserInfo, {...currentPost, simplifiedUserInfo: {firstName: 'Hidden', lastName: 'Hidden', profilePictureKey: ''}}]
+                                        count--
+                                        if(count==0){ 
+                                            resolve(postsWithUserInfo)
                                         }
-                                    )
+                                    }
+                                    
+                                }
+                                if(count==0){
+                                    resolve(postsWithUserInfo)
                                 }
                                 
-                                resolve(postsWithUserInfo)
                             }
                         )
                         
@@ -332,6 +374,11 @@ router.route('/get-post-by-price').get(
                                         data: postsWithUserInfo
                                     }
                                 )
+                            }
+                        )
+                        .catch(
+                            (err) => {
+                                return response.json(err)
                             }
                         )
                 }

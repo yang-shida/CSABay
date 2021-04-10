@@ -19,11 +19,7 @@ backend:
 
 
 frontend:
- - update password checking
  - integrate email verification
-   - block getcode button if no email entered
-   - cannot get code after 60s
  - hide contact info when not logged in
  - main page filter/sort UI
  - page main page (Pagination)
- - post time x days ago

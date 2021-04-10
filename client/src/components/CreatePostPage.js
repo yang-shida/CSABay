@@ -108,7 +108,7 @@ const CreatePostPage = ({user}) => {
 
     const onFinish = async () => {
 
-        message.loading({content: "Uploading Pictures", key: "updatable"})
+        message.loading({content: "Uploading Pictures", key: "uploadPicMessage", duration: 0})
         await uploadAllPictures()
             .then(
                 async () => {
@@ -129,7 +129,7 @@ const CreatePostPage = ({user}) => {
                         .then(
                             (res) => {
                                 if(res.data.code===1){
-                                    message.error({content: `Fail to create post: ${res.data.message}`, key: "updatable", duration: 2})
+                                    message.error({content: `Fail to create post: ${res.data.message}`, key: "uploadPicMessage", duration: 2})
                                 }
                                 else{
                                     setTitle('')
@@ -146,14 +146,14 @@ const CreatePostPage = ({user}) => {
                             
                                     form.resetFields();
 
-                                    message.success({content: "Post Created!", key: "updatable", duration: 2})
+                                    message.success({content: "Post Created!", key: "uploadPicMessage", duration: 2})
                                 }
                             }
                         )
                         .catch(
                             (err) => {
                                 console.log(err)
-                                message.error({content: "Fail to create post", key: "updatable", duration: 2})
+                                message.error({content: "Fail to create post", key: "uploadPicMessage", duration: 2})
                             }
                         )
             
@@ -162,7 +162,7 @@ const CreatePostPage = ({user}) => {
             )
             .catch(
                 () => {
-                    message.error({content: "Fail to upload pictures", key: "updatable", duration: 2})
+                    message.error({content: "Fail to upload pictures", key: "uploadPicMessage", duration: 2})
                 }
             )
 
