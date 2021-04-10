@@ -133,7 +133,19 @@ const ProfilePage = ({user, setUser}) => {
                         return []
                     }
                     else{
-                        return res.data.data
+                        var tempPosts = res.data.data
+                        var count = tempPosts.length
+                        for(var i = 0; i < tempPosts.length; i++) {
+                            tempPosts[i] = {...tempPosts[i], simplifiedUserInfo: {firstName: user.firstName, lastName: user.lastName, profilePictureKey: user.profilePictureKey}}
+                            count--
+                            if(count==0){
+                                return tempPosts
+                            }
+                        }
+                        if(count==0){
+                            return tempPosts
+                        }
+                        
                     }
                 }
             )
@@ -455,7 +467,7 @@ const ProfilePage = ({user, setUser}) => {
                 footer={null}
                 width='70%'
             >
-                <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost._id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={currentMenuKey==1?user:selectedPostUserInfo}/>
+                <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost._id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={currentMenuKey==1?user:selectedPostUserInfo} isAuth={true} />
             
                 <Modal title="Delete Warning" visible={isDeleteModalVisible && isProductDetailVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
                     <p>Are you sure you want to delete this post?</p>
