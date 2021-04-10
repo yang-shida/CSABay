@@ -74,7 +74,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
         () => {
             let isSubscribed = true
             const getPosts = async()=>{
-                message.loading({content: "Loading posts", key: "updatable", duration: 0})
+                message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
                 axios.get(base_ + '/api/get-post-by-time?startIndex=0&numberOfPosts=100&order=new')
                     .then(
                         (res) => {
@@ -82,13 +82,13 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                                 message.error(res.data.message)
                                 if (isSubscribed){
                                     setPosts([])
-                                    message.error({content: 'Fail to load posts', key: "updatable", duration: 2})
+                                    message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
                                 }
                             }
                             else{
                                 if (isSubscribed){
                                     setPosts(res.data.data)
-                                    message.success({content: 'Posts loaded', key: "updatable", duration: 2})
+                                    message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
                                 }
                             }
                             
@@ -100,7 +100,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                             if (isSubscribed){
                                 setPosts([])
                             }
-                            message.error({content: 'Fail to load posts', key: "updatable", duration: 2})
+                            message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
                         }
                     )
                 
@@ -188,7 +188,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 
     const handleTypeChange = (value) => {
         setTypeFilter(value)
-        message.loading({content: "Loading posts", key: "updatable", duration: 0})
+        message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
         setDisableFilterSorter(true)
         axios.get(base_ + `/api/${sortState.includes('time')?'get-post-by-time':'get-post-by-price'}?${value=='All'?'':`typeOfPost=${value}&`}startIndex=0&numberOfPosts=100&order=${sortState.substr(sortState.lastIndexOf('-')+1)}`)
             .then(
@@ -197,12 +197,12 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                     if(res.data.code===1){
                         message.error(res.data.message)
                         setPosts([])
-                        message.error({content: 'Fail to load posts', key: "updatable", duration: 2})
+                        message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
                         setDisableFilterSorter(false)
                     }
                     else{
                         setPosts(res.data.data)
-                        message.success({content: 'Posts loaded', key: "updatable", duration: 2})
+                        message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
                         setDisableFilterSorter(false)
                     }
                     
@@ -212,7 +212,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                 (err) => {
                     console.log(err)
                     setPosts([])
-                    message.error({content: 'Fail to load posts', key: "updatable", duration: 2})
+                    message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
                     setDisableFilterSorter(false)
                 }
             )
@@ -221,7 +221,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 
     const handleSorterChange = (value) => {
         setSortState(value)
-        message.loading({content: "Loading posts", key: "updatable", duration: 0})
+        message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
         setDisableFilterSorter(true)
         axios.get(base_ + `/api/${value.includes('time')?'get-post-by-time':'get-post-by-price'}?${typeFilter=='All'?'':`typeOfPost=${typeFilter}&`}startIndex=0&numberOfPosts=100&order=${value.substr(value.lastIndexOf('-')+1)}`)
             .then(
@@ -230,12 +230,12 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                     if(res.data.code===1){
                         message.error(res.data.message)
                         setPosts([])
-                        message.error({content: 'Fail to load posts', key: "updatable", duration: 2})
+                        message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
                         setDisableFilterSorter(false)
                     }
                     else{
                         setPosts(res.data.data)
-                        message.success({content: 'Posts loaded', key: "updatable", duration: 2})
+                        message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
                         setDisableFilterSorter(false)
                     }
                     
@@ -245,7 +245,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                 (err) => {
                     console.log(err)
                     setPosts([])
-                    message.error({content: 'Fail to load posts', key: "updatable", duration: 2})
+                    message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
                     setDisableFilterSorter(false)
                 }
             )

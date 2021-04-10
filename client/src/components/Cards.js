@@ -164,7 +164,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                             {`\$${post.price}`}
                                         </div>
                                         <div style={locationStyle}>
-                                            {'Gainesville, FL 32607'}
+                                            {post.zipcode===''?'N/A':post.zipcode}
                                         </div>
                                     </div>
                                     <div style={{clear: 'both'}}></div>

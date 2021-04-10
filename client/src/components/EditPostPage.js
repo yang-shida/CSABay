@@ -152,7 +152,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
     }
 
     const onFinish = async () => {
-        message.loading({content: "Uploading Pictures", key: "updatable"})
+        message.loading({content: "Uploading Pictures", key: "uploadPicMessage", duration: 0})
         await uploadAllPictures()
             .then(
                 async () => {
@@ -174,24 +174,24 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                         .then(
                             (res) => {
                                 if(res.data.code===1){
-                                    message.error({content: res.data.message, key: "updatable", duration: 2})
+                                    message.error({content: res.data.message, key: "uploadPicMessage", duration: 2})
                                 }
                                 else{
-                                    message.success({content: "Post updated!", key: "updatable", duration: 2})
+                                    message.success({content: "Post updated!", key: "uploadPicMessage", duration: 2})
                                 }
                             }
                         )
                         .catch(
                             (err) => {
                                 console.log(err)
-                                message.error({content: "Fail to update post", key: "updatable", duration: 2})
+                                message.error({content: "Fail to update post", key: "uploadPicMessage", duration: 2})
                             }
                         )
                 }
             )
             .catch(
                 () => {
-                    message.error({content: "Fail to update pictures", key: "updatable", duration: 2})
+                    message.error({content: "Fail to update pictures", key: "uploadPicMessage", duration: 2})
                 }
             )
         
