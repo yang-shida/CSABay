@@ -4,7 +4,7 @@ const User = require("../models/User");
 const hidePwdAndID = {pwd: 0, _id: 0}
 const randomString = require("randomString");
 const bodyParser = require("body-parser");
-const exphbs = require("express-handlebars");
+// const exphbs = require("express-handlebars");
 
 //post new user
 router.route("/add-user").post((request, response)=> {

@@ -140,3 +140,5 @@ router.route("/resend").post(
             }
         )
 });
+
+module.exports = router;
