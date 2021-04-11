@@ -2,19 +2,29 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const hidePwdAndID = {pwd: 0, _id: 0}
+const randomString = require("randomString");
+const bodyParser = require("body-parser");
+const exphbs = require("express-handlebars");
 
 //post new user
 router.route("/add-user").post((request, response)=> {
+    //Generate Verification Code
+    const secretToken = randomString.generate(5); //Code of Length 5
+
     const pwd = request.body.pwd;
     const firstName = request.body.firstName;
     const lastName = request.body.lastName;
     const email = request.body.email;
-    const emailVerification = request.body.emailVerification;
     const wechatID = request.body.wechatID;
     const phoneNum = request.body.phoneNum;
     const profilePictureKey = request.body.profilePictureKey;
 
+
+
+    const emailVerification = request.body.emailVerification;
     // TODO: check if email verification code match, delete after verifying
+
+
 
     const u = new User({
         firstName: firstName,
@@ -24,6 +34,7 @@ router.route("/add-user").post((request, response)=> {
         pwd: pwd,
         phoneNum: phoneNum,
         profilePictureKey: profilePictureKey,
+        isVerified: true,
         savedPosts: []
     })
 
