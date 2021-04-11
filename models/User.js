@@ -13,7 +13,7 @@ const userSchema = {
     pwd: { type:String, required: true },
     phoneNum: { type:String },
     savedPosts: [mongoose.ObjectId],
-    profilePictureKey: { type:String }
+    profilePictureKey: { type:String },
 }
 
 const User = mongoose.model("user", userSchema);
