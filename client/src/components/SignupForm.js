@@ -154,7 +154,27 @@ const SignupForm = () => {
     const onClickGetCode = () => {
         // request code from backend
         // if backend receives the request
+        const token = {
+            email: email.toLowerCase()
+        }
         setIsGetCodeButtonWaiting(true)
+        //axios.post(base_ + '/api/resend', token).then((response) => {
+        //    if(response.data.code === 0){
+        //        message.success("Email Was Sent!")
+        //    }
+        //    else {
+        //        if(typeof(response.data.message)==="string"){
+        //            message.error(response.data.message)
+        //        }
+        //        else{
+        //            message.error("Something went wrong 1!")
+        //        }
+        //        
+        //    }
+        //}, (error)=> {
+        //    message.error("Something went wrong 2!")
+        //    console.log(error)
+        //});
         setDelay(1000)
     }
 
