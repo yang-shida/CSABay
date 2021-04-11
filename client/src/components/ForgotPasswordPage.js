@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Form,
     Input,
@@ -42,6 +42,27 @@ const tailFormItemLayout = {
     },
 };
 
+// https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+function useInterval(callback, delay) {
+    const savedCallback = useRef();
+
+    // Remember the latest callback.
+    useEffect(() => {
+        savedCallback.current = callback;
+    }, [callback]);
+
+    // Set up the interval.
+    useEffect(() => {
+        function tick() {
+            savedCallback.current();
+        }
+        if (delay !== null) {
+            let id = setInterval(tick, delay);
+            return () => clearInterval(id);
+        }
+    }, [delay]);
+}
+
 // const base_ = "http://localhost:3001";
 const base_ = ""
 
@@ -52,6 +73,38 @@ const ForgotPasswordPage = () => {
     const [emailVerification, setEmailVerification] = useState('')
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
+
+    const GET_CODE_WAITING = 60
+    const [isGetCodeButtonWaiting, setIsGetCodeButtonWaiting] = useState(false)
+    const [getCodeButtonWaitingTime, setGetCodeButtonWaitingTime] = useState(GET_CODE_WAITING)
+    const [delay, setDelay] = useState(null)
+
+    const emailValidator = (rule, value) => {
+		if (!value || /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.[a-zA-Z]{2,4}$/.test(value)) {
+			return Promise.resolve();
+		}
+		return Promise.reject('Please enter a valid email address!');
+	}
+
+    useInterval(
+        () => {
+            if(getCodeButtonWaitingTime>=1){
+                setGetCodeButtonWaitingTime(getCodeButtonWaitingTime-1)
+            }
+            else{
+                setGetCodeButtonWaitingTime(GET_CODE_WAITING)
+                setIsGetCodeButtonWaiting(false)
+                setDelay(null)
+            }
+        }, delay
+    )
+
+    const onClickGetCode = () => {
+        // request code from backend
+        // if backend receives the request
+        setIsGetCodeButtonWaiting(true)
+        setDelay(1000)
+    }
 
     const onFinish = async () =>{
 
@@ -100,12 +153,11 @@ const ForgotPasswordPage = () => {
             >
 
                 <Form.Item
-                    name = "email"
-                    label = "E-mail"
-                    rules = {[
+                    name="email"
+                    label="E-mail"
+                    rules={[
                         {
-                            type: 'email',
-                            message: 'Please input a valid E-mail'
+                            validator: emailValidator
                         },
                         {
                             required: true,
@@ -113,10 +165,10 @@ const ForgotPasswordPage = () => {
                         },
                     ]}
                 >
-                    <Input value = {email} onChange = {(e) => setEmail(e.target.value)}/>
+                    <Input value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </Form.Item>
 
-                <Form.Item label="* Email Verification Code" >
+                <Form.Item label="* Email Verification Code">
                     <Row gutter={6}>
                         <Col span={20}>
                             <Form.Item
@@ -133,8 +185,18 @@ const ForgotPasswordPage = () => {
                             </Form.Item>
                         </Col>
                         <Col span={4}>
-                            <Button>    
-                                Get Code
+                            <Button 
+                                disabled={
+                                    !(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.[a-zA-Z]{2,4}$/.test(form.getFieldValue('email'))) || isGetCodeButtonWaiting
+                                }
+                                onClick={onClickGetCode}
+                            >    
+                                {
+                                    isGetCodeButtonWaiting?
+                                    `${getCodeButtonWaitingTime} s`:
+                                    "Get Code"
+                                }
+                                
                             </Button>
                         </Col>
                     </Row>

@@ -79,7 +79,7 @@ const SignupForm = () => {
     const [confirm, setConfirm] = useState('')
     const [phoneNum, setPhoneNum] = useState('')
 
-    const GET_CODE_WAITING = 30
+    const GET_CODE_WAITING = 60
     const [isGetCodeButtonWaiting, setIsGetCodeButtonWaiting] = useState(false)
     const [getCodeButtonWaitingTime, setGetCodeButtonWaitingTime] = useState(GET_CODE_WAITING)
     const [delay, setDelay] = useState(null)
