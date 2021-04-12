@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const Token = require("../models/Token");
 const hidePwdAndID = {pwd: 0, _id: 0}
 const randomString = require("randomString");
 const bodyParser = require("body-parser");
@@ -18,14 +19,52 @@ router.route("/add-user").post((request, response)=> {
     const wechatID = request.body.wechatID;
     const phoneNum = request.body.phoneNum;
     const profilePictureKey = request.body.profilePictureKey;
-
-
-
     const emailVerification = request.body.emailVerification;
-    // TODO: check if email verification code match, delete after verifying
 
+    let success = false;
+    //check the db for a matching token
+    Token.findOne({email: email}).exec(
+       (err, token) => {
+           if(err){
+               console.log(err)
+               return response.json(
+                   {
+                       code: 1,
+                       message: "Something went wrong on our end."
+                   }
+               )
+           }
+           if(!token){
+               return response.json(
+                   {
+                       code: 1,
+                       message: "Please request a verification code for this email!"
+                   }
+               )
+           }
+           else{
+               console.log("checkpoint 1");
+               //code is there
+               if(Token.findOne({
+                   verificationCodes: 
+                   {
+                           code:emailVerification
+                   }            
+                   })) {
+                   Token.findOneAndUpdate({email:email}, {hasBeenVerified:true}, {returnOriginal:false} )
+                   success = true;
+                   console.log(success);
+               }
+               //code is not there
+               else {
+                   success = false; //wrong verification
+               }
+           }
+       }
+    )
 
-
+console.log(success);
+if(success){
     const u = new User({
         firstName: firstName,
         lastName: lastName,
@@ -64,7 +103,13 @@ router.route("/add-user").post((request, response)=> {
                 
             }
         )
-
+        }
+        else {
+            return response.json({
+                code: 1,
+                message: "Invalid Email Verification."
+            })
+        }
     
 })
 

@@ -3,6 +3,8 @@ const router = express.Router();
 const Token = require("../models/Token");
 const User = require("../models/User");
 const randomString = require("randomstring");
+const mailer = require("../client/misc/mailer");
+
 
 router.route("/confirmation").put( 
     (request, response)=> {
@@ -46,11 +48,10 @@ router.route("/confirmation").put(
 });
 
 router.route("/resend").post(
-    (req, res)=> {
+    (request, response)=> {
         const email = request.body.email;
         const newCode = randomString.generate(5);
-        console.log("made it to req");
-        
+
         //if the email isn't there, create a new obj.
         Token.findOne({email: email}).exec(
             (err, token) => {
@@ -77,6 +78,7 @@ router.route("/resend").post(
                     .then(
                         (data) => {
                             //send through mailer
+                            mailer.sendCC(newCode, email);
                             return response.json({
                                 code: 0
                             })
@@ -103,39 +105,29 @@ router.route("/resend").post(
                 }
                 else{ 
                     //find the token and add a new code
-                    Token.findOneAndUpdate({email:email}, {$push: {verificationCodes: [{code: randomString.generate(5)}]}}, {returnOriginal:false});
-                    return response.json(
+                    Token.updateOne({email:email}, {
+                        $push: {
+                            verificationCodes: {
+                                code: newCode
+                            }
+                        }
+                    })
+                    .then((data)=>{
+                        mailer.sendCC(newCode, email);
+                        return response.json(
                         {
                             code: 0,
                             message: "An email has been sent to your account."
                         }
-                    )
-                    .then(
-                        (data) => {
-                            //send through mailer
-                            return response.json({
-                                code: 0
-                            })
-                        }
-                    )
-                    .catch(
-                        (err) => {
-                            console.log(err)
-                            if(err.code === 11000){
-                                return response.json({
-                                    code: 1,
-                                    message: "Email already exists!"
-                                })
+                    )})
+                    .catch((err)=> {
+                        return response.json(
+                            {
+                                code: 1,
+                                message: "Something went wrong."
                             }
-                            else{
-                                return response.json({
-                                    code: 1,
-                                    message: err 
-                                })
-                            }
-
-                        }
-                    )
+                        )
+                    });
                 }
             }
         )

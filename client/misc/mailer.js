@@ -34,4 +34,6 @@ async function sendConfirmationCode(_code, _email) {
   // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 
-sendConfirmationCode().catch(console.error);
+module.exports.sendCC = function(_code, _email) {
+  sendConfirmationCode(_code, _email).catch(console.error);
+}
