@@ -466,7 +466,7 @@ const ProfilePage = ({user, setUser}) => {
                 visible={isProductDetailVisible}
                 onCancel={onCloseProductDetail}
                 footer={null}
-                width='70%'
+                width={window.innerWidth>=600?"70%":"100%"}
             >
                 <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost._id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={currentMenuKey==1?user:selectedPostUserInfo} isAuth={true} />
             

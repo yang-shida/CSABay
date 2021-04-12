@@ -71,6 +71,8 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
     const [typeFilter, setTypeFilter] = useState('All')
     const [sortState, setSortState] = useState('time-new')
 
+    // const [productDetailWidth, setProductDetailWidth] = useState(`${window.innerWidth>=992?"70%":"100%"}`)
+
     useEffect(
         () => {
             let isSubscribed = true
@@ -313,10 +315,11 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                 visible={isProductDetailVisible}
                 onCancel={onCloseProductDetail}
                 footer={null}
-                width='70%'
+                width={window.innerWidth>=600?"70%":"100%"}
             >
                 <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={isAuthenticated?user.savedPosts.includes(selectedPost._id):false} onClickStar={onClickStar} user={selectedPostUserInfo} routerProps={routerProps} isAuth={isAuthenticated} />
             </Modal>
+            
             
         </div>
     )
