@@ -4,6 +4,72 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
+const schedule = require('node-schedule');
+var AWS = require('aws-sdk');
+
+const durationDaysChecker = schedule.scheduleJob('0 53 12 * * *', function(){
+    const config = {
+        bucketName: process.env.AWS_S3_BUCKET_NAME,
+        region: process.env.AWS_S3_REGION,
+        accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+    }
+    var S3 = new AWS.S3({
+        region: config.region,
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey
+    })
+    const threeDaysInMSeconds = 3 * 24 * 3600 * 1000;
+    const timeNow = Date.now()
+    console.log("Running post cleanup: ", new Date(timeNow).toLocaleDateString("en-US"))
+    Post.find({}).exec(
+        (err, allPosts) => {
+            if(err){
+                console.log(err)
+            }
+            if(!allPosts){
+                console.log("DurationDays Checker: No post")
+            }
+            else{
+                for(const post of allPosts){
+                    const endTime = post.durationDays * 24 * 3600 * 1000 + Date.parse(post.modifiedTimestamp)
+                    const timeDiff = endTime - timeNow
+                    if(timeDiff > threeDaysInMSeconds){
+                        // more than 3 days, do nothing
+                    }
+                    else if(timeDiff > 0){
+                        // within 3 days, send email
+                    }
+                    else{
+                        // expired, delete post
+                        console.log(" - Deleting post: ", post.title)
+                        const pictureKeyArray = post.pictureKeyArray
+                        Post.deleteOne({_id: post._id}).exec(
+                            (err, doc) => {
+                                if(err){
+                                    console.log(err)
+                                }
+                                else{
+                                    for(const pictureKey of pictureKeyArray){
+                                        var params = {
+                                            Bucket: config.bucketName, 
+                                            Key: pictureKey
+                                        };
+                                        S3.deleteObject(params, function(err, data) {
+                                            if (err) {
+                                                console.log(err)
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    )
+  });
 
 router.route("/add-post").post(
     (request, response)=> {
@@ -501,7 +567,7 @@ router.route('/delete-single-post').delete(
                         )
                     }
                     else{
-                        Post.remove({_id: postID}).exec(
+                        Post.deleteOne({_id: postID}).exec(
                             (err, doc) => {
                                 if(err){
                                     console.log(err)

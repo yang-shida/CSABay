@@ -67,7 +67,7 @@ const CreatePostPage = ({user}) => {
 
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
-    const [durationDays, setDurationDays] = useState('')
+    const [durationDays, setDurationDays] = useState(30)
     const [typeOfPost, setTypeOfPost] = useState('')
 
     const [zipcode, setZipcode] = useState('')
@@ -101,7 +101,9 @@ const CreatePostPage = ({user}) => {
                         reject()
                     }
                 }
-                // resolve()
+                if(count===0){
+                    resolve()
+                }
             }
         )
     }

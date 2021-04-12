@@ -166,11 +166,11 @@ const ProfilePage = ({user, setUser}) => {
             .then(
                 (res) => {
                     if(res.data.code===1){
-                        message.error(res.data.message)
                         if(res.data.message=="Post not found"){
                             return "Post not found"
                         }
                         else{
+                            message.error(res.data.message)
                             return {}
                         }
                         
@@ -182,7 +182,6 @@ const ProfilePage = ({user, setUser}) => {
             )
             .catch(
                 (err) => {
-                    message.error('Fail to fetch the post.')
                     console.log(err)
                     return {}
                 }
