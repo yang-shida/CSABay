@@ -65,7 +65,7 @@ const App = () => {
         setIsAuth(true)
         setIsBusy(false)
       }
-    }, [userInfo]
+    }, [isAuth]
   )
 
   if(isBusy){
@@ -86,14 +86,14 @@ const App = () => {
                 isAuth?
                 ((props)=>(
                   <>
-                    {userInfo===undefined?"":<NavBar isAuthenticated={true} user={userInfo} currentRoute={"home"} routerProps={props} setUserInfo={setUserInfo}/>}
+                    {userInfo===undefined?"":<NavBar isAuthenticated={true} setIsAuth={setIsAuth} user={userInfo} currentRoute={"home"} routerProps={props} setUserInfo={setUserInfo}/>}
                     {userInfo===undefined?"":<MainPage isAuthenticated={true} user={userInfo} setUser={setUserInfo}></MainPage>}
                   </>
                 ))
                 :
                 ((props)=>(
                   <>
-                    <NavBar isAuthenticated={false} currentRoute={"home"} routerProps={props} setUserInfo={setUserInfo}/>
+                    <NavBar isAuthenticated={false} setIsAuth={setIsAuth} currentRoute={"home"} routerProps={props} setUserInfo={setUserInfo}/>
                     <MainPage isAuthenticated={false} setUser={setUserInfo} routerProps={props}></MainPage>
                   </>
                 ))
@@ -105,8 +105,8 @@ const App = () => {
               exact render={
                 (props)=>(
                   <>
-                    <NavBar isAuthenticated={false} currentRoute={"login"} routerProps={props} setUserInfo={setUserInfo}/>
-                    <LoginPage routerProps={props} setUserInfo={setUserInfo} />
+                    <NavBar isAuthenticated={false} setIsAuth={setIsAuth} currentRoute={"login"} routerProps={props} setUserInfo={setUserInfo}/>
+                    <LoginPage routerProps={props} setUserInfo={setUserInfo} setIsAuth={setIsAuth} />
                   </>
                 )
               }
@@ -117,7 +117,7 @@ const App = () => {
               exact render={
                 (props)=>(
                   <>
-                    <NavBar isAuthenticated={false} currentRoute={"forgot-password"} routerProps={props} setUserInfo={setUserInfo}/>
+                    <NavBar isAuthenticated={false} setIsAuth={setIsAuth} currentRoute={"forgot-password"} routerProps={props} setUserInfo={setUserInfo}/>
                     <ForgotPasswordPage routerProps={props} />
                   </>
                 )
@@ -129,7 +129,7 @@ const App = () => {
               exact render={
                 (props)=>(
                   <>
-                    <NavBar isAuthenticated={false} currentRoute={"register"} routerProps={props} setUserInfo={setUserInfo}/>
+                    <NavBar isAuthenticated={false} setIsAuth={setIsAuth} currentRoute={"register"} routerProps={props} setUserInfo={setUserInfo}/>
                     <SignupForm></SignupForm>
                   </>
                 )
@@ -142,7 +142,7 @@ const App = () => {
               exact render={
                 (props)=>(
                   <>
-                    {userInfo===undefined?"":<NavBar isAuthenticated={true} user={userInfo} currentRoute={"create-post"} routerProps={props} setUserInfo={setUserInfo}/>}
+                    {userInfo===undefined?"":<NavBar isAuthenticated={true} setIsAuth={setIsAuth} user={userInfo} currentRoute={"create-post"} routerProps={props} setUserInfo={setUserInfo}/>}
                     {userInfo===undefined?"":<CreatePostPage user={userInfo}/>}
                   </>
                 )
@@ -155,7 +155,7 @@ const App = () => {
               exact render={
                 (props)=>(
                   <>
-                    {userInfo===undefined?"":<NavBar isAuthenticated={true} user={userInfo} currentRoute={"profile"} routerProps={props} setUserInfo={setUserInfo}/>}
+                    {userInfo===undefined?"":<NavBar isAuthenticated={true} setIsAuth={setIsAuth} user={userInfo} currentRoute={"profile"} routerProps={props} setUserInfo={setUserInfo}/>}
                     {userInfo===undefined?"":<ProfilePage user={userInfo} setUser={setUserInfo}/>}
                     
                   </>

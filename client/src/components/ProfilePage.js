@@ -59,6 +59,7 @@ const defaultMenuKey = 1
 
 const ProfilePage = ({user, setUser}) => {
     const [myPosts, setMyPosts] = useState([])
+    const [localUser, setLocalUser] = useState(user)
     const [mySavedPosts, setMySavedPosts] = useState([])
     const [currentMenuKey, setCurrentMenuKey] = useState(defaultMenuKey)
 
@@ -92,6 +93,13 @@ const ProfilePage = ({user, setUser}) => {
 
             getMyPosts()
 
+            
+
+        }, [isEditPostVisible]
+    )
+
+    useEffect(
+        () => {
             const getMySavedPosts = async()=>{
                 var temp=[]
                 for(var i=0; i<user.savedPosts.length; i++){
@@ -107,8 +115,7 @@ const ProfilePage = ({user, setUser}) => {
             }
             
             getMySavedPosts()
-
-        }, [isEditPostVisible]
+        }, []
     )
 
     useEffect(
@@ -121,6 +128,7 @@ const ProfilePage = ({user, setUser}) => {
                         }
                     )
             }
+            setLocalUser(user)
         }, [user]
     )
 
@@ -195,7 +203,7 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const addSavedPosts = async (postID) => {
-        const updatedUser = {savedPosts: [...user.savedPosts, postID]}
+        const updatedUser = {savedPosts: [...localUser.savedPosts, postID]}
 
         axios.put(base_ + '/api/update-user-info', {newUser: updatedUser})
             .then(
@@ -204,7 +212,8 @@ const ProfilePage = ({user, setUser}) => {
                         message.error(`Fail to update saved posts: ${res.data.message}`)
                     }
                     else{
-                        setUser({...user, savedPosts: res.data.data.savedPosts})
+                        setLocalUser({...localUser, savedPosts: res.data.data.savedPosts})
+                        // setMySavedPosts(res.data.data.savedPosts)
                         message.success("Post saved!")
                     }
                 }
@@ -218,8 +227,8 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const deleteSavedPosts = async (postID) => {
-        var updatedSavedPosts = user.savedPosts
-        updatedSavedPosts.splice(user.savedPosts.indexOf(postID),1)
+        var updatedSavedPosts = localUser.savedPosts
+        updatedSavedPosts.splice(localUser.savedPosts.indexOf(postID),1)
         const updatedUser = {savedPosts: updatedSavedPosts}
 
         axios.put(base_ + '/api/update-user-info', {newUser: updatedUser})
@@ -229,7 +238,8 @@ const ProfilePage = ({user, setUser}) => {
                         message.error(`Fail to update saved posts: ${res.data.message}`)
                     }
                     else{
-                        setUser({...user, savedPosts: res.data.data.savedPosts})
+                        setLocalUser({...localUser, savedPosts: res.data.data.savedPosts})
+                        // setMySavedPosts(res.data.data.savedPosts)
                         message.success("Post unsaved!")
                     }
                 }
@@ -243,7 +253,7 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const onClickStar = (postID) => {
-        if(user.savedPosts.includes(postID)){
+        if(localUser.savedPosts.includes(postID)){
             deleteSavedPosts(postID)
         }
         else{
@@ -454,7 +464,7 @@ const ProfilePage = ({user, setUser}) => {
                     currentMenuKey==1?
                     <Cards posts={myPosts} displayMyPost={true} onClickDelete={onClickDelete} onClickEdit={onClickEdit} onClickCard={onClickCard}></Cards>:
                     currentMenuKey==2?
-                    <Cards posts={mySavedPosts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}  onClickCard={onClickCard} isAuth={true}></Cards>:
+                    <Cards posts={mySavedPosts} displayMyPost={false} favoriteIDs={localUser.savedPosts} onClickStar={onClickStar}  onClickCard={onClickCard} isAuth={true}></Cards>:
                     currentMenuKey==3?
                     <ChangePasswordPage user={user} setUser={setUser}/>:
                     <EditContactInfoPage user={user} setUser={setUser} />

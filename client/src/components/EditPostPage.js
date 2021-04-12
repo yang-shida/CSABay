@@ -93,6 +93,10 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                         }
                     )
             }
+            if(count===0){
+                message.success({content: "Pictures loaded", key: "loadPicMessage"})
+                setFileList(array)
+            }
             
         },[]
     )
