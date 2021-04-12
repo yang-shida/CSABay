@@ -183,6 +183,7 @@ const CreatePostPage = ({user}) => {
                 name="createPost"
                 onFinish={onFinish}
                 initialValues={{
+                    "duration": 30,
                     "email": user.email,
                     "wechat-id": user.wechatID,
                     "phone": user.phoneNum,
@@ -243,9 +244,9 @@ const CreatePostPage = ({user}) => {
                         [
                             {
                                 type: 'number', 
-                                min: 1, 
+                                min: 7, 
                                 max: 30, 
-                                message: 'Duration needs to be a number between 1 and 30!'
+                                message: 'Duration needs to be a number between 7 and 30!'
                             },
                             {
                                 required: true,

@@ -254,16 +254,16 @@ const ProfilePage = ({user, setUser}) => {
 
     const deletePost = async (postID) => {
         const postToDelete = await fetchPost(postID)
-        for(const key in postToDelete.pictureKeyArray){
-            await S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
-        }
         axios.delete(base_ + `/api/delete-single-post?postID=${postID}`)
             .then(
-                (res) => {
+                async (res) => {
                     if(res.data.code===1){
                         message.err(res.data.message)
                     }
                     else{
+                        for(const key in postToDelete.pictureKeyArray){
+                            await S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
+                        }
                         setMyPosts(myPosts.filter((post) => post._id !== postID))
                     }
                 }

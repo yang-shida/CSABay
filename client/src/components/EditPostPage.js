@@ -58,6 +58,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
 
     useEffect(
         async () => {
+            message.loading({content: "Loading Pictures", key: "loadPicMessage", duration: 0})
             var array = []
             var count = post.pictureKeyArray.length
             for(const key in post.pictureKeyArray){
@@ -76,6 +77,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                                         }]
                                         count--
                                         if(count===0){
+                                            message.success({content: "Pictures loaded", key: "loadPicMessage"})
                                             setFileList(array)
                                         }
                                     }
@@ -85,6 +87,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                     )
                     .catch(
                         (err) => {
+                            message.error({content: "Fail to load pictures", key: "loadPicMessage"})
                             console.log(err)
                             setFileList(array)
                         }
@@ -295,9 +298,9 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                             [
                                 {
                                     type: 'number', 
-                                    min: 1, 
+                                    min: 7, 
                                     max: 30, 
-                                    message: 'Duration needs to be a number between 1 and 30!'
+                                    message: 'Duration needs to be a number between 7 and 30!'
                                 },
                                 {
                                     required: true,
