@@ -3,22 +3,25 @@ const { response, Router, request } = require("express");
 const express = require("express");
 const router = express.Router();
 const Post = require("../models/Post");
+const DeletedPost = require("../models/DeletedPost");
 const User = require("../models/User");
 const schedule = require('node-schedule');
 var AWS = require('aws-sdk');
 
-const durationDaysChecker = schedule.scheduleJob('0 53 12 * * *', function(){
-    const config = {
-        bucketName: process.env.AWS_S3_BUCKET_NAME,
-        region: process.env.AWS_S3_REGION,
-        accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
-    }
-    var S3 = new AWS.S3({
-        region: config.region,
-        accessKeyId: config.accessKeyId,
-        secretAccessKey: config.secretAccessKey
-    })
+const config = {
+    bucketName: process.env.AWS_S3_BUCKET_NAME,
+    region: process.env.AWS_S3_REGION,
+    accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+}
+var S3 = new AWS.S3({
+    region: config.region,
+    accessKeyId: config.accessKeyId,
+    secretAccessKey: config.secretAccessKey
+})
+
+const durationDaysChecker = schedule.scheduleJob('0 0 0 * * *', function(){
+    
     const threeDaysInMSeconds = 3 * 24 * 3600 * 1000;
     const timeNow = Date.now()
     console.log("Running post cleanup: ", new Date(timeNow).toLocaleDateString("en-US"))
@@ -44,26 +47,55 @@ const durationDaysChecker = schedule.scheduleJob('0 53 12 * * *', function(){
                         // expired, delete post
                         console.log(" - Deleting post: ", post.title)
                         const pictureKeyArray = post.pictureKeyArray
-                        Post.deleteOne({_id: post._id}).exec(
-                            (err, doc) => {
-                                if(err){
-                                    console.log(err)
-                                }
-                                else{
-                                    for(const pictureKey of pictureKeyArray){
-                                        var params = {
-                                            Bucket: config.bucketName, 
-                                            Key: pictureKey
-                                        };
-                                        S3.deleteObject(params, function(err, data) {
-                                            if (err) {
+                        const newDeletedPost = new DeletedPost({
+                            _id: post._id,
+                            userID: post.userID,
+                            title: post.title,
+                            description: post.description,
+                            durationDays: post.durationDays,
+                            typeOfPost: post.typeOfPost,
+                            zipcode: post.zipcode,
+                            price: post.price,
+                            pictureKeyArray: post.pictureKeyArray,
+                            email: post.email,
+                            wechatID: post.wechatID,
+                            phoneNum: post.phoneNum,
+                            createdTimestamp: post.createdTimestamp,
+                            modifiedTimestamp: post.modifiedTimestamp,
+                            deleteTimestamp: Date.now()
+                        })
+                        newDeletedPost.save()
+                            .then(
+                                () => {
+                                    Post.deleteOne({_id: post._id}).exec(
+                                        (err, doc) => {
+                                            if(err){
                                                 console.log(err)
                                             }
-                                        });
-                                    }
+                                            else{
+                                                // Do this only if you really want to permanately delete the post since it removes all pictures associated with this post in AWS S3
+                                                // for(const pictureKey of pictureKeyArray){
+                                                //     var params = {
+                                                //         Bucket: config.bucketName, 
+                                                //         Key: pictureKey
+                                                //     };
+                                                //     S3.deleteObject(params, function(err, data) {
+                                                //         if (err) {
+                                                //             console.log(err)
+                                                //         }
+                                                //     });
+                                                // }
+                                            }
+                                        }
+                                    )
                                 }
-                            }
-                        )
+                            )
+                            .catch(
+                                (err) => {
+                                    console.log(err)
+                                }
+                            )
+                        
                     }
                 }
             }
@@ -567,27 +599,73 @@ router.route('/delete-single-post').delete(
                         )
                     }
                     else{
-                        Post.deleteOne({_id: postID}).exec(
-                            (err, doc) => {
-                                if(err){
+                        const pictureKeyArray = doc.pictureKeyArray
+                        const newDeletedPost = new DeletedPost({
+                            _id: doc._id,
+                            userID: doc.userID,
+                            title: doc.title,
+                            description: doc.description,
+                            durationDays: doc.durationDays,
+                            typeOfPost: doc.typeOfPost,
+                            zipcode: doc.zipcode,
+                            price: doc.price,
+                            pictureKeyArray: doc.pictureKeyArray,
+                            email: doc.email,
+                            wechatID: doc.wechatID,
+                            phoneNum: doc.phoneNum,
+                            createdTimestamp: doc.createdTimestamp,
+                            modifiedTimestamp: doc.modifiedTimestamp,
+                            deleteTimestamp: Date.now()
+                        })
+                        newDeletedPost.save()
+                            .then(
+                                () => {
+                                    Post.deleteOne({_id: postID}).exec(
+                                        (err, doc) => {
+                                            if(err){
+                                                console.log(err)
+                                                return response.json(
+                                                    {
+                                                        code: 1,
+                                                        message: "Something went wrong on our end."
+                                                    }
+                                                )
+                                            }
+                                            else{
+                                                // Do this only if you really want to permanately delete the post since it removes all pictures associated with this post in AWS S3
+                                                // for(const pictureKey of pictureKeyArray){
+                                                //     var params = {
+                                                //         Bucket: config.bucketName, 
+                                                //         Key: pictureKey
+                                                //     };
+                                                //     S3.deleteObject(params, function(err, data) {
+                                                //         if (err) {
+                                                //             console.log(err)
+                                                //         }
+                                                //     });
+                                                // }
+                                                return response.json(
+                                                    {
+                                                        code: 0,
+                                                        message: "Post deleted"
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+                            )
+                            .catch(
+                                (err) => {
                                     console.log(err)
                                     return response.json(
                                         {
                                             code: 1,
-                                            message: "Something went wrong on our end."
+                                            message: "Fail to delete post"
                                         }
                                     )
                                 }
-                                else{
-                                    return response.json(
-                                        {
-                                            code: 0,
-                                            message: "Post deleted"
-                                        }
-                                    )
-                                }
-                            }
-                        )
+                            )
                     }
                 }
             }

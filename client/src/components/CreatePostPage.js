@@ -136,10 +136,10 @@ const CreatePostPage = ({user}) => {
                                 else{
                                     setTitle('')
                                     setDescription('')
-                                    setDurationDays('')
+                                    setDurationDays(30)
                                     setTypeOfPost('')
                                     setZipcode('')
-                                    setPrice('')
+                                    setPrice(0)
                                     setPictureKeyArray([])
                                     setFileList([])
                                     setEmail(user.email)
