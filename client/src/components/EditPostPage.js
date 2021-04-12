@@ -143,8 +143,9 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
     const deleteAllOldPictures = () => {
         return new Promise(
             async (resolve, reject) => {
-                for(const key in originalPictureKeyArray){
-                    await S3_DELETE_BY_KEY(originalPictureKeyArray[key])
+                const deletedPictureKeys = originalPictureKeyArray.filter(key => !pictureKeyArray.includes(key))
+                for(const key in deletedPictureKeys){
+                    await S3_DELETE_BY_KEY(deletedPictureKeys[key])
                 }
                 resolve()
             }
@@ -156,37 +157,43 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
         await uploadAllPictures()
             .then(
                 async () => {
-                    const updatedPost = {
-                        ...post,
-                        title: title,
-                        description: description,
-                        durationDays: durationDays,
-                        typeOfPost: typeOfPost,
-                        zipcode: zipcode,
-                        price: price,
-                        pictureKeyArray: pictureKeyArray,
-                        email: email.toLowerCase(),
-                        wechatID: wechatID.toLowerCase(),
-                        phoneNum: phoneNum
-                    }
-
-                    axios.put(base_ + '/api/update-post', {updatedPost: updatedPost})
+                    await deleteAllOldPictures()
                         .then(
-                            (res) => {
-                                if(res.data.code===1){
-                                    message.error({content: res.data.message, key: "uploadPicMessage", duration: 2})
+                            async () => {
+                                const updatedPost = {
+                                    ...post,
+                                    title: title,
+                                    description: description,
+                                    durationDays: durationDays,
+                                    typeOfPost: typeOfPost,
+                                    zipcode: zipcode,
+                                    price: price,
+                                    pictureKeyArray: pictureKeyArray,
+                                    email: email.toLowerCase(),
+                                    wechatID: wechatID.toLowerCase(),
+                                    phoneNum: phoneNum
                                 }
-                                else{
-                                    message.success({content: "Post updated!", key: "uploadPicMessage", duration: 2})
-                                }
+            
+                                axios.put(base_ + '/api/update-post', {updatedPost: updatedPost})
+                                    .then(
+                                        (res) => {
+                                            if(res.data.code===1){
+                                                message.error({content: res.data.message, key: "uploadPicMessage", duration: 2})
+                                            }
+                                            else{
+                                                message.success({content: "Post updated!", key: "uploadPicMessage", duration: 2})
+                                            }
+                                        }
+                                    )
+                                    .catch(
+                                        (err) => {
+                                            console.log(err)
+                                            message.error({content: "Fail to update post", key: "uploadPicMessage", duration: 2})
+                                        }
+                                    )
                             }
                         )
-                        .catch(
-                            (err) => {
-                                console.log(err)
-                                message.error({content: "Fail to update post", key: "uploadPicMessage", duration: 2})
-                            }
-                        )
+                    
                 }
             )
             .catch(

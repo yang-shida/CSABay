@@ -340,16 +340,17 @@ const ProfilePage = ({user, setUser}) => {
             (signed) => {
                 S3_UPLOAD_SINGLE_FILE(signed, file)
                     .then(
-                        () => {
+                        () => {   
                             const newUser = {profilePictureKey: `ProfilePictures/${file.uid}`}
                             axios.put(base_ + '/api/update-user-info', {newUser: newUser})
                                 .then(
-                                    (res) => {
+                                    async (res) => {
                                         if(res.data.code===1){
                                             message.error(`Fail to update profile picture: ${res.data.message}`)
                                         }
                                         else{
                                             message.success("Profile picture updated!")
+                                            await S3_DELETE_BY_KEY(user.profilePictureKey)
                                             const data = res.data.data
                                             setUser({...user, profilePictureKey: data.profilePictureKey})
                                         }
