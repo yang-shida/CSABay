@@ -67,7 +67,7 @@ const CreatePostPage = ({user}) => {
 
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
-    const [durationDays, setDurationDays] = useState('')
+    const [durationDays, setDurationDays] = useState(30)
     const [typeOfPost, setTypeOfPost] = useState('')
 
     const [zipcode, setZipcode] = useState('')
@@ -101,7 +101,9 @@ const CreatePostPage = ({user}) => {
                         reject()
                     }
                 }
-                // resolve()
+                if(count===0){
+                    resolve()
+                }
             }
         )
     }
@@ -134,10 +136,10 @@ const CreatePostPage = ({user}) => {
                                 else{
                                     setTitle('')
                                     setDescription('')
-                                    setDurationDays('')
+                                    setDurationDays(30)
                                     setTypeOfPost('')
                                     setZipcode('')
-                                    setPrice('')
+                                    setPrice(0)
                                     setPictureKeyArray([])
                                     setFileList([])
                                     setEmail(user.email)
@@ -183,6 +185,7 @@ const CreatePostPage = ({user}) => {
                 name="createPost"
                 onFinish={onFinish}
                 initialValues={{
+                    "duration": 30,
                     "email": user.email,
                     "wechat-id": user.wechatID,
                     "phone": user.phoneNum,
@@ -243,9 +246,9 @@ const CreatePostPage = ({user}) => {
                         [
                             {
                                 type: 'number', 
-                                min: 1, 
+                                min: 7, 
                                 max: 30, 
-                                message: 'Duration needs to be a number between 1 and 30!'
+                                message: 'Duration needs to be a number between 7 and 30!'
                             },
                             {
                                 required: true,

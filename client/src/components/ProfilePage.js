@@ -166,11 +166,11 @@ const ProfilePage = ({user, setUser}) => {
             .then(
                 (res) => {
                     if(res.data.code===1){
-                        message.error(res.data.message)
                         if(res.data.message=="Post not found"){
                             return "Post not found"
                         }
                         else{
+                            message.error(res.data.message)
                             return {}
                         }
                         
@@ -182,7 +182,6 @@ const ProfilePage = ({user, setUser}) => {
             )
             .catch(
                 (err) => {
-                    message.error('Fail to fetch the post.')
                     console.log(err)
                     return {}
                 }
@@ -253,17 +252,18 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const deletePost = async (postID) => {
-        const postToDelete = await fetchPost(postID)
-        for(const key in postToDelete.pictureKeyArray){
-            await S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
-        }
+        // const postToDelete = await fetchPost(postID)
         axios.delete(base_ + `/api/delete-single-post?postID=${postID}`)
             .then(
-                (res) => {
+                async (res) => {
                     if(res.data.code===1){
                         message.err(res.data.message)
                     }
                     else{
+                        // for(const key in postToDelete.pictureKeyArray){
+                        //     await S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
+                        // }
+                        message.success(res.data.message)
                         setMyPosts(myPosts.filter((post) => post._id !== postID))
                     }
                 }
@@ -340,16 +340,17 @@ const ProfilePage = ({user, setUser}) => {
             (signed) => {
                 S3_UPLOAD_SINGLE_FILE(signed, file)
                     .then(
-                        () => {
+                        () => {   
                             const newUser = {profilePictureKey: `ProfilePictures/${file.uid}`}
                             axios.put(base_ + '/api/update-user-info', {newUser: newUser})
                                 .then(
-                                    (res) => {
+                                    async (res) => {
                                         if(res.data.code===1){
                                             message.error(`Fail to update profile picture: ${res.data.message}`)
                                         }
                                         else{
                                             message.success("Profile picture updated!")
+                                            await S3_DELETE_BY_KEY(user.profilePictureKey)
                                             const data = res.data.data
                                             setUser({...user, profilePictureKey: data.profilePictureKey})
                                         }

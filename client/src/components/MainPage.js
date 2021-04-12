@@ -1,5 +1,6 @@
-import { message, Modal, Select, Row, Col, Divider } from 'antd';
+import { message, Modal, Select, Row, Col, Divider, Empty, Button } from 'antd';
 import { useEffect, useState } from 'react';
+import {Link} from 'react-router-dom'
 import axios from 'axios';
 
 import Cards from './Cards'
@@ -289,7 +290,21 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 
             {
                 posts.length===0?
-                'There is no post now. Create the first one!':
+                <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={
+                    <span>
+                        There is no post now. {isAuthenticated?'Create the first one!':'Login to create the first one!'}
+                    </span>
+                    }
+                >
+                    {
+                        isAuthenticated?
+                        <Link to="/create-post"><Button type="primary">Create New Post</Button></Link>:
+                        <Link to="/login"><Button type="primary">Goto Login</Button></Link>
+                    }
+                    
+                </Empty>:
                 <Cards posts={posts} displayMyPost={false} favoriteIDs={isAuthenticated?user.savedPosts:[]} onClickStar={onClickStar} onClickCard={onClickCard} routerProps={routerProps} isAuth={isAuthenticated}></Cards>
             }
 
