@@ -138,6 +138,9 @@ export const S3_DELETE = async (file) => {
 export const S3_DELETE_BY_KEY = async (key) => {
     return new Promise(
         (resolve, reject) => {
+            if(key==""){
+                resolve()
+            }
             axios.post(base_ + '/api/s3-delete-by-key', {key: key})
                 .then(
                     (res) => {
