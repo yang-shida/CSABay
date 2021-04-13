@@ -38,6 +38,7 @@ mongoose.connect(process.env.MONGODB_KEY, {
 
 //require routes
 app.use("/api", require("./routes/user_route"))
+app.use("/api", require("./routes/token_routes"))
 app.use("/api", require("./routes/aws_s3_routes"))
 app.use("/api", require("./routes/post_route"))
 
@@ -54,3 +55,5 @@ if(process.env.NODE_ENV === 'production') {
 app.listen(PORT, function() {
     console.log("express server works. Port: ", PORT);
 })
+
+app.post('',)
