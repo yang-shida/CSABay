@@ -1,51 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Token = require("../models/Token");
-const User = require("../models/User");
 const randomString = require("randomstring");
 const mailer = require("../client/misc/mailer");
 
-
-router.route("/confirmation").put( 
-    (request, response)=> {
-        const email = request.body.email;
-        const cod = request.body.emailVerification;
-
-        //check the db for a matching token
-        Token.findOne({email: email}).exec(
-            (err, token) => {
-                if(err){
-                    console.log(err)
-                    return response.json(
-                        {
-                            code: 1,
-                            message: "Something went wrong on our end."
-                        }
-                    )
-                }
-                if(!token){
-                    return response.json(
-                        {
-                            code: 1,
-                            message: "Please request a verification code for this email!"
-                        }
-                    )
-                }
-                else{
-                    //code is there
-                    if(Token.findOne({verificationCodes: [{code:cod}]})) {
-                        Token.findOneAndUpdate({email:email}, {hasBeenVerified:true}, {returnOriginal:false} )
-                        return response.json({code: 0, message: "Verification Successful!"});
-
-                    }
-                    //code is not there
-                    else {
-                        return response.json({code: 1, message: "Invalid Verification Code."});
-                    }
-                }
-            }
-        )
-});
 
 router.route("/resend").post(
     (request, response)=> {

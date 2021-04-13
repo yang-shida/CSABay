@@ -96,7 +96,7 @@ const SignupForm = () => {
             phoneNum: phoneNum,
             profilePictureKey: ""
         }
-
+        
         axios.post(base_ + '/api/add-user', newUser).then((response) => {
             if(response.data.code === 0){
                 message.success("Account created!")

@@ -17,7 +17,6 @@ const tokenSchema = {
             }
        }
    ],
-   hasBeenVerified: {type: Boolean}
 }
 
 const Token = mongoose.model("token", tokenSchema);

@@ -3,15 +3,12 @@ const router = express.Router();
 const User = require("../models/User");
 const Token = require("../models/Token");
 const hidePwdAndID = {pwd: 0, _id: 0}
-const randomString = require("randomString");
 const bodyParser = require("body-parser");
 // const exphbs = require("express-handlebars");
 
 //post new user
 router.route("/add-user").post((request, response)=> {
     //Generate Verification Code
-    const secretToken = randomString.generate(5); //Code of Length 5
-
     const pwd = request.body.pwd;
     const firstName = request.body.firstName;
     const lastName = request.body.lastName;
@@ -43,73 +40,68 @@ router.route("/add-user").post((request, response)=> {
                )
            }
            else{
-               console.log("checkpoint 1");
                //code is there
+               //error with expiration -- whole token expires
+               //error with findOne -- should you cross-find with emmail too? -- go through oject
                if(Token.findOne({
                    verificationCodes: 
                    {
-                           code:emailVerification
+                        code:emailVerification
                    }            
                    })) {
-                   Token.findOneAndUpdate({email:email}, {hasBeenVerified:true}, {returnOriginal:false} )
-                   success = true;
-                   console.log(success);
-               }
+                   Token.findOneAndUpdate({email:email}, {$set:{verificationCodes:[]}}, {returnOriginal:false} )
+                    const u = new User({
+                         firstName: firstName,
+                         lastName: lastName,
+                         email: email,
+                         wechatID: wechatID,
+                         pwd: pwd,
+                         phoneNum: phoneNum,
+                         profilePictureKey: profilePictureKey,
+                         isVerified: true,
+                         savedPosts: []
+                     })
+                     u.save()
+                         .then(
+                             (data) => {
+                                 return response.json({
+                                     code: 0
+                                 })
+                             }
+                         )
+                         .catch(
+                             (err) => {
+                                 console.log(err)
+                                 if(err.code === 11000){
+                                     return response.json({
+                                         code: 1,
+                                         message: "Email already exists!"
+                                     })
+                                 }
+                                 else{
+                                     return response.json({
+                                         code: 1,
+                                         message: err // TODO: research for different error types and replace message with meaningful string that describes the error
+                                     })
+                                 }
+
+                             }
+                         )
+                    }
                //code is not there
                else {
-                   success = false; //wrong verification
+                return response.json(
+                    {
+                        code: 1,
+                        message: "Incorrect email verification code, please try again."
+                    }
+                )
                }
            }
        }
     )
 
-console.log(success);
-if(success){
-    const u = new User({
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        wechatID: wechatID,
-        pwd: pwd,
-        phoneNum: phoneNum,
-        profilePictureKey: profilePictureKey,
-        isVerified: true,
-        savedPosts: []
-    })
-
-    u.save()
-        .then(
-            (data) => {
-                return response.json({
-                    code: 0
-                })
-            }
-        )
-        .catch(
-            (err) => {
-                console.log(err)
-                if(err.code === 11000){
-                    return response.json({
-                        code: 1,
-                        message: "Email already exists!"
-                    })
-                }
-                else{
-                    return response.json({
-                        code: 1,
-                        message: err // TODO: research for different error types and replace message with meaningful string that describes the error
-                    })
-                }
-                
-            }
-        )
-        }
-        else {
-            return response.json({
-                code: 1,
-                message: "Invalid Email Verification."
-            })
-        }
+        
     
 })
 
