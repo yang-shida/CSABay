@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Token = require("../models/Token");
 const randomString = require("randomstring");
-const mailer = require("../client/misc/mailer");
+const mailer = require("../misc/mailer");
 
 
 router.route("/resend").post(
@@ -28,7 +28,8 @@ router.route("/resend").post(
                         email:email, 
                         verificationCodes: [
                             {
-                                code: newCode
+                                code: newCode,
+                                createdTimestamp: Date.now()
                             }
                         ]
                     })
@@ -66,7 +67,8 @@ router.route("/resend").post(
                     Token.updateOne({email:email}, {
                         $push: {
                             verificationCodes: {
-                                code: newCode
+                                code: newCode,
+                                createdTimestamp: Date.now()
                             }
                         }
                     })

@@ -18,87 +18,90 @@ router.route("/add-user").post((request, response)=> {
     const profilePictureKey = request.body.profilePictureKey;
     const emailVerification = request.body.emailVerification;
 
-    let success = false;
     //check the db for a matching token
     Token.findOne({email: email}).exec(
-       (err, token) => {
-           if(err){
-               console.log(err)
-               return response.json(
-                   {
-                       code: 1,
-                       message: "Something went wrong on our end."
-                   }
-               )
-           }
-           if(!token){
-               return response.json(
-                   {
-                       code: 1,
-                       message: "Please request a verification code for this email!"
-                   }
-               )
-           }
-           else{
-               //code is there
-               //error with expiration -- whole token expires
-               //error with findOne -- should you cross-find with emmail too? -- go through oject
-               if(Token.findOne({
-                   verificationCodes: 
-                   {
-                        code:emailVerification
-                   }            
-                   })) {
-                   Token.findOneAndUpdate({email:email}, {$set:{verificationCodes:[]}}, {returnOriginal:false} )
-                    const u = new User({
-                         firstName: firstName,
-                         lastName: lastName,
-                         email: email,
-                         wechatID: wechatID,
-                         pwd: pwd,
-                         phoneNum: phoneNum,
-                         profilePictureKey: profilePictureKey,
-                         isVerified: true,
-                         savedPosts: []
-                     })
-                     u.save()
-                         .then(
-                             (data) => {
-                                 return response.json({
-                                     code: 0
-                                 })
-                             }
-                         )
-                         .catch(
-                             (err) => {
-                                 console.log(err)
-                                 if(err.code === 11000){
-                                     return response.json({
-                                         code: 1,
-                                         message: "Email already exists!"
-                                     })
-                                 }
-                                 else{
-                                     return response.json({
-                                         code: 1,
-                                         message: err // TODO: research for different error types and replace message with meaningful string that describes the error
-                                     })
-                                 }
-
-                             }
-                         )
-                    }
-               //code is not there
-               else {
+        (err, token) => {
+            if(err){
+                console.log(err)
                 return response.json(
                     {
                         code: 1,
-                        message: "Incorrect email verification code, please try again."
+                        message: "Something went wrong on our end."
                     }
                 )
-               }
-           }
-       }
+            }
+            if(!token){
+                return response.json(
+                    {
+                        code: 1,
+                        message: "Please request a verification code for this email!"
+                    }
+                )
+            }
+            else{
+                // email found, check code match
+                const matchIndex = token.verificationCodes.findIndex((element) => (element.code == emailVerification && Date.parse(element.createdTimestamp)+10*60*1000>Date.now()))
+            
+                if(matchIndex!=-1) {
+                    Token.deleteOne({email:email}).exec(
+                        (err, doc) => {
+                            if(err){
+                                console.log(err)
+                            }
+                            else{
+                                const u = new User({
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    email: email,
+                                    wechatID: wechatID,
+                                    pwd: pwd,
+                                    phoneNum: phoneNum,
+                                    profilePictureKey: profilePictureKey,
+                                    isVerified: true,
+                                    savedPosts: []
+                                })
+                                u.save()
+                                    .then(
+                                        (data) => {
+                                            return response.json({
+                                                code: 0
+                                            })
+                                        }
+                                    )
+                                    .catch(
+                                        (err) => {
+                                            console.log(err)
+                                            if(err.code === 11000){
+                                                return response.json({
+                                                    code: 1,
+                                                    message: "Email already exists!"
+                                                })
+                                            }
+                                            else{
+                                                return response.json({
+                                                    code: 1,
+                                                    message: err // TODO: research for different error types and replace message with meaningful string that describes the error
+                                                })
+                                            }
+        
+                                        }
+                                    )
+                            }
+                        }
+                    )
+                        
+                }
+                //code is not there
+                else {
+                    return response.json(
+                        {
+                            code: 1,
+                            message: "Incorrect email verification code, please try again."
+                        }
+                    )
+                }
+            }
+        }
     )
 
         
@@ -377,13 +380,8 @@ router.route("/forgot-password").put(
     (request, response) => {
         const {email, emailVerification, pwd} = request.body
 
-        // get email verification code in DB based on email
-
-        // check if match
-
-        // if match
-        User.findOneAndUpdate({email: email}, {pwd: pwd}, {returnOriginal: false}).exec(
-            (err, doc) => {
+        Token.findOne({email: email}).exec(
+            (err, token) => {
                 if(err){
                     console.log(err)
                     return response.json(
@@ -393,26 +391,72 @@ router.route("/forgot-password").put(
                         }
                     )
                 }
-                if(!doc){
+                if(!token){
                     return response.json(
                         {
                             code: 1,
-                            message: "User not found!"
+                            message: "Please request a verification code for this email!"
                         }
                     )
                 }
                 else{
-                    return response.json(
-                        {
-                            code: 0,
-                            message: "Password updated!"
-                        }
-                    )
+                    // email found, check code match
+                    const matchIndex = token.verificationCodes.findIndex((element) => (element.code == emailVerification && Date.parse(element.createdTimestamp)+10*60*1000>Date.now()))
+                
+                    if(matchIndex!=-1) {
+                        Token.deleteOne({email:email}).exec(
+                            (err, doc) => {
+                                if(err){
+                                    console.log(err)
+                                }
+                                else{
+                                    // if match
+                                    User.findOneAndUpdate({email: email}, {pwd: pwd}, {returnOriginal: false}).exec(
+                                        (err, doc) => {
+                                            if(err){
+                                                console.log(err)
+                                                return response.json(
+                                                    {
+                                                        code: 1,
+                                                        message: "Something went wrong on our end."
+                                                    }
+                                                )
+                                            }
+                                            if(!doc){
+                                                return response.json(
+                                                    {
+                                                        code: 1,
+                                                        message: "User not found!"
+                                                    }
+                                                )
+                                            }
+                                            else{
+                                                return response.json(
+                                                    {
+                                                        code: 0,
+                                                        message: "Password updated!"
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        )
+                            
+                    }
+                    //code is not there
+                    else {
+                        return response.json(
+                            {
+                                code: 1,
+                                message: "Incorrect email verification code, please try again."
+                            }
+                        )
+                    }
                 }
             }
         )
-
-
     }
 )
 

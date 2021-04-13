@@ -157,25 +157,27 @@ const SignupForm = () => {
         const token = {
             email: email.toLowerCase()
         }
-        setIsGetCodeButtonWaiting(true)
+        
         axios.post(base_ + '/api/resend', token).then((response) => {
             if(response.data.code === 0){
                 message.success("Email Was Sent!")
+                setIsGetCodeButtonWaiting(true)
+                setDelay(1000)
             }
             else {
                 if(typeof(response.data.message)==="string"){
                     message.error(response.data.message)
                 }
                 else{
-                    message.error("Something went wrong 1!")
+                    message.error("Something went wrong!")
                 }
                 
             }
         }, (error)=> {
-            message.error("Something went wrong 2!")
+            message.error("Something went wrong!")
             console.log(error)
         });
-        setDelay(1000)
+        
     }
 
     return (

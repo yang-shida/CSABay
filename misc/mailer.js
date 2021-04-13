@@ -25,15 +25,9 @@ async function sendConfirmationCode(_code, _email) {
     from: '"CSABay Team" <csa.bay00@gmail.com>', 
     to: _email, 
     subject: "Your Verification Code for CSABay", 
-    text: "Verification Code: " + _code, 
+    text:   "Verification Code: " + _code + "\n"
+            + "The code will expire in 10 minutes."
   });
-
-  console.log("Message sent: %s", info.messageId);
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-  // Preview only available when sending through an Ethereal account
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 
 const sendCreatePostEmail = async (newPost, email) => {

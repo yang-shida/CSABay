@@ -8,14 +8,9 @@ const tokenSchema = {
     },
     verificationCodes: [
         {
-           code: {type: String},
-           createdAt: {
-                type: Date, 
-                required: true, 
-                default: Date.now, 
-                expires: 900 //fifteen minues
-            }
-       }
+            code: {type: String},
+            createdTimestamp: {type: Date, required: true}
+        }
    ],
 }
 
