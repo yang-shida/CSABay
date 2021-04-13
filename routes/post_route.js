@@ -7,6 +7,7 @@ const DeletedPost = require("../models/DeletedPost");
 const User = require("../models/User");
 const schedule = require('node-schedule');
 var AWS = require('aws-sdk');
+const mailer = require("../misc/mailer")
 
 const config = {
     bucketName: process.env.AWS_S3_BUCKET_NAME,
@@ -120,6 +121,16 @@ router.route("/add-post").post(
         newPost.save()
             .then(
                 (data) => {
+                    User.findById(userID).exec(
+                        (err, user) => {
+                            if(err){
+                                console.log(err)
+                            }
+                            else{
+                                mailer.sendCreatePostEmail(data, user.email)
+                            }
+                        }
+                    )
                     return response.json({
                         code: 0
                     })
@@ -201,6 +212,16 @@ router.route('/update-post').put(
                                 )
                             }
                             else{
+                                User.findById(userID).exec(
+                                    (err, user) => {
+                                        if(err){
+                                            console.log(err)
+                                        }
+                                        else{
+                                            mailer.sendUpdatePostEmail(doc, user.email)
+                                        }
+                                    }
+                                )
                                 return response.json(
                                     {
                                         code: 0,
@@ -208,6 +229,7 @@ router.route('/update-post').put(
                                         data: doc
                                     }
                                 )
+                                
                             }
                         }
                     )
