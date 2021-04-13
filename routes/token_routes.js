@@ -31,7 +31,8 @@ router.route("/resend").post(
                                 code: newCode,
                                 createdTimestamp: Date.now()
                             }
-                        ]
+                        ],
+                        modifiedTimestamp: Date.now()
                     })
                     toke.save()
                     .then(
@@ -70,7 +71,8 @@ router.route("/resend").post(
                                 code: newCode,
                                 createdTimestamp: Date.now()
                             }
-                        }
+                        },
+                        modifiedTimestamp: Date.now()
                     })
                     .then((data)=>{
                         mailer.sendCC(newCode, email);

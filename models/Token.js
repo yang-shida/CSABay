@@ -9,9 +9,14 @@ const tokenSchema = {
     verificationCodes: [
         {
             code: {type: String},
-            createdTimestamp: {type: Date, required: true}
+            createdTimestamp: {type: Date, required: true, default: Date.now()}
         }
    ],
+   modifiedTimestamp: {
+       type: Date,
+       require: true,
+       expires: 900
+   }
 }
 
 const Token = mongoose.model("token", tokenSchema);

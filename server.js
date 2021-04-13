@@ -27,15 +27,6 @@ app.use(function (req, res, next) {
 	next();
 });
 
-//connect to mongoose
-//FIX THIS -- VERY INSECURE
-mongoose.connect(process.env.MONGODB_KEY, {
-    useNewUrlParser:true,
-    useUnifiedTopology:true,
-    useCreateIndex:true,
-    useFindAndModify:false
-});
-
 //require routes
 app.use("/api", require("./routes/user_route"))
 app.use("/api", require("./routes/token_routes"))
@@ -43,12 +34,26 @@ app.use("/api", require("./routes/aws_s3_routes"))
 app.use("/api", require("./routes/post_route"))
 
 if(process.env.NODE_ENV === 'production') {
+	mongoose.connect(process.env.MONGODB_KEY_PROD, {
+		useNewUrlParser:true,
+		useUnifiedTopology:true,
+		useCreateIndex:true,
+		useFindAndModify:false
+	});
 	app.use(express.static('client/build'))
 	app.use((req, res, next) => {
 		if (req.url.startsWith('/api')) {
 			return next();
 		}
 		return res.sendFile(path.resolve('client/build/index.html'));
+	});
+}
+else{
+	mongoose.connect(process.env.MONGODB_KEY_DEV, {
+		useNewUrlParser:true,
+		useUnifiedTopology:true,
+		useCreateIndex:true,
+		useFindAndModify:false
 	});
 }
 
