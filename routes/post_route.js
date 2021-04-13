@@ -43,10 +43,22 @@ const durationDaysChecker = schedule.scheduleJob('0 0 0 * * *', function(){
                     }
                     else if(timeDiff > 0){
                         // within 3 days, send email
+                        console.log(" - Send reminder post: ", post.title)
+                        User.findById(post.userID).exec(
+                            (err, user) => {
+                                if(err){
+                                    console.log(err)
+                                }
+                                else{
+                                    mailer.sendExpireReminderEmail(post, user.email, false)
+                                }
+                            }
+                        )
+                        
                     }
                     else{
                         // expired, delete post
-                        console.log(" - Deleting post: ", post.title)
+                        console.log(" - Delete post: ", post.title)
                         const pictureKeyArray = post.pictureKeyArray
                         const newDeletedPost = new DeletedPost({
                             _id: post._id,
@@ -74,6 +86,16 @@ const durationDaysChecker = schedule.scheduleJob('0 0 0 * * *', function(){
                                                 console.log(err)
                                             }
                                             else{
+                                                User.findById(post.userID).exec(
+                                                    (err, user) => {
+                                                        if(err){
+                                                            console.log(err)
+                                                        }
+                                                        else{
+                                                            mailer.sendExpireReminderEmail(post, user.email, true)
+                                                        }
+                                                    }
+                                                )
                                                 // Do this only if you really want to permanately delete the post since it removes all pictures associated with this post in AWS S3
                                                 // for(const pictureKey of pictureKeyArray){
                                                 //     var params = {
