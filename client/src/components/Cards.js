@@ -5,6 +5,7 @@ import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from 
 import auth from '../auth/auth';
 import { CostExplorer } from 'aws-sdk';
 import no_image from '../img/no_image.jpg'
+import default_profile_pic from '../img/default_profile_pic.jpg'
 
 const { Meta } = Card;
 
@@ -62,19 +63,34 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                     const currentPost = posts[post]
                     if(posts[post].pictureKeyArray.length>0){
                         await S3_GET(posts[post].pictureKeyArray[0]).then(
-                            (url) => {
-                                temp = [...temp, {...currentPost, coverUrl: url}]
-                                count--
-                                if(count === 0){
-                                    if(isSubscribed){
-                                        setPostsWithCoverUrl(temp)
+                            async (coverUrl) => {
+                                if(posts[post].simplifiedUserInfo.profilePictureKey != ''){
+                                    await S3_GET(posts[post].simplifiedUserInfo.profilePictureKey).then(
+                                        (profilePicUrl) => {
+                                            temp = [...temp, {...currentPost, coverUrl: coverUrl, profilePicUrl: profilePicUrl}]
+                                            count--
+                                            if(count === 0){
+                                                if(isSubscribed){
+                                                    setPostsWithCoverUrl(temp)
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
+                                else{
+                                    temp = [...temp, {...currentPost, coverUrl: coverUrl, profilePicUrl: ''}]
+                                    count--
+                                    if(count === 0){
+                                        if(isSubscribed){
+                                            setPostsWithCoverUrl(temp)
+                                        }
                                     }
                                 }
                             }
                         )
                     }
                     else{
-                        temp = [...temp, {...currentPost, coverUrl: ''}]
+                        temp = [...temp, {...currentPost, coverUrl: '', profilePicUrl: ''}]
                         count--
                         if(count === 0){
                             if(isSubscribed){
@@ -148,13 +164,13 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                             {`\$${post.price}`}
                                         </div>
                                         <div style={locationStyle}>
-                                            {'Gainesville, FL 32607'}
+                                            {post.zipcode===''?'N/A':post.zipcode}
                                         </div>
                                     </div>
                                     <div style={{clear: 'both'}}></div>
                                     <Meta
                                         style={{marginLeft: '0px'}}
-                                        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                        avatar={<Avatar src={post.profilePicUrl==''?default_profile_pic:post.profilePicUrl} />}
                                         title={post.title}
                                         description={
                                             Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/3600)==0?

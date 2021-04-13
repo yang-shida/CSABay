@@ -5,6 +5,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 var cookieParser = require('cookie-parser')
 const path = require('path');
+require('dotenv').config()
 
 const PORT = process.env.PORT || 5000
 
@@ -28,7 +29,7 @@ app.use(function (req, res, next) {
 
 //connect to mongoose
 //FIX THIS -- VERY INSECURE
-mongoose.connect("mongodb+srv://admin:gogators@csacluster.fqmy1.mongodb.net/CSABay_?retryWrites=true&w=majority", {
+mongoose.connect(process.env.MONGODB_KEY, {
     useNewUrlParser:true,
     useUnifiedTopology:true,
     useCreateIndex:true,

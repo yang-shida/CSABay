@@ -58,6 +58,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
 
     useEffect(
         async () => {
+            message.loading({content: "Loading Pictures", key: "loadPicMessage", duration: 0})
             var array = []
             var count = post.pictureKeyArray.length
             for(const key in post.pictureKeyArray){
@@ -76,6 +77,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                                         }]
                                         count--
                                         if(count===0){
+                                            message.success({content: "Pictures loaded", key: "loadPicMessage"})
                                             setFileList(array)
                                         }
                                     }
@@ -85,10 +87,15 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                     )
                     .catch(
                         (err) => {
+                            message.error({content: "Fail to load pictures", key: "loadPicMessage"})
                             console.log(err)
                             setFileList(array)
                         }
                     )
+            }
+            if(count===0){
+                message.success({content: "Pictures loaded", key: "loadPicMessage"})
+                setFileList(array)
             }
             
         },[]
@@ -143,8 +150,9 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
     const deleteAllOldPictures = () => {
         return new Promise(
             async (resolve, reject) => {
-                for(const key in originalPictureKeyArray){
-                    await S3_DELETE_BY_KEY(originalPictureKeyArray[key])
+                const deletedPictureKeys = originalPictureKeyArray.filter(key => !pictureKeyArray.includes(key))
+                for(const key in deletedPictureKeys){
+                    await S3_DELETE_BY_KEY(deletedPictureKeys[key])
                 }
                 resolve()
             }
@@ -152,46 +160,52 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
     }
 
     const onFinish = async () => {
-        message.loading({content: "Uploading Pictures", key: "updatable"})
+        message.loading({content: "Uploading Pictures", key: "uploadPicMessage", duration: 0})
         await uploadAllPictures()
             .then(
                 async () => {
-                    const updatedPost = {
-                        ...post,
-                        title: title,
-                        description: description,
-                        durationDays: durationDays,
-                        typeOfPost: typeOfPost,
-                        zipcode: zipcode,
-                        price: price,
-                        pictureKeyArray: pictureKeyArray,
-                        email: email.toLowerCase(),
-                        wechatID: wechatID.toLowerCase(),
-                        phoneNum: phoneNum
-                    }
-
-                    axios.put(base_ + '/api/update-post', {updatedPost: updatedPost})
+                    await deleteAllOldPictures()
                         .then(
-                            (res) => {
-                                if(res.data.code===1){
-                                    message.error({content: res.data.message, key: "updatable", duration: 2})
+                            async () => {
+                                const updatedPost = {
+                                    ...post,
+                                    title: title,
+                                    description: description,
+                                    durationDays: durationDays,
+                                    typeOfPost: typeOfPost,
+                                    zipcode: zipcode,
+                                    price: price,
+                                    pictureKeyArray: pictureKeyArray,
+                                    email: email.toLowerCase(),
+                                    wechatID: wechatID.toLowerCase(),
+                                    phoneNum: phoneNum
                                 }
-                                else{
-                                    message.success({content: "Post updated!", key: "updatable", duration: 2})
-                                }
+            
+                                axios.put(base_ + '/api/update-post', {updatedPost: updatedPost})
+                                    .then(
+                                        (res) => {
+                                            if(res.data.code===1){
+                                                message.error({content: res.data.message, key: "uploadPicMessage", duration: 2})
+                                            }
+                                            else{
+                                                message.success({content: "Post updated!", key: "uploadPicMessage", duration: 2})
+                                            }
+                                        }
+                                    )
+                                    .catch(
+                                        (err) => {
+                                            console.log(err)
+                                            message.error({content: "Fail to update post", key: "uploadPicMessage", duration: 2})
+                                        }
+                                    )
                             }
                         )
-                        .catch(
-                            (err) => {
-                                console.log(err)
-                                message.error({content: "Fail to update post", key: "updatable", duration: 2})
-                            }
-                        )
+                    
                 }
             )
             .catch(
                 () => {
-                    message.error({content: "Fail to update pictures", key: "updatable", duration: 2})
+                    message.error({content: "Fail to update pictures", key: "uploadPicMessage", duration: 2})
                 }
             )
         
@@ -288,9 +302,9 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                             [
                                 {
                                     type: 'number', 
-                                    min: 1, 
+                                    min: 7, 
                                     max: 30, 
-                                    message: 'Duration needs to be a number between 1 and 30!'
+                                    message: 'Duration needs to be a number between 7 and 30!'
                                 },
                                 {
                                     required: true,

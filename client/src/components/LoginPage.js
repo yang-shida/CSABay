@@ -38,7 +38,7 @@ const tailFormItemLayout = {
 // const base_ = "http://localhost:3001";
 const base_ = ""
 
-const LoginPage = ({routerProps, setUserInfo}) => {
+const LoginPage = ({routerProps, setUserInfo, setIsAuth}) => {
     const [form] = Form.useForm();
     const [email, setEmail] = useState('')
     const [pwd, setPwd] = useState('')
@@ -60,6 +60,7 @@ const LoginPage = ({routerProps, setUserInfo}) => {
                         auth.login(
                             () => {
                                 setUserInfo(res.data.data)
+                                setIsAuth(true)
                                 routerProps.history.push("/")
                             }
                         )

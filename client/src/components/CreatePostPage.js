@@ -67,7 +67,7 @@ const CreatePostPage = ({user}) => {
 
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
-    const [durationDays, setDurationDays] = useState('')
+    const [durationDays, setDurationDays] = useState(30)
     const [typeOfPost, setTypeOfPost] = useState('')
 
     const [zipcode, setZipcode] = useState('')
@@ -101,14 +101,16 @@ const CreatePostPage = ({user}) => {
                         reject()
                     }
                 }
-                // resolve()
+                if(count===0){
+                    resolve()
+                }
             }
         )
     }
 
     const onFinish = async () => {
 
-        message.loading({content: "Uploading Pictures", key: "updatable"})
+        message.loading({content: "Uploading Pictures", key: "uploadPicMessage", duration: 0})
         await uploadAllPictures()
             .then(
                 async () => {
@@ -129,15 +131,15 @@ const CreatePostPage = ({user}) => {
                         .then(
                             (res) => {
                                 if(res.data.code===1){
-                                    message.error({content: `Fail to create post: ${res.data.message}`, key: "updatable", duration: 2})
+                                    message.error({content: `Fail to create post: ${res.data.message}`, key: "uploadPicMessage", duration: 2})
                                 }
                                 else{
                                     setTitle('')
                                     setDescription('')
-                                    setDurationDays('')
+                                    setDurationDays(30)
                                     setTypeOfPost('')
                                     setZipcode('')
-                                    setPrice('')
+                                    setPrice(0)
                                     setPictureKeyArray([])
                                     setFileList([])
                                     setEmail(user.email)
@@ -146,14 +148,14 @@ const CreatePostPage = ({user}) => {
                             
                                     form.resetFields();
 
-                                    message.success({content: "Post Created!", key: "updatable", duration: 2})
+                                    message.success({content: "Post Created!", key: "uploadPicMessage", duration: 2})
                                 }
                             }
                         )
                         .catch(
                             (err) => {
                                 console.log(err)
-                                message.error({content: "Fail to create post", key: "updatable", duration: 2})
+                                message.error({content: "Fail to create post", key: "uploadPicMessage", duration: 2})
                             }
                         )
             
@@ -162,7 +164,7 @@ const CreatePostPage = ({user}) => {
             )
             .catch(
                 () => {
-                    message.error({content: "Fail to upload pictures", key: "updatable", duration: 2})
+                    message.error({content: "Fail to upload pictures", key: "uploadPicMessage", duration: 2})
                 }
             )
 
@@ -183,6 +185,7 @@ const CreatePostPage = ({user}) => {
                 name="createPost"
                 onFinish={onFinish}
                 initialValues={{
+                    "duration": 30,
                     "email": user.email,
                     "wechat-id": user.wechatID,
                     "phone": user.phoneNum,
@@ -243,9 +246,9 @@ const CreatePostPage = ({user}) => {
                         [
                             {
                                 type: 'number', 
-                                min: 1, 
+                                min: 7, 
                                 max: 30, 
-                                message: 'Duration needs to be a number between 1 and 30!'
+                                message: 'Duration needs to be a number between 7 and 30!'
                             },
                             {
                                 required: true,

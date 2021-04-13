@@ -1,5 +1,6 @@
-import { message, Modal } from 'antd';
+import { message, Modal, Select, Row, Col, Divider, Empty, Button } from 'antd';
 import { useEffect, useState } from 'react';
+import {Link} from 'react-router-dom'
 import axios from 'axios';
 
 import Cards from './Cards'
@@ -9,6 +10,56 @@ import ProductDetailPage from './ProductDetailPage'
 // const base_ = "http://localhost:3001";
 const base_ = ""
 
+const { Option } = Select;
+
+const filterSorterLayout = {
+    xs: {
+        span: 24,
+    },
+    sm: {
+        span: 9,
+    },
+    md: {
+        span: 7,
+    },
+    lg: {
+        span: 6,
+    },
+    xl: {
+        span: 5,
+    },
+}
+
+const typeTextLayout = {
+    xs: {
+        span: 24,
+    },
+    sm: {
+        span: 4,
+    },
+    md: {
+        span: 3,
+    },
+    lg: {
+        span: 3,
+    },
+    xl: {
+        span: 2
+    }
+}
+
+const sortTextLayout = {
+    xs: {
+        span: 24,
+    },
+    sm: {
+        span: 2,
+    },
+    md: {
+        span: 1,
+    },
+}
+
 const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 
     const [posts, setPosts] = useState([])
@@ -16,22 +67,31 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
     const [selectedPost, setSelectedPost] = useState('')
     const [selectedPostUserInfo, setSelectedPostUserInfo] = useState('')
 
+    const [disableFilterSorter, setDisableFilterSorter] = useState(false)
+    const [typeFilter, setTypeFilter] = useState('All')
+    const [sortState, setSortState] = useState('time-new')
+
+    // const [productDetailWidth, setProductDetailWidth] = useState(`${window.innerWidth>=992?"70%":"100%"}`)
+
     useEffect(
         () => {
             let isSubscribed = true
             const getPosts = async()=>{
-                axios.get(base_ + '/api/get-post-by-time?startIndex=0&numberOfPosts=20&order=new')
+                message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
+                axios.get(base_ + '/api/get-post-by-time?startIndex=0&numberOfPosts=100&order=new')
                     .then(
                         (res) => {
                             if(res.data.code===1){
                                 message.error(res.data.message)
                                 if (isSubscribed){
                                     setPosts([])
+                                    message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
                                 }
                             }
                             else{
                                 if (isSubscribed){
                                     setPosts(res.data.data)
+                                    message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
                                 }
                             }
                             
@@ -43,7 +103,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                             if (isSubscribed){
                                 setPosts([])
                             }
-                            message.error("Something went wrong")
+                            message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
                         }
                     )
                 
@@ -129,11 +189,124 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
         setSelectedPost('')
     }
 
+    const handleTypeChange = (value) => {
+        setTypeFilter(value)
+        message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
+        setDisableFilterSorter(true)
+        axios.get(base_ + `/api/${sortState.includes('time')?'get-post-by-time':'get-post-by-price'}?${value=='All'?'':`typeOfPost=${value}&`}startIndex=0&numberOfPosts=100&order=${sortState.substr(sortState.lastIndexOf('-')+1)}`)
+            .then(
+                (res) => {
+                    console.log(res)
+                    if(res.data.code===1){
+                        message.error(res.data.message)
+                        setPosts([])
+                        message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
+                        setDisableFilterSorter(false)
+                    }
+                    else{
+                        setPosts(res.data.data)
+                        message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
+                        setDisableFilterSorter(false)
+                    }
+                    
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    setPosts([])
+                    message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
+                    setDisableFilterSorter(false)
+                }
+            )
+
+    }
+
+    const handleSorterChange = (value) => {
+        setSortState(value)
+        message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
+        setDisableFilterSorter(true)
+        axios.get(base_ + `/api/${value.includes('time')?'get-post-by-time':'get-post-by-price'}?${typeFilter=='All'?'':`typeOfPost=${typeFilter}&`}startIndex=0&numberOfPosts=100&order=${value.substr(value.lastIndexOf('-')+1)}`)
+            .then(
+                (res) => {
+                    console.log(res)
+                    if(res.data.code===1){
+                        message.error(res.data.message)
+                        setPosts([])
+                        message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
+                        setDisableFilterSorter(false)
+                    }
+                    else{
+                        setPosts(res.data.data)
+                        message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
+                        setDisableFilterSorter(false)
+                    }
+                    
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    setPosts([])
+                    message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
+                    setDisableFilterSorter(false)
+                }
+            )
+    }
+
     return (
         <div>
+
+            <Row style={{marginTop: '30px'}} gutter={16}>
+                <Col {...typeTextLayout}>
+                    Type of Post:
+                </Col>
+
+                <Col {...filterSorterLayout}>
+                    <Select style={{ width: '100%' }} onChange={handleTypeChange} defaultValue='All' disabled={disableFilterSorter}>
+                        <Option value="All">All</Option>
+                        <Option value="Selling">Selling</Option>
+                        <Option value="Buying">Buying</Option>
+                        <Option value="Subleasing">Subleasing</Option>
+                        <Option value="Other">Other</Option>
+                    </Select>
+                </Col>
+
+                <Col {...sortTextLayout}>
+                    Sort:
+                </Col>
+
+                <Col {...filterSorterLayout}>
+                    <Select style={{ width: '100%' }} onChange={handleSorterChange} defaultValue='time-new' disabled={disableFilterSorter}>
+                        <Option value="time-new">Post time: from new to old</Option>
+                        <Option value="time-old">Post time: from old to new</Option>
+                        <Option value="price-high">Price: from high to low</Option>
+                        <Option value="price-low">Price: from low to high</Option>
+                    </Select>
+                </Col>
+            </Row>
+
+            <Divider></Divider>
+
+            
+
             {
                 posts.length===0?
-                'There is no post now. Create the first one!':
+                <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={
+                    <span>
+                        There is no post now. {isAuthenticated?'Create the first one!':'Login to create the first one!'}
+                    </span>
+                    }
+                >
+                    {
+                        isAuthenticated?
+                        <Link to="/create-post"><Button type="primary">Create New Post</Button></Link>:
+                        <Link to="/login"><Button type="primary">Goto Login</Button></Link>
+                    }
+                    
+                </Empty>:
                 <Cards posts={posts} displayMyPost={false} favoriteIDs={isAuthenticated?user.savedPosts:[]} onClickStar={onClickStar} onClickCard={onClickCard} routerProps={routerProps} isAuth={isAuthenticated}></Cards>
             }
 
@@ -142,10 +315,11 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                 visible={isProductDetailVisible}
                 onCancel={onCloseProductDetail}
                 footer={null}
-                width='70%'
+                width={window.innerWidth>=600?"70%":"100%"}
             >
-                <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={isAuthenticated?user.savedPosts.includes(selectedPost._id):false} onClickStar={onClickStar} user={selectedPostUserInfo} routerProps={routerProps} />
+                <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={isAuthenticated?user.savedPosts.includes(selectedPost._id):false} onClickStar={onClickStar} user={selectedPostUserInfo} routerProps={routerProps} isAuth={isAuthenticated} />
             </Modal>
+            
             
         </div>
     )
