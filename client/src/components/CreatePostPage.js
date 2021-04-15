@@ -220,7 +220,7 @@ const CreatePostPage = ({user}) => {
 
                 <Form.Item
                     name="description"
-                    label="Post Desceiption"
+                    label="Post Description"
                     rules={[
                         {
                             required: true,
