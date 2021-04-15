@@ -66,7 +66,7 @@ function useInterval(callback, delay) {
     }, [delay]);
 }
 
-const SignupForm = () => {
+const SignupForm = ({routerProps}) => {
     const [form] = Form.useForm();
 
     const [firstName, setFirstName] = useState('')
@@ -110,7 +110,9 @@ const SignupForm = () => {
                 setConfirm('')
                 setPhoneNum('')
         
-                form.resetFields();
+                form.resetFields()
+
+                routerProps.history.push('./login')
             }
             else {
                 if(typeof(response.data.message)==="string"){

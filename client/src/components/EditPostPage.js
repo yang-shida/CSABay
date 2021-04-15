@@ -230,6 +230,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                 onCancel={onCloseEditPost}
                 footer={null}
                 width='70%'
+                destroyOnClose={true}
             >
                 <Form
                     form={form}

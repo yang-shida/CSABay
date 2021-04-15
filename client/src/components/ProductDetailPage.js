@@ -135,21 +135,34 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
 
     useEffect(
         async () => {
+            let isSubscribed = true
             if(post.pictureKeyArray.length === 0){
-                setPictureUrlArray([])
+                if(isSubscribed){
+                    setPictureUrlArray([])
+                }
+                
             }
             else{
-                setPictureUrlArray([])
+                if(isSubscribed){
+                    setPictureUrlArray([])
+                }
                 for(const key in post.pictureKeyArray){
                     const currentKey = post.pictureKeyArray[key]
                     await S3_GET(currentKey).then(
                         (url) => {
-                            setPictureUrlArray(prevState=>([...prevState, url]))
+                            if(isSubscribed){
+                                setPictureUrlArray(prevState=>([...prevState, url]))
+                            }
+                            
                         }
                     )
                 }
             }
-            
+            return (
+                () => {
+                    isSubscribed = false
+                }
+            )
         }, [post]
     )
 

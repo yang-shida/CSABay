@@ -316,6 +316,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                 onCancel={onCloseProductDetail}
                 footer={null}
                 width={window.innerWidth>=600?"70%":"100%"}
+                destroyOnClose={true}
             >
                 <ProductDetailPage post={selectedPost} displayMyPost={false} isFavorite={isAuthenticated?user.savedPosts.includes(selectedPost._id):false} onClickStar={onClickStar} user={selectedPostUserInfo} routerProps={routerProps} isAuth={isAuthenticated} />
             </Modal>

@@ -22,7 +22,7 @@ const MAX_CONTENT_LEN = 10485760
 router.route("/s3-get-url").post(
     (request, response) => {
         const key = request.body.key 
-        var params = {Bucket: config.bucketName, Key: key, Expires: 60}
+        var params = {Bucket: config.bucketName, Key: key, Expires: 300}
         S3.getSignedUrl('getObject', params,
             (err, url) => {
                 if(err){
@@ -54,7 +54,7 @@ router.route("/s3-get-signed-post").post(
             Fields: {
                 key: `${dir}/${fileUid}`,
             },
-            Expires: 30,
+            Expires: 300,
             Bucket: config.bucketName,
             Conditions: [
                 ["starts-with", "$Content-Type", "image/"],

@@ -37,14 +37,27 @@ const ContactInfoCard = ({user, post, isInfoVisible}) => {
 
     useEffect(
         () => {
+            let isSubscribed = true
+            if(isSubscribed){
+                setProfilePictureURL("")
+            }
+            
             if(user.profilePictureKey !== ""){
                 S3_GET(user.profilePictureKey)
                     .then(
                         (url) => {
-                            setProfilePictureURL(url)
+                            if(isSubscribed){
+                                setProfilePictureURL(url)
+                            }
+                            
                         }
                     )
             }
+            return (
+                () => {
+                    isSubscribed = false
+                }
+            )
         }, [user]
     )
 

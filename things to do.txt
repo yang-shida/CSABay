@@ -21,3 +21,5 @@ backend:
 frontend:
  - integrate email verification
  - page main page (Pagination)
+
+downsize image for preview

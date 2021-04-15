@@ -130,7 +130,7 @@ const App = () => {
                 (props)=>(
                   <>
                     <NavBar isAuthenticated={false} setIsAuth={setIsAuth} currentRoute={"register"} routerProps={props} setUserInfo={setUserInfo}/>
-                    <SignupForm></SignupForm>
+                    <SignupForm routerProps={props}></SignupForm>
                   </>
                 )
               }
