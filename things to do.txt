@@ -1,25 +1,17 @@
 backend:
- - append time when receiving a new post
- - append modification dates to post (latest or an array)
  - interact with AWS
-    - receive request from client
-    - generate get, put presigned URL OR delete request
     - periodically delete pictures that is no longer in use (maybe every month?)
       - listObjectsV2 or listObjects
       - post pictures, user profile pictures
- - email verification
- - sort and filter main page
  - password storage/encoding
- - required DBs (collections):
-    - users
-    - posts
- - cookie parser
- - if user not logged in, don't send contact info in post
 
 
 
 frontend:
- - integrate email verification
  - page main page (Pagination)
+ - image uploader long text format
+ 
+
+
 
 downsize image for preview

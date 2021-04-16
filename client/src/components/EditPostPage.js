@@ -392,7 +392,9 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                             [
                                 {
                                     type: 'number',
-                                    message: 'Price needs to be a number!'
+                                    min: 0, 
+                                    max: 99999999, 
+                                    message: 'Price needs to be a number between 0 and 99999999!'
                                 }
                                 
                             ]

@@ -191,7 +191,7 @@ const ForgotPasswordPage = () => {
 
                 <Form.Item label="* Email Verification Code">
                     <Row gutter={6}>
-                        <Col span={20}>
+                        <Col span={isGetCodeButtonWaiting?14:20}>
                             <Form.Item
                                 name='code'
                                 noStyle						
@@ -205,7 +205,7 @@ const ForgotPasswordPage = () => {
                                 <Input placeholder="Enter your email verification code" value={emailVerification} onChange={(e) => setEmailVerification(e.target.value)}/>
                             </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={isGetCodeButtonWaiting?10:4}>
                             <Button 
                                 disabled={
                                     !(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.[a-zA-Z]{2,4}$/.test(form.getFieldValue('email'))) || isGetCodeButtonWaiting
@@ -214,7 +214,7 @@ const ForgotPasswordPage = () => {
                             >    
                                 {
                                     isGetCodeButtonWaiting?
-                                    `${getCodeButtonWaitingTime} s`:
+                                    `Please wait ${getCodeButtonWaitingTime} s before resending`:
                                     "Get Code"
                                 }
                                 
