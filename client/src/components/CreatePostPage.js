@@ -372,7 +372,7 @@ const CreatePostPage = ({user}) => {
                     name="pictures"
                     label={
                         <span>
-                            Pictures&nbsp;
+                            Pictures (&lt;10MB Each)&nbsp;
                             <Tooltip title="The first picture will be used as the cover picture.">
                                 <QuestionCircleOutlined />
                             </Tooltip>

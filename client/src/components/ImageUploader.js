@@ -26,7 +26,7 @@ const itemCounterStyle = {
 const pictureSizeStyle = {
     fontFamily: 'Arial, Helvetica, sans-serif',
     position: 'absolute',
-    bottom: '5%',
+    top: '2%',
     left: '2%',
     textAlign: 'Left', 
     fontSize: '13pt'
@@ -106,9 +106,10 @@ const ImageUploader = ({maxNumberOfPictures, pictureKeyArray, setPictureKeyArray
                 // accept="image/*"
                 // maxCount={maxNumberOfPictures}
             >
+                
                 {fileList.length >= maxNumberOfPictures ? null : uploadButton}
             </Upload>
-            <span style={pictureSizeStyle}>(Each picture should be less than 10MB)</span>
+            {/* <div style={pictureSizeStyle}>(Each picture should be less than 10MB)</div> */}
             <span style={itemCounterStyle}>{`${currentNumberOfPictures}/${maxNumberOfPictures}`}</span>
             <Modal
                 visible={previewVisible}
