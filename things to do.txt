@@ -8,6 +8,7 @@ backend:
 
 
 frontend:
+  - go back to main and show post after creating one
  
 
 

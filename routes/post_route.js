@@ -438,7 +438,13 @@ router.route('/get-post-by-price').get(
         const order = params.get('order')
         const typeOfPost = params.get('typeOfPost')
 
-        const totalNumberOfPosts = await Post.countDocuments({typeOfPost: typeOfPost})
+        var totalNumberOfPosts = 0
+        if(typeOfPost){
+            totalNumberOfPosts = await Post.countDocuments({typeOfPost: typeOfPost})
+        }
+        else{
+            totalNumberOfPosts = await Post.countDocuments({})
+        }
         
         Post.find(typeOfPost?{typeOfPost: typeOfPost}:{}, null, {sort:{price: order=='high'?'desc':'asc', modifiedTimestamp: 'desc'}, skip: Number(startIndex), limit: Number(numberOfPosts)}).exec(
             (err, doc) => {
