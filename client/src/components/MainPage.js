@@ -1,4 +1,4 @@
-import { message, Modal, Select, Row, Col, Divider, Empty, Button } from 'antd';
+import { message, Modal, Select, Row, Col, Divider, Empty, Button, Pagination } from 'antd';
 import { useEffect, useState } from 'react';
 import {Link} from 'react-router-dom'
 import axios from 'axios';
@@ -62,6 +62,8 @@ const sortTextLayout = {
 
 const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 
+    const PAGE_SIZE = 20
+
     const [posts, setPosts] = useState([])
     const [isProductDetailVisible, setIsProductDetailVisible] = useState(false)
     const [selectedPost, setSelectedPost] = useState('')
@@ -71,26 +73,82 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
     const [typeFilter, setTypeFilter] = useState('All')
     const [sortState, setSortState] = useState('time-new')
 
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalNumberOfPosts, setTotalNumberOfPosts] = useState(PAGE_SIZE)
+
+    
+
     // const [productDetailWidth, setProductDetailWidth] = useState(`${window.innerWidth>=992?"70%":"100%"}`)
+
+    // useEffect(
+    //     () => {
+    //         let isSubscribed = true
+    //         const getPosts = async()=>{
+    //             message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
+    //             axios.get(base_ + '/api/get-post-by-time?startIndex=0&numberOfPosts=20&order=new')
+    //                 .then(
+    //                     (res) => {
+    //                         if(res.data.code===1){
+    //                             message.error(res.data.message)
+    //                             if (isSubscribed){
+    //                                 setPosts([])
+    //                                 message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
+    //                             }
+    //                         }
+    //                         else{
+    //                             if (isSubscribed){
+    //                                 setPosts(res.data.data)
+    //                                 message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
+    //                             }
+    //                         }
+                            
+    //                     }
+    //                 )
+    //                 .catch(
+    //                     (err) => {
+    //                         console.log(err)
+    //                         if (isSubscribed){
+    //                             setPosts([])
+    //                         }
+    //                         message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
+    //                     }
+    //                 )
+                
+    //         }
+
+    //         getPosts()
+
+    //         return (
+    //             () => {
+    //                 isSubscribed = false
+    //             }
+    //         )
+
+    //     }, []
+    // )
 
     useEffect(
         () => {
             let isSubscribed = true
             const getPosts = async()=>{
+                setDisableFilterSorter(true)
                 message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
-                axios.get(base_ + '/api/get-post-by-time?startIndex=0&numberOfPosts=100&order=new')
+                axios.get(base_ + `/api/${sortState.includes('time')?'get-post-by-time':'get-post-by-price'}?${typeFilter=='All'?'':`typeOfPost=${typeFilter}&`}startIndex=${(currentPage-1)*PAGE_SIZE}&numberOfPosts=${PAGE_SIZE}&order=${sortState.substr(sortState.lastIndexOf('-')+1)}`)
                     .then(
                         (res) => {
                             if(res.data.code===1){
                                 message.error(res.data.message)
                                 if (isSubscribed){
                                     setPosts([])
+                                    setDisableFilterSorter(false)
                                     message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
                                 }
                             }
                             else{
                                 if (isSubscribed){
+                                    setTotalNumberOfPosts(res.data.totalNumberOfPosts)
                                     setPosts(res.data.data)
+                                    setDisableFilterSorter(false)
                                     message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
                                 }
                             }
@@ -102,6 +160,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                             console.log(err)
                             if (isSubscribed){
                                 setPosts([])
+                                setDisableFilterSorter(false)
                             }
                             message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
                         }
@@ -117,7 +176,7 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                 }
             )
 
-        }, []
+        }, [currentPage, typeFilter, sortState]
     )
 
     const addSavedPosts = async (postID) => {
@@ -191,67 +250,73 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
 
     const handleTypeChange = (value) => {
         setTypeFilter(value)
-        message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
-        setDisableFilterSorter(true)
-        axios.get(base_ + `/api/${sortState.includes('time')?'get-post-by-time':'get-post-by-price'}?${value=='All'?'':`typeOfPost=${value}&`}startIndex=0&numberOfPosts=100&order=${sortState.substr(sortState.lastIndexOf('-')+1)}`)
-            .then(
-                (res) => {
-                    console.log(res)
-                    if(res.data.code===1){
-                        message.error(res.data.message)
-                        setPosts([])
-                        message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
-                        setDisableFilterSorter(false)
-                    }
-                    else{
-                        setPosts(res.data.data)
-                        message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
-                        setDisableFilterSorter(false)
-                    }
+        setCurrentPage(1)
+        // message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
+        // setDisableFilterSorter(true)
+        // axios.get(base_ + `/api/${sortState.includes('time')?'get-post-by-time':'get-post-by-price'}?${value=='All'?'':`typeOfPost=${value}&`}startIndex=0&numberOfPosts=100&order=${sortState.substr(sortState.lastIndexOf('-')+1)}`)
+        //     .then(
+        //         (res) => {
+        //             console.log(res)
+        //             if(res.data.code===1){
+        //                 message.error(res.data.message)
+        //                 setPosts([])
+        //                 message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
+        //                 setDisableFilterSorter(false)
+        //             }
+        //             else{
+        //                 setPosts(res.data.data)
+        //                 message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
+        //                 setDisableFilterSorter(false)
+        //             }
                     
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                    setPosts([])
-                    message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
-                    setDisableFilterSorter(false)
-                }
-            )
+        //         }
+        //     )
+        //     .catch(
+        //         (err) => {
+        //             console.log(err)
+        //             setPosts([])
+        //             message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
+        //             setDisableFilterSorter(false)
+        //         }
+        //     )
 
     }
 
     const handleSorterChange = (value) => {
         setSortState(value)
-        message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
-        setDisableFilterSorter(true)
-        axios.get(base_ + `/api/${value.includes('time')?'get-post-by-time':'get-post-by-price'}?${typeFilter=='All'?'':`typeOfPost=${typeFilter}&`}startIndex=0&numberOfPosts=100&order=${value.substr(value.lastIndexOf('-')+1)}`)
-            .then(
-                (res) => {
-                    console.log(res)
-                    if(res.data.code===1){
-                        message.error(res.data.message)
-                        setPosts([])
-                        message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
-                        setDisableFilterSorter(false)
-                    }
-                    else{
-                        setPosts(res.data.data)
-                        message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
-                        setDisableFilterSorter(false)
-                    }
+        setCurrentPage(1)
+        // message.loading({content: "Loading posts", key: "loadingPostMessage", duration: 0})
+        // setDisableFilterSorter(true)
+        // axios.get(base_ + `/api/${value.includes('time')?'get-post-by-time':'get-post-by-price'}?${typeFilter=='All'?'':`typeOfPost=${typeFilter}&`}startIndex=0&numberOfPosts=100&order=${value.substr(value.lastIndexOf('-')+1)}`)
+        //     .then(
+        //         (res) => {
+        //             console.log(res)
+        //             if(res.data.code===1){
+        //                 message.error(res.data.message)
+        //                 setPosts([])
+        //                 message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
+        //                 setDisableFilterSorter(false)
+        //             }
+        //             else{
+        //                 setPosts(res.data.data)
+        //                 message.success({content: 'Posts loaded', key: "loadingPostMessage", duration: 2})
+        //                 setDisableFilterSorter(false)
+        //             }
                     
-                }
-            )
-            .catch(
-                (err) => {
-                    console.log(err)
-                    setPosts([])
-                    message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
-                    setDisableFilterSorter(false)
-                }
-            )
+        //         }
+        //     )
+        //     .catch(
+        //         (err) => {
+        //             console.log(err)
+        //             setPosts([])
+        //             message.error({content: 'Fail to load posts', key: "loadingPostMessage", duration: 2})
+        //             setDisableFilterSorter(false)
+        //         }
+        //     )
+    }
+
+    const onPageChange = (page, pageSize) => {
+        setCurrentPage(page)
     }
 
     return (
@@ -307,7 +372,12 @@ const MainPage = ({isAuthenticated=false, user, setUser, routerProps}) => {
                     }
                     
                 </Empty>:
-                <Cards posts={posts} displayMyPost={false} favoriteIDs={isAuthenticated?user.savedPosts:[]} onClickStar={onClickStar} onClickCard={onClickCard} routerProps={routerProps} isAuth={isAuthenticated}></Cards>
+                [
+                    <Cards key="post-cards" posts={posts} displayMyPost={false} favoriteIDs={isAuthenticated?user.savedPosts:[]} onClickStar={onClickStar} onClickCard={onClickCard} routerProps={routerProps} isAuth={isAuthenticated}></Cards>,
+                    <Divider key="post-cards-page-divider"></Divider>,
+                    <Pagination key="pages" current={currentPage} onChange={onPageChange} defaultPageSize={PAGE_SIZE} total={totalNumberOfPosts} />
+                ]
+                
             }
 
             <Modal 

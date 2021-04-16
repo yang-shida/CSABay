@@ -8,8 +8,6 @@ backend:
 
 
 frontend:
- - page main page (Pagination)
- - image uploader long text format
  
 
 

@@ -314,6 +314,14 @@ router.route('/get-post-by-time').get(
         const numberOfPosts = params.get('numberOfPosts')
         const order = params.get('order')
         const typeOfPost = params.get('typeOfPost')
+
+        var totalNumberOfPosts = 0
+        if(typeOfPost){
+            totalNumberOfPosts = await Post.countDocuments({typeOfPost: typeOfPost})
+        }
+        else{
+            totalNumberOfPosts = await Post.countDocuments({})
+        }
         
         Post.find(typeOfPost?{typeOfPost: typeOfPost}:{}, null, {sort:{modifiedTimestamp: order=='new'?'desc':'asc'}, skip: Number(startIndex), limit: Number(numberOfPosts)}).exec(
             (err, doc) => {
@@ -399,7 +407,8 @@ router.route('/get-post-by-time').get(
                                 return response.json(
                                     {
                                         code: 0,
-                                        data: postsWithUserInfo
+                                        data: postsWithUserInfo,
+                                        totalNumberOfPosts: totalNumberOfPosts
                                     }
                                 )
                             }
@@ -421,13 +430,15 @@ router.route('/get-post-by-time').get(
 )
 
 router.route('/get-post-by-price').get(
-    (request, response) => {
+    async (request, response) => {
         const paramsStr = request.url.substring(request.url.indexOf('?'))
         let params = new URLSearchParams(paramsStr)
         const startIndex = params.get('startIndex')
         const numberOfPosts = params.get('numberOfPosts')
         const order = params.get('order')
         const typeOfPost = params.get('typeOfPost')
+
+        const totalNumberOfPosts = await Post.countDocuments({typeOfPost: typeOfPost})
         
         Post.find(typeOfPost?{typeOfPost: typeOfPost}:{}, null, {sort:{price: order=='high'?'desc':'asc', modifiedTimestamp: 'desc'}, skip: Number(startIndex), limit: Number(numberOfPosts)}).exec(
             (err, doc) => {
@@ -513,7 +524,8 @@ router.route('/get-post-by-price').get(
                                 return response.json(
                                     {
                                         code: 0,
-                                        data: postsWithUserInfo
+                                        data: postsWithUserInfo,
+                                        totalNumberOfPosts: totalNumberOfPosts
                                     }
                                 )
                             }
