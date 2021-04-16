@@ -133,6 +133,7 @@ const SignupForm = ({routerProps}) => {
         // Go to login page
     }
 
+    // https://github.com/ufcsa/airpick/blob/master/client/container/auth/Register.js
     const emailValidator = (rule, value) => {
 		if (!value || /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.[a-zA-Z]{2,4}$/.test(value)) {
 			return Promise.resolve();
