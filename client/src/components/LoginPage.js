@@ -127,6 +127,10 @@ const LoginPage = ({routerProps, setUserInfo, setIsAuth}) => {
                     <Link to='/forgot-password'>&nbsp;&nbsp;&nbsp;&nbsp;Forgot password?</Link>
                 </Form.Item>
 
+                <Form.Item {...tailFormItemLayout}>
+                    <Link to='/register'>Does not have an account? Go to register page!</Link>
+                </Form.Item>
+
             </Form>
 
         </div>

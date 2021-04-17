@@ -11,6 +11,7 @@ import {
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {PasswordInput} from 'antd-password-input-strength'
+import {Link} from 'react-router-dom'
 
 // const base_ = "http://localhost:3001";
 const base_ = ""
@@ -401,6 +402,10 @@ const SignupForm = ({routerProps}) => {
                     <Button type="primary" htmlType="submit">
                         Register
                     </Button>
+                </Form.Item>
+
+                <Form.Item {...tailFormItemLayout}>
+                    <Link to='/login'>Already have an account? Go to login page!</Link>
                 </Form.Item>
 
             </Form>

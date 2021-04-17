@@ -9,8 +9,4 @@ backend:
 
 frontend:
   - go back to main and show post after creating one
- 
-
-
-
-downsize image for preview
+  - downsize image for preview
