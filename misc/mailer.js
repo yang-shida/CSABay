@@ -31,17 +31,16 @@ async function sendConfirmationCode(_code, _email) {
 }
 
 const sendCreatePostEmail = async (newPost, email) => {
-    var timeOffset = new Date(Date.now()).getTimezoneOffset()*60*1000
-    var endTimeUnix = newPost.durationDays * 24 * 3600 * 1000 + Date.parse(newPost.modifiedTimestamp) - timeOffset
-    endTimeUnix=Math.ceil(endTimeUnix/1000/3600/24)*1000*3600*24 + timeOffset
-    const endTimeStr = new Date(endTimeUnix).toLocaleString("en-US", { timeZone: 'America/New_York' })
+    var endTimeUnix = newPost.durationDays * 24 * 3600 * 1000 + Date.parse(newPost.modifiedTimestamp)
+    var endTimeStr = new Date(endTimeUnix+23*3600*1000+59*60*1000+59*1000+999).toLocaleString("en-US", { timeZone: 'America/New_York' })
+    endTimeStr=endTimeStr.substring(0, endTimeStr.indexOf(',')).concat(", 12:00:00 AM EST")
 
     let info = await transporter.sendMail({
         from: '"CSABay Team" <csa.bay00@gmail.com>', 
         to: email, 
         subject: "[CSABay] New Post Created", 
         text:   "You created a new post on CSABay." + "\n"
-                + "Your post will expire on " + endTimeStr + " EST" + "\n"
+                + "Your post will expire on " + endTimeStr + "\n"
                 + "You can extend the expiration date by updating your post later." + "\n"
                 + "\n"
                 + "\n"
@@ -57,17 +56,17 @@ const sendCreatePostEmail = async (newPost, email) => {
 
 
 const sendUpdatePostEmail = async (newPost, email) => {
-    var timeOffset = new Date(Date.now()).getTimezoneOffset()*60*1000
-    var endTimeUnix = newPost.durationDays * 24 * 3600 * 1000 + Date.parse(newPost.modifiedTimestamp) - timeOffset
-    endTimeUnix=Math.ceil(endTimeUnix/1000/3600/24)*1000*3600*24 + timeOffset
-    const endTimeStr = new Date(endTimeUnix).toLocaleString("en-US", { timeZone: 'America/New_York' })
+    var endTimeUnix = newPost.durationDays * 24 * 3600 * 1000 + Date.parse(newPost.modifiedTimestamp)
+    var endTimeStr = new Date(endTimeUnix+23*3600*1000+59*60*1000+59*1000+999).toLocaleString("en-US", { timeZone: 'America/New_York' })
+    endTimeStr=endTimeStr.substring(0, endTimeStr.indexOf(',')).concat(", 12:00:00 AM EST")
+
 
     let info = await transporter.sendMail({
         from: '"CSABay Team" <csa.bay00@gmail.com>', 
         to: email, 
         subject: "[CSABay] Post updated", 
         text:   "You updated your post on CSABay." + "\n"
-                + "Your post will expire on " + endTimeStr + " EST" + "\n"
+                + "Your post will expire on " + endTimeStr + "\n"
                 + "You can extend the expiration date by updating your post later." + "\n"
                 + "\n"
                 + "\n"
@@ -82,18 +81,16 @@ const sendUpdatePostEmail = async (newPost, email) => {
 }
 
 const sendExpireReminderEmail = async (newPost, email, isExpired) => {
-    var timeOffset = new Date(Date.now()).getTimezoneOffset()*60*1000
-    var endTimeUnix = newPost.durationDays * 24 * 3600 * 1000 + Date.parse(newPost.modifiedTimestamp) - timeOffset
-    endTimeUnix=Math.ceil(endTimeUnix/1000/3600/24)*1000*3600*24 + timeOffset
-    const endTimeStr = new Date(endTimeUnix).toLocaleString("en-US", { timeZone: 'America/New_York' })
+    var endTimeUnix = newPost.durationDays * 24 * 3600 * 1000 + Date.parse(newPost.modifiedTimestamp)
+    var endTimeStr = new Date(endTimeUnix+23*3600*1000+59*60*1000+59*1000+999).toLocaleString("en-US", { timeZone: 'America/New_York' })
+    endTimeStr=endTimeStr.substring(0, endTimeStr.indexOf(',')).concat(", 12:00:00 AM EST")
 
     if(!isExpired){
         let info = await transporter.sendMail({
             from: '"CSABay Team" <csa.bay00@gmail.com>', 
             to: email, 
-            subject: "[CSABay] Your post will expire in " + Math.ceil((endTimeUnix-Date.now())/1000/3600) + " hours", 
-            text:   "Your post will expire in " + Math.ceil((endTimeUnix-Date.now())/1000/3600) + " hours" + "\n"
-                    + "The exact expiration time is: " + endTimeStr + " EST" + "\n"
+            subject: "[CSABay] Your post will expire SOON!", 
+            text:   "Your post will expire on " + endTimeStr + "\n"
                     + "You can extend the expiration date by updating your post." + "\n"
                     + "\n"
                     + "\n"
@@ -111,7 +108,7 @@ const sendExpireReminderEmail = async (newPost, email, isExpired) => {
             from: '"CSABay Team" <csa.bay00@gmail.com>', 
             to: email, 
             subject: "[CSABay] Your post was expired", 
-            text:   "Your post was deleted since it was expired on " + endTimeStr + " EST" + "\n"
+            text:   "Your post was deleted since it was expired on " + endTimeStr + "\n"
                     + "If you need to restore your post, contact a CSA IT department member ASAP." + "\n"
                     + "\n"
                     + "\n"

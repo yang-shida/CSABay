@@ -5,7 +5,7 @@ const router = express.Router();
 const Post = require("../models/Post");
 const DeletedPost = require("../models/DeletedPost");
 const User = require("../models/User");
-const schedule = require('node-schedule');
+var CronJob = require('cron').CronJob;
 var AWS = require('aws-sdk');
 const mailer = require("../misc/mailer")
 
@@ -21,7 +21,7 @@ var S3 = new AWS.S3({
     secretAccessKey: config.secretAccessKey
 })
 
-const durationDaysChecker = schedule.scheduleJob('0 0 0 * * *', function(){
+var job = new CronJob('0 0 0 * * *', function(){
     
     const threeDaysInMSeconds = 3 * 24 * 3600 * 1000;
     const timeNow = Date.now()
@@ -124,7 +124,9 @@ const durationDaysChecker = schedule.scheduleJob('0 0 0 * * *', function(){
             }
         }
     )
-  });
+}, null, true, 'America/New_York');
+
+job.start();
 
 router.route("/add-post").post(
     (request, response)=> {
