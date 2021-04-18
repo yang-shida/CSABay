@@ -1,8 +1,18 @@
 # CSABay
-A Craigslist/eBay type website where people can publicize selling information and contact information for sellers
+A Craigslist/eBay type website where people can publicize selling information and contact information
 
 ## Installing Dependencies:
-- npm install
+```npm install```
 
 ## To run locally:
-- npm run dev
+```npm run dev```
+
+## Project Structure
+The front end uses React.js, and the back end uses Node.js. The communication between the front end and the back end uses REST API.
+### Important Folders and Files
+- /client: stores all the files required for the front end
+- /controllers: handles various errors
+- /misc/mailer.js: functions related to sending emails (verification code and reminders)
+- /models: the database schemas
+- /routes: the back-end API routes
+- /server.js: the back-end server code
