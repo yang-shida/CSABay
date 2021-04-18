@@ -15,7 +15,6 @@ The front end uses React.js, and the back end uses Node.js. The communication be
   - /src/auth: front-end authentication
   - /src/components: front-end components
   - /src/img: front-end local/default images
-- /controllers: handles various errors
 - /misc/mailer.js: functions related to sending emails (verification code and reminders)
 - /models: the database schemas
 - /routes: the back-end API routes
