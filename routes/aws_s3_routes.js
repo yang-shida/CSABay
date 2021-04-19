@@ -54,7 +54,7 @@ router.route("/s3-get-signed-post").post(
             Fields: {
                 key: `${dir}/${fileUid}`,
             },
-            Expires: 300,
+            Expires: 600,
             Bucket: config.bucketName,
             Conditions: [
                 ["starts-with", "$Content-Type", "image/"],
