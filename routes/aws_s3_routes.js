@@ -22,7 +22,7 @@ const MAX_CONTENT_LEN = 10485760
 router.route("/s3-get-url").post(
     (request, response) => {
         const key = request.body.key 
-        var params = {Bucket: config.bucketName, Key: key, Expires: 300}
+        var params = {Bucket: config.bucketName, Key: key, Expires: 3600}
         S3.getSignedUrl('getObject', params,
             (err, url) => {
                 if(err){
