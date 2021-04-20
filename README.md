@@ -5,6 +5,7 @@ A Craigslist/eBay type website where people can publicize selling information an
 ```npm install```
 
 ## To run locally:
+Create (or get) a .env file and put it in the project root directory, then
 ```npm run dev```
 
 ## Project Structure
