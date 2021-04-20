@@ -8,7 +8,7 @@ import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DE
 
 const { SubMenu } = Menu;
 
-const NavBar = ({isAuthenticated=false, user, currentRoute, routerProps, setUserInfo}) => {
+const NavBar = ({isAuthenticated=false, setIsAuth, user, currentRoute, routerProps, setUserInfo}) => {
     const [currentPage, setCurrentPage] = useState(currentRoute)
     const [isConfirmLogoutVisible, setIsConfirmLogoutVisible] = useState(false)
 
@@ -24,7 +24,12 @@ const NavBar = ({isAuthenticated=false, user, currentRoute, routerProps, setUser
     useEffect(
         () => {
             if(isAuthenticated && user.profilePictureKey !== ""){
-                setProfilePictureURL(S3_GET(user.profilePictureKey))
+                S3_GET(user.profilePictureKey)
+                    .then(
+                        (url) => {
+                            setProfilePictureURL(url)
+                        }
+                    )
             }
         }, [user]
     )
@@ -36,9 +41,11 @@ const NavBar = ({isAuthenticated=false, user, currentRoute, routerProps, setUser
     const onLogoutConfirm = () => {
         auth.logout(
             () => {
-                routerProps.history.push('/')
                 setIsConfirmLogoutVisible(false)
                 setUserInfo()
+                setIsAuth(false)
+                document.cookie = "userid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                routerProps.history.push('/')
             }
         )
     }

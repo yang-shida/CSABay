@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import {
   Form,
   Input,
@@ -6,9 +7,14 @@ import {
   Row,
   Col,
   Button,
+  message
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {PasswordInput} from 'antd-password-input-strength'
+import {Link} from 'react-router-dom'
+
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const formItemLayout = {
     labelCol: {
@@ -40,7 +46,28 @@ const tailFormItemLayout = {
     },
 }
 
-const SignupForm = () => {
+// https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+function useInterval(callback, delay) {
+    const savedCallback = useRef();
+
+    // Remember the latest callback.
+    useEffect(() => {
+        savedCallback.current = callback;
+    }, [callback]);
+
+    // Set up the interval.
+    useEffect(() => {
+        function tick() {
+            savedCallback.current();
+        }
+        if (delay !== null) {
+            let id = setInterval(tick, delay);
+            return () => clearInterval(id);
+        }
+    }, [delay]);
+}
+
+const SignupForm = ({routerProps}) => {
     const [form] = Form.useForm();
 
     const [firstName, setFirstName] = useState('')
@@ -49,9 +76,14 @@ const SignupForm = () => {
     const [email, setEmail] = useState('')
     const [emailVerification, setEmailVerification] = useState('')
     const [wechatID, setWechatID] = useState('')
-    const [password, setPassword] = useState('')
+    const [pwd, setPwd] = useState('')
     const [confirm, setConfirm] = useState('')
     const [phoneNum, setPhoneNum] = useState('')
+
+    const GET_CODE_WAITING = 60
+    const [isGetCodeButtonWaiting, setIsGetCodeButtonWaiting] = useState(false)
+    const [getCodeButtonWaitingTime, setGetCodeButtonWaitingTime] = useState(GET_CODE_WAITING)
+    const [delay, setDelay] = useState(null)
 
 
     const onFinish = async () =>{
@@ -59,33 +91,97 @@ const SignupForm = () => {
             firstName: firstName,
             lastName: lastName,
             email: email.toLowerCase(),
+            emailVerification: emailVerification,
             wechatID: wechatID.toLowerCase(),
-            password: password,
+            pwd: pwd,
             phoneNum: phoneNum,
             profilePictureKey: ""
         }
+        
+        axios.post(base_ + '/api/add-user', newUser).then((response) => {
+            if(response.data.code === 0){
+                message.success("Account created!")
+                setFirstName('')
+                setLastName('')
+                setUsername('')
+                setEmail('')
+                setEmailVerification('')
+                setWechatID('')
+                setPwd('')
+                setConfirm('')
+                setPhoneNum('')
+        
+                form.resetFields()
 
-        const res = await fetch('http://localhost:8080/users', {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(newUser),
-        })
+                routerProps.history.push('./login')
+            }
+            else {
+                if(typeof(response.data.message)==="string"){
+                    message.error(response.data.message)
+                }
+                else{
+                    message.error("Something went wrong!")
+                }
+                
+            }
+        }, (error)=> {
+            message.error("Something went wrong!")
+            console.log(error)
+        });
 
-        setFirstName('')
-        setLastName('')
-        setUsername('')
-        setEmail('')
-        setEmailVerification('')
-        setWechatID('')
-        setPassword('')
-        setConfirm('')
-        setPhoneNum('')
-
-        form.resetFields();
+        
 
         // Go to login page
+    }
+
+    // https://github.com/ufcsa/airpick/blob/master/client/container/auth/Register.js
+    const emailValidator = (rule, value) => {
+		if (!value || /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.[a-zA-Z]{2,4}$/.test(value)) {
+			return Promise.resolve();
+		}
+		return Promise.reject('Please enter a valid email address!');
+	}
+
+    useInterval(
+        () => {
+            if(getCodeButtonWaitingTime>=1){
+                setGetCodeButtonWaitingTime(getCodeButtonWaitingTime-1)
+            }
+            else{
+                setGetCodeButtonWaitingTime(GET_CODE_WAITING)
+                setIsGetCodeButtonWaiting(false)
+                setDelay(null)
+            }
+        }, delay
+    )
+
+    const onClickGetCode = () => {
+        // request code from backend
+        // if backend receives the request
+        const token = {
+            email: email.toLowerCase()
+        }
+        
+        axios.post(base_ + '/api/resend', token).then((response) => {
+            if(response.data.code === 0){
+                message.success("Email Was Sent!")
+                setIsGetCodeButtonWaiting(true)
+                setDelay(1000)
+            }
+            else {
+                if(typeof(response.data.message)==="string"){
+                    message.error(response.data.message)
+                }
+                else{
+                    message.error("Something went wrong!")
+                }
+                
+            }
+        }, (error)=> {
+            message.error("Something went wrong!")
+            console.log(error)
+        });
+        
     }
 
     return (
@@ -147,8 +243,7 @@ const SignupForm = () => {
                     label="E-mail"
                     rules={[
                         {
-                            type: 'email',
-                            message: 'Please input a valid E-mail!'
+                            validator: emailValidator
                         },
                         {
                             required: true,
@@ -161,7 +256,7 @@ const SignupForm = () => {
 
                 <Form.Item label="* Email Verification Code">
                     <Row gutter={6}>
-                        <Col span={20}>
+                        <Col span={isGetCodeButtonWaiting?14:20}>
                             <Form.Item
                                 name='code'
                                 noStyle						
@@ -175,10 +270,19 @@ const SignupForm = () => {
                                 <Input placeholder="Enter your email verification code" value={emailVerification} onChange={(e) => setEmailVerification(e.target.value)}/>
                             </Form.Item>
                         </Col>
-                        <Col span={4}>
-                            {/* TODO: add onClick action to check if match database */}
-                            <Button>    
-                                Get Code
+                        <Col span={isGetCodeButtonWaiting?10:4}>
+                            <Button 
+                                disabled={
+                                    !(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.[a-zA-Z]{2,4}$/.test(form.getFieldValue('email'))) || isGetCodeButtonWaiting
+                                }
+                                onClick={onClickGetCode}
+                            >    
+                                {
+                                    isGetCodeButtonWaiting?
+                                    `Please wait ${getCodeButtonWaitingTime} s before resending`:
+                                    "Get Code"
+                                }
+                                
                             </Button>
                         </Col>
                     </Row>
@@ -233,8 +337,8 @@ const SignupForm = () => {
                     hasFeedback
                 >
                     <PasswordInput 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        value={pwd}
+                        onChange={(e) => setPwd(e.target.value)}
                         settings={{
                             colorScheme: {
                                 levels: ["#ff4033", "#fe940d", "#ffd908", "#cbe11d", "#6ecc3a"],
@@ -260,7 +364,7 @@ const SignupForm = () => {
                         },
                         () => ({
                             validator(_, value) {
-                            if (!value || password === value) {
+                            if (!value || pwd === value) {
                                 return Promise.resolve();
                             }
 
@@ -275,6 +379,21 @@ const SignupForm = () => {
                 <Form.Item
                     name="phone"
                     label="Phone Number"
+                    // rules={[
+                    //     ()=>({
+                    //         validator(_, value){
+                    //             if(value==='' || value===undefined){
+                    //                 return Promise.resolve();
+                    //             }
+                    //             else if(!(/^\d+$/.test(value))){
+                    //                 return Promise.reject('Phone number should only contain numbers!');
+                    //             }
+                    //             else{
+                    //                 return Promise.resolve();
+                    //             }
+                    //         }
+                    //     })
+                    // ]}
                 >
                     <Input value={phoneNum} onChange={(e) => setPhoneNum(e.target.value)}/>
                 </Form.Item>
@@ -283,6 +402,10 @@ const SignupForm = () => {
                     <Button type="primary" htmlType="submit">
                         Register
                     </Button>
+                </Form.Item>
+
+                <Form.Item {...tailFormItemLayout}>
+                    <Link to='/login'>Already have an account? Go to login page!</Link>
                 </Form.Item>
 
             </Form>

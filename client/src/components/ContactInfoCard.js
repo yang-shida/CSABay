@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import { Card, Avatar } from 'antd';
 import {S3_GET} from './S3'
+import default_profile_pic from '../img/default_profile_pic.jpg'
+import please_log_in from '../img/please_log_in.png'
 
 const profilePictureStyle = {
     width: '90%',
@@ -35,21 +37,41 @@ const ContactInfoCard = ({user, post, isInfoVisible}) => {
 
     useEffect(
         () => {
-            if(user.profilePictureKey !== ""){
-                setProfilePictureURL(S3_GET(user.profilePictureKey))
+            let isSubscribed = true
+            if(isSubscribed){
+                setProfilePictureURL("")
             }
+            
+            if(user.profilePictureKey !== ""){
+                S3_GET(user.profilePictureKey)
+                    .then(
+                        (url) => {
+                            if(isSubscribed){
+                                setProfilePictureURL(url)
+                            }
+                            
+                        }
+                    )
+            }
+            return (
+                () => {
+                    isSubscribed = false
+                }
+            )
         }, [user]
     )
 
     return (
         <div>
-            <Card style={{ width: '100%', marginTop: 16 }} loading={!isInfoVisible} hoverable={true}>
+            <Card style={{ width: '100%', marginTop: 16 }} hoverable={true}>
                 <div style={contactInfoHeadingTextStyle}>
                     Contact Information
                 </div>
                 {
+                    (!isInfoVisible)?
+                    <Avatar size="default" src={please_log_in} style={profilePictureStyle} />:
                     user.profilePictureKey===""?
-                    <Avatar size="default" src={'./default_profile_pic.jpg'} style={profilePictureStyle} />:
+                    <Avatar size="default" src={default_profile_pic} style={profilePictureStyle} />:
                     <Avatar size="default" src={profilePictureURL} style={profilePictureStyle} />
                 }
                 <div style={contactInfoStyle}>

@@ -17,6 +17,7 @@ import {
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ImageUploader from './ImageUploader'
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY, S3_GET_OBJECT_TYPE} from './S3'
+import axios from 'axios';
 
 const { Option } = Select;
 
@@ -48,34 +49,55 @@ const dividerLayout = {
     },
 }
 
+// const base_ = "http://localhost:3001";
+const base_ = ""
+
 const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
 
     const [fileList, setFileList] = useState([])
 
     useEffect(
         async () => {
+            message.loading({content: "Loading Pictures", key: "loadPicMessage", duration: 0})
             var array = []
+            var count = post.pictureKeyArray.length
             for(const key in post.pictureKeyArray){
                 await S3_GET_OBJECT_TYPE(post.pictureKeyArray[key])
                     .then(
                         (type) => {
-                            var temp = {
-                                uid: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
-                                name: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
-                                status: 'done',
-                                url: S3_GET(post.pictureKeyArray[key]),
-                                type: type
-                            }
-                            array = [...array, temp]
+                            S3_GET(post.pictureKeyArray[key])
+                                .then(
+                                    (url) => {
+                                        array = [...array, {
+                                            uid: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
+                                            name: post.pictureKeyArray[key].substring(post.pictureKeyArray[key].lastIndexOf('/')+1),
+                                            status: 'done',
+                                            url: url,
+                                            type: type
+                                        }]
+                                        count--
+                                        if(count===0){
+                                            message.success({content: "Pictures loaded", key: "loadPicMessage"})
+                                            setFileList(array)
+                                        }
+                                    }
+
+                                )
                         }
                     )
                     .catch(
                         (err) => {
+                            message.error({content: "Fail to load pictures", key: "loadPicMessage"})
                             console.log(err)
+                            setFileList(array)
                         }
                     )
             }
-            setFileList(array)
+            if(count===0){
+                message.success({content: "Pictures loaded", key: "loadPicMessage"})
+                setFileList(array)
+            }
+            
         },[]
     )
 
@@ -102,14 +124,21 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
         return new Promise(
             async (resolve, reject) => {
                 try{
+                    var count = fileList.length
                     for(let index = 0; index < fileList.length; index ++){
                         const file = fileList[index]
                         if(!originalPictureKeyArray.includes(`ProductDetailPhotos/${file.uid}`)){
                             const signed = await S3_GET_SIGNED_POST(file, 'ProductDetailPhotos')
                             await S3_UPLOAD(signed, fileList, index)
                         }
+                        count--
+                        if(count===0){
+                            resolve()
+                        }
                     }
-                    resolve()
+                    if(count===0){
+                        resolve()
+                    }
                 }
                 catch{
                     reject()
@@ -121,8 +150,9 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
     const deleteAllOldPictures = () => {
         return new Promise(
             async (resolve, reject) => {
-                for(const key in originalPictureKeyArray){
-                    await S3_DELETE_BY_KEY(originalPictureKeyArray[key])
+                const deletedPictureKeys = originalPictureKeyArray.filter(key => !pictureKeyArray.includes(key))
+                for(const key in deletedPictureKeys){
+                    await S3_DELETE_BY_KEY(deletedPictureKeys[key])
                 }
                 resolve()
             }
@@ -130,40 +160,52 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
     }
 
     const onFinish = async () => {
-        message.loading({content: "Uploading Pictures", key: "updatable"})
+        message.loading({content: "Uploading Pictures", key: "uploadPicMessage", duration: 0})
         await uploadAllPictures()
             .then(
                 async () => {
-                    const updatedPost = {
-                        ...post,
-                        title: title,
-                        description: description,
-                        durationDays: durationDays,
-                        typeOfPost: typeOfPost,
-                        zipcode: zipcode,
-                        price: price,
-                        pictureKeyArray: pictureKeyArray,
-                        email: email.toLowerCase(),
-                        wechatID: wechatID.toLowerCase(),
-                        phoneNum: phoneNum
-                    }
-
-                    const res = await fetch(`http://localhost:8080/posts1/${post.id}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-type': 'application/json'
-                        },
-                        body: JSON.stringify(updatedPost),
-                    })
-
-                    message.success({content: "Post updated!", key: "updatable", duration: 2})
-
-                    // setIsEditPostVisible(false)
+                    await deleteAllOldPictures()
+                        .then(
+                            async () => {
+                                const updatedPost = {
+                                    ...post,
+                                    title: title,
+                                    description: description,
+                                    durationDays: durationDays,
+                                    typeOfPost: typeOfPost,
+                                    zipcode: zipcode,
+                                    price: price,
+                                    pictureKeyArray: pictureKeyArray,
+                                    email: email.toLowerCase(),
+                                    wechatID: wechatID.toLowerCase(),
+                                    phoneNum: phoneNum
+                                }
+            
+                                axios.put(base_ + '/api/update-post', {updatedPost: updatedPost})
+                                    .then(
+                                        (res) => {
+                                            if(res.data.code===1){
+                                                message.error({content: res.data.message, key: "uploadPicMessage", duration: 2})
+                                            }
+                                            else{
+                                                message.success({content: "Post updated!", key: "uploadPicMessage", duration: 2})
+                                            }
+                                        }
+                                    )
+                                    .catch(
+                                        (err) => {
+                                            console.log(err)
+                                            message.error({content: "Fail to update post", key: "uploadPicMessage", duration: 2})
+                                        }
+                                    )
+                            }
+                        )
+                    
                 }
             )
             .catch(
                 () => {
-                    message.error({content: "Fail to update pictures", key: "updatable", duration: 2})
+                    message.error({content: "Fail to update pictures", key: "uploadPicMessage", duration: 2})
                 }
             )
         
@@ -188,6 +230,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                 onCancel={onCloseEditPost}
                 footer={null}
                 width='70%'
+                destroyOnClose={true}
             >
                 <Form
                     form={form}
@@ -234,7 +277,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
 
                     <Form.Item
                         name="description"
-                        label="Post Desceiption"
+                        label="Post Description"
                         rules={[
                             {
                                 required: true,
@@ -260,9 +303,9 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                             [
                                 {
                                     type: 'number', 
-                                    min: 1, 
+                                    min: 7, 
                                     max: 30, 
-                                    message: 'Duration needs to be a number between 1 and 30!'
+                                    message: 'Duration needs to be a number between 7 and 30!'
                                 },
                                 {
                                     required: true,
@@ -349,17 +392,35 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                             [
                                 {
                                     type: 'number',
-                                    message: 'Price needs to be a number!'
+                                    min: 0, 
+                                    max: 99999999, 
+                                    message: 'Price needs to be a number between 0 and 99999999!'
                                 }
                                 
                             ]
                         }
                     >
                         <InputNumber 
-                            formatter={value => `$ ${value}`}
+                            formatter={
+                                value => {
+                                    return (value==0?
+                                    "$ 0":
+                                    `$ ${value}`)
+                                }
+                            }
                             style={{ width: '100%' }}
                             value={price} 
-                            onChange={(value) => setPrice(value)}
+                            onChange={
+                                (value) => {
+                                    if(value==null){
+                                        setPrice(0)
+                                    }
+                                    else{
+                                        setPrice(value)
+                                    }
+                                    
+                                }
+                            }
                         />
                     </Form.Item>
 
@@ -367,7 +428,7 @@ const EditPostPage = ({post, isEditPostVisible, setIsEditPostVisible}) => {
                         name="pictures"
                         label={
                             <span>
-                                Pictures&nbsp;
+                                Pictures (&lt;10MB Each)&nbsp;
                                 <Tooltip title="The first picture will be used as the cover picture.">
                                     <QuestionCircleOutlined />
                                 </Tooltip>

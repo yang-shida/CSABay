@@ -1,8 +1,11 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Card, Col, Row, Avatar, Popconfirm } from 'antd';
 import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-design/icons';
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
 import auth from '../auth/auth';
+import { CostExplorer } from 'aws-sdk';
+import no_image from '../img/no_image.jpg'
+import default_profile_pic from '../img/default_profile_pic.jpg'
 
 const { Meta } = Card;
 
@@ -38,19 +41,85 @@ const priceStyle = {
     float: 'left'
 };
 
-const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit, onClickCard, routerProps}) => {
+const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, onClickEdit, onClickCard, routerProps, isAuth}) => {
 
     const onConfirmToLogin = () => {
         routerProps.history.push('./login')
     }
 
+    const [postsWithCoverUrl, setPostsWithCoverUrl] = useState([])
+
+    useEffect(
+        () => {
+            let isSubscribed = true
+
+            const func = async () => {
+                var temp = []
+                var count = posts.length
+                if(posts.length===0){
+                    setPostsWithCoverUrl(temp)
+                }
+                for(const post in posts){
+                    const currentPost = posts[post]
+                    if(posts[post].pictureKeyArray.length>0){
+                        await S3_GET(posts[post].pictureKeyArray[0]).then(
+                            async (coverUrl) => {
+                                if(posts[post].simplifiedUserInfo.profilePictureKey != ''){
+                                    await S3_GET(posts[post].simplifiedUserInfo.profilePictureKey).then(
+                                        (profilePicUrl) => {
+                                            temp = [...temp, {...currentPost, coverUrl: coverUrl, profilePicUrl: profilePicUrl}]
+                                            count--
+                                            if(count === 0){
+                                                if(isSubscribed){
+                                                    setPostsWithCoverUrl(temp)
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
+                                else{
+                                    temp = [...temp, {...currentPost, coverUrl: coverUrl, profilePicUrl: ''}]
+                                    count--
+                                    if(count === 0){
+                                        if(isSubscribed){
+                                            setPostsWithCoverUrl(temp)
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    }
+                    else{
+                        temp = [...temp, {...currentPost, coverUrl: '', profilePicUrl: ''}]
+                        count--
+                        if(count === 0){
+                            if(isSubscribed){
+                                setPostsWithCoverUrl(temp)
+                            }
+                        }
+                    }
+                }
+                
+            }
+
+            func()
+            
+            
+            return (
+                () => {
+                    isSubscribed = false
+                }
+            )
+        }, [posts]
+    )
+
     return (
         <div>
             <Row>
                 {
-                    posts.map(
+                    postsWithCoverUrl.map(
                         (post) => (
-                            <Col key={post.id} style={{margin: '20px 15px'}}>
+                            <Col key={post._id} style={{margin: '20px 15px'}}>
                                 <Card
                                     hoverable={true}
                                     bordered={false}
@@ -59,14 +128,14 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                         displayMyPost?
                                             [
                                                 <EditOutlined key="edit-post" onClick={(e)=>{e.stopPropagation();onClickEdit(post);}} />,
-                                                <DeleteOutlined key="delete-post" onClick={(e)=>{e.stopPropagation();onClickDelete(post.id);}} />
+                                                <DeleteOutlined key="delete-post" onClick={(e)=>{e.stopPropagation();onClickDelete(post._id);}} />
                                             ]
                                             :
                                             [
-                                                favoriteIDs.includes(post.id)?
-                                                <StarTwoTone key="favorite-post-yellow" twoToneColor="yellow" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>:
-                                                auth.isAuthenticated()?
-                                                <StarOutlined key="favorite-post-gray" onClick={(e)=>{e.stopPropagation();onClickStar(post.id);}}/>:
+                                                favoriteIDs.includes(post._id)?
+                                                <StarTwoTone key="favorite-post-yellow" twoToneColor="yellow" onClick={(e)=>{e.stopPropagation();onClickStar(post._id);}}/>:
+                                                isAuth?
+                                                <StarOutlined key="favorite-post-gray" onClick={(e)=>{e.stopPropagation();onClickStar(post._id);}}/>:
                                                 <Popconfirm
                                                     title="You need to login to favorite a post. Do you want to login?"
                                                     onConfirm={(e) => {e.stopPropagation(); onConfirmToLogin()}}
@@ -84,7 +153,7 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                             <img
                                                 style={{height: '100%', width: '100%', objectFit: 'cover'}}
                                                 alt="example"
-                                                src={post.pictureKeyArray.length===0?'../no_image.jpg':S3_GET(post.pictureKeyArray[0])}
+                                                src={post.pictureKeyArray.length===0?no_image:post.coverUrl}
                                             />
                                         </div>
                                     }
@@ -92,18 +161,24 @@ const Cards = ({posts, onClickStar, favoriteIDs, displayMyPost, onClickDelete, o
                                 >
                                     <div style={locationPriceContainerStyle}>
                                         <div style={priceStyle}>
-                                            {`\$${post.price?post.price:' N/A'}`}
+                                            {`\$${post.price}`}
                                         </div>
                                         <div style={locationStyle}>
-                                            {'Gainesville, FL 32607'}
+                                            {post.zipcode===''?'N/A':post.zipcode}
                                         </div>
                                     </div>
                                     <div style={{clear: 'both'}}></div>
                                     <Meta
                                         style={{marginLeft: '0px'}}
-                                        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                        avatar={<Avatar src={post.profilePicUrl==''?default_profile_pic:post.profilePicUrl} />}
                                         title={post.title}
-                                        description={'5 days ago'}
+                                        description={
+                                            Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/3600)==0?
+                                            `${Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/60)} minutes ago`:
+                                            Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/3600/24)==0?
+                                            `${Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/3600)} hours ago`:
+                                            `${Math.floor((Date.now() - Date.parse(post.modifiedTimestamp))/1000/3600/24)} days ago`
+                                        }
                                     />
                                 </Card>
                             </Col>

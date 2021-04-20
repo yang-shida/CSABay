@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import { Divider, Row, Col, Image, Popconfirm } from 'antd';
+import { Divider, Row, Col, Image, Popconfirm, Button } from 'antd';
 import { StarOutlined, DeleteOutlined, StarTwoTone, EditOutlined } from '@ant-design/icons';
 
 import ContactInfoCard from './ContactInfoCard'
 
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST} from './S3'
+import no_image from '../img/no_image.jpg'
 import auth from '../auth/auth';
 
 // title | actions
@@ -123,11 +124,47 @@ const dividerLayout = {
 
 
 
-const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, onClickEdit, onClickDelete, routerProps}) => {
+const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, onClickEdit, onClickDelete, routerProps, isAuth}) => {
 
     const onConfirmToLogin = () => {
         routerProps.history.push('./login')
     }
+
+    const [pictureUrlArray, setPictureUrlArray] = useState([])
+    
+
+    useEffect(
+        async () => {
+            let isSubscribed = true
+            if(post.pictureKeyArray.length === 0){
+                if(isSubscribed){
+                    setPictureUrlArray([])
+                }
+                
+            }
+            else{
+                if(isSubscribed){
+                    setPictureUrlArray([])
+                }
+                for(const key in post.pictureKeyArray){
+                    const currentKey = post.pictureKeyArray[key]
+                    await S3_GET(currentKey).then(
+                        (url) => {
+                            if(isSubscribed){
+                                setPictureUrlArray(prevState=>([...prevState, url]))
+                            }
+                            
+                        }
+                    )
+                }
+            }
+            return (
+                () => {
+                    isSubscribed = false
+                }
+            )
+        }, [post]
+    )
 
     return (
         <div>
@@ -143,14 +180,14 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                         (
                             [
                                 <EditOutlined style={actionIconStyle} key="edit-post" onClick={()=>onClickEdit(post)} />,
-                                <DeleteOutlined style={actionIconStyle} key="delete-post" onClick={()=>onClickDelete(post.id)} />
+                                <DeleteOutlined style={actionIconStyle} key="delete-post" onClick={()=>onClickDelete(post._id)} />
                             ]
                         ):
                         (
                             isFavorite?
-                            <StarTwoTone style={actionIconStyle} key="favorite-post-yellow" twoToneColor="yellow" onClick={()=>onClickStar(post.id)}/>:
-                            auth.isAuthenticated()?
-                            <StarOutlined style={actionIconStyle} key="favorite-post-gray" onClick={()=>onClickStar(post.id)}/>:
+                            <StarTwoTone style={actionIconStyle} key="favorite-post-yellow" twoToneColor="yellow" onClick={()=>onClickStar(post._id)}/>:
+                            isAuth?
+                            <StarOutlined style={actionIconStyle} key="favorite-post-gray" onClick={()=>onClickStar(post._id)}/>:
                             <Popconfirm
                                 title="You need to login to favorite a post. Do you want to login?"
                                 onConfirm={onConfirmToLogin}
@@ -176,7 +213,20 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
 
             <Row gutter='16'>
                 <Col {...contactInfoLayout}>
-                    <ContactInfoCard user={user} post={post} isInfoVisible={true}/>
+                    {
+                        isAuth?
+                        <ContactInfoCard user={user} post={post} isInfoVisible={true}/>:
+                        <Popconfirm
+                            title="You need to login to see the contact info. Do you want to login?"
+                            onConfirm={onConfirmToLogin}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button style={{width: '100%', height: '100%', borderColor: 'transparent'}}>
+                                <ContactInfoCard user={user} post={post} isInfoVisible={false}/>
+                            </Button>
+                        </Popconfirm>
+                    }
                 </Col>
                 <Col {...pictureWallLayout}>
                     <div style={headingTextStyle}>
@@ -184,21 +234,21 @@ const ProductDetailPage = ({post, displayMyPost, isFavorite, onClickStar, user, 
                     </div>
                     <Image.PreviewGroup>
                         {
-                            post.pictureKeyArray.length===0?
+                            pictureUrlArray.length===0?
                             <Image
                                 width="250px"
                                 height="250px"
                                 style={{objectFit: 'contain', padding: '10px'}}
-                                src='../no_image.jpg'
+                                src={no_image}
                             />:
-                            post.pictureKeyArray.map(
-                                (key, index) => (
+                            pictureUrlArray.map(
+                                (url, index) => (
                                     <Image
                                         key={index}
                                         width="250px"
                                         height="250px"
                                         style={{objectFit: 'contain', padding: '10px'}}
-                                        src={S3_GET(key)}
+                                        src={url}
                                     />
                                 )
                             )

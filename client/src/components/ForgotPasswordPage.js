@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Form,
     Input,
@@ -9,6 +9,7 @@ import {
     message,
   } from 'antd';
 import {PasswordInput} from 'antd-password-input-strength'
+import axios from 'axios';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const formItemLayout =  { 
@@ -41,6 +42,30 @@ const tailFormItemLayout = {
     },
 };
 
+// https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+function useInterval(callback, delay) {
+    const savedCallback = useRef();
+
+    // Remember the latest callback.
+    useEffect(() => {
+        savedCallback.current = callback;
+    }, [callback]);
+
+    // Set up the interval.
+    useEffect(() => {
+        function tick() {
+            savedCallback.current();
+        }
+        if (delay !== null) {
+            let id = setInterval(tick, delay);
+            return () => clearInterval(id);
+        }
+    }, [delay]);
+}
+
+// const base_ = "http://localhost:3001";
+const base_ = ""
+
 const ForgotPasswordPage = () => {
     const [form] = Form.useForm();
 
@@ -49,29 +74,93 @@ const ForgotPasswordPage = () => {
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
 
+    const GET_CODE_WAITING = 60
+    const [isGetCodeButtonWaiting, setIsGetCodeButtonWaiting] = useState(false)
+    const [getCodeButtonWaitingTime, setGetCodeButtonWaitingTime] = useState(GET_CODE_WAITING)
+    const [delay, setDelay] = useState(null)
+
+    // https://github.com/ufcsa/airpick/blob/master/client/container/auth/Register.js
+    const emailValidator = (rule, value) => {
+		if (!value || /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.[a-zA-Z]{2,4}$/.test(value)) {
+			return Promise.resolve();
+		}
+		return Promise.reject('Please enter a valid email address!');
+	}
+
+    useInterval(
+        () => {
+            if(getCodeButtonWaitingTime>=1){
+                setGetCodeButtonWaitingTime(getCodeButtonWaitingTime-1)
+            }
+            else{
+                setGetCodeButtonWaitingTime(GET_CODE_WAITING)
+                setIsGetCodeButtonWaiting(false)
+                setDelay(null)
+            }
+        }, delay
+    )
+
+    const onClickGetCode = () => {
+        // request code from backend
+        const token = {
+            email: email.toLowerCase()
+        }
+        setIsGetCodeButtonWaiting(true)
+        axios.post(base_ + '/api/resend', token).then((response) => {
+            if(response.data.code === 0){
+                // if backend receives the request
+                message.success("Email Was Sent!")
+                setIsGetCodeButtonWaiting(true)
+                setDelay(1000)
+            }
+            else {
+                if(typeof(response.data.message)==="string"){
+                    message.error(response.data.message)
+                }
+                else{
+                    message.error("Something went wrong!")
+                }
+                
+            }
+        }, (error)=> {
+            message.error("Something went wrong!")
+            console.log(error)
+        });
+    }
+
     const onFinish = async () =>{
 
         const body = {
-            email: email,
+            email: email.toLocaleLowerCase(),
             emailVerification: emailVerification,
-            password: password
+            pwd: password
         }
 
         // set body to backend (forget-password)
-
-        // check res code
-
-        if(false /*check email verification*/){
-            message.error('Your email verification code is incorrect.')
-        }
-        else{
-            setEmailVerification('')
-            setPassword('')
-            setConfirm('')
-            message.success('Successfully changed your password!')
-    
-            form.resetFields();
-        }
+        axios.put(base_ + '/api/forgot-password', body)
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(res.data.message)
+                    }
+                    else{
+                        setEmail('')
+                        setEmailVerification('')
+                        setPassword('')
+                        setConfirm('')
+                        message.success(res.data.message)
+                
+                        form.resetFields();
+                        
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    message.error("Something went wrong!")
+                    console.log(err)
+                }
+            )
     }
 
     return (
@@ -86,12 +175,11 @@ const ForgotPasswordPage = () => {
             >
 
                 <Form.Item
-                    name = "email"
-                    label = "E-mail"
-                    rules = {[
+                    name="email"
+                    label="E-mail"
+                    rules={[
                         {
-                            type: 'email',
-                            message: 'Please input a valid E-mail'
+                            validator: emailValidator
                         },
                         {
                             required: true,
@@ -99,12 +187,12 @@ const ForgotPasswordPage = () => {
                         },
                     ]}
                 >
-                    <Input value = {email} onChange = {(e) => setEmail(e.target.value)}/>
+                    <Input value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </Form.Item>
 
-                <Form.Item label="* Email Verification Code" >
+                <Form.Item label="* Email Verification Code">
                     <Row gutter={6}>
-                        <Col span={20}>
+                        <Col span={isGetCodeButtonWaiting?14:20}>
                             <Form.Item
                                 name='code'
                                 noStyle						
@@ -118,9 +206,19 @@ const ForgotPasswordPage = () => {
                                 <Input placeholder="Enter your email verification code" value={emailVerification} onChange={(e) => setEmailVerification(e.target.value)}/>
                             </Form.Item>
                         </Col>
-                        <Col span={4}>
-                            <Button>    
-                                Get Code
+                        <Col span={isGetCodeButtonWaiting?10:4}>
+                            <Button 
+                                disabled={
+                                    !(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.[a-zA-Z]{2,4}$/.test(form.getFieldValue('email'))) || isGetCodeButtonWaiting
+                                }
+                                onClick={onClickGetCode}
+                            >    
+                                {
+                                    isGetCodeButtonWaiting?
+                                    `Please wait ${getCodeButtonWaitingTime} s before resending`:
+                                    "Get Code"
+                                }
+                                
                             </Button>
                         </Col>
                     </Row>

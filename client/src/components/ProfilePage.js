@@ -6,10 +6,13 @@ import EditContactInfoPage from './EditContactInfoPage'
 import ProductDetailPage from './ProductDetailPage'
 import EditPostPage from './EditPostPage'
 import ImgCrop from 'antd-img-crop'
-
+import default_profile_pic from '../img/default_profile_pic.jpg'
 
 import {MAX_CONTENT_LEN, S3_GET, S3_UPLOAD, S3_DELETE, S3_GET_SIGNED_POST, S3_DELETE_BY_KEY, S3_UPLOAD_SINGLE_FILE} from './S3'
+import axios from 'axios';
 
+// const base_ = "http://localhost:3001";
+const base_ = ""
 const { Sider } = Layout;
 
 const profileContainerStyle = {
@@ -56,6 +59,7 @@ const defaultMenuKey = 1
 
 const ProfilePage = ({user, setUser}) => {
     const [myPosts, setMyPosts] = useState([])
+    const [localUser, setLocalUser] = useState(user)
     const [mySavedPosts, setMySavedPosts] = useState([])
     const [currentMenuKey, setCurrentMenuKey] = useState(defaultMenuKey)
 
@@ -78,17 +82,29 @@ const ProfilePage = ({user, setUser}) => {
         () => {
 
             const getMyPosts = async()=>{
-                const postsFromServer = await fetchMyPosts()
-                setMyPosts(postsFromServer)
+                fetchMyPosts()
+                    .then(
+                        (postsFromServer) => {
+                            setMyPosts(postsFromServer)
+                        }
+                    )
+                
             }
 
             getMyPosts()
 
+            
+
+        }, [isEditPostVisible]
+    )
+
+    useEffect(
+        () => {
             const getMySavedPosts = async()=>{
                 var temp=[]
                 for(var i=0; i<user.savedPosts.length; i++){
                     const fetchedPost = await fetchPost(user.savedPosts[i])
-                    if(fetchedPost==='Post Not Found'){
+                    if(fetchedPost==="Post not found"){
                         deleteSavedPosts(user.savedPosts[i])
                     }
                     else{
@@ -99,45 +115,87 @@ const ProfilePage = ({user, setUser}) => {
             }
             
             getMySavedPosts()
-
-        }, [isEditPostVisible]
+        }, []
     )
 
     useEffect(
         () => {
             if(user.profilePictureKey !== ""){
-                setProfilePictureURL(S3_GET(user.profilePictureKey))
+                S3_GET(user.profilePictureKey)
+                    .then(
+                        (url) => {
+                            setProfilePictureURL(url)
+                        }
+                    )
             }
+            setLocalUser(user)
         }, [user]
     )
 
     const fetchMyPosts = async () => {
-        const res = await fetch(`http://localhost:8080/posts1?userID=${user.email.toLowerCase()}`)
-        if(res.status===404){
-            return 'User Not Found'
-        }
-        else{
-            const data = await res.json()
-            return data
-        }
+        const postsFromServer = await axios.get(base_ + '/api/get-post-by-user')
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(res.data.message)
+                        return []
+                    }
+                    else{
+                        var tempPosts = res.data.data
+                        var count = tempPosts.length
+                        for(var i = 0; i < tempPosts.length; i++) {
+                            tempPosts[i] = {...tempPosts[i], simplifiedUserInfo: {firstName: user.firstName, lastName: user.lastName, profilePictureKey: user.profilePictureKey}}
+                            count--
+                            if(count==0){
+                                return tempPosts
+                            }
+                        }
+                        if(count==0){
+                            return tempPosts
+                        }
+                        
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    message.error('Fail to fetch user posts.')
+                    console.log(err)
+                    return []
+                }
+            )
+
+        return postsFromServer
         
     }
 
     const fetchPost = async (postID) => {
-        const res = await fetch(`http://localhost:8080/posts1/${postID}`)
-        if(res.status===404){
-            return 'Post Not Found'
-        }
-        else{
-            const data = await res.json()
-            return data
-        }
-    }
+        const postFromServer = axios.get(base_ + `/api/get-post-by-id?postID=${postID}`)
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        if(res.data.message=="Post not found"){
+                            return "Post not found"
+                        }
+                        else{
+                            message.error(res.data.message)
+                            return {}
+                        }
+                        
+                    }
+                    else{
+                        return res.data.data
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    return {}
+                }
+            )
 
-    const fetchUser = async(email) =>{
-        const res = await fetch(`http://localhost:8080/users?email=${email.toLowerCase()}`)
-        const data = await res.json()
-        return data[0]
+        return postFromServer
     }
 
     const onSelectMenu = async (selectedKeys) => {
@@ -145,45 +203,57 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const addSavedPosts = async (postID) => {
-        const updatedUser = {...user, savedPosts: [...user.savedPosts, postID].sort((a, b) => a - b)}
+        const updatedUser = {savedPosts: [...localUser.savedPosts, postID]}
 
-        const res = await fetch(`http://localhost:8080/users/${user.id}`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(updatedUser),
-            }
-        )
-
-        const data = await res.json()
-
-        setUser(updatedUser)
+        axios.put(base_ + '/api/update-user-info', {newUser: updatedUser})
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(`Fail to update saved posts: ${res.data.message}`)
+                    }
+                    else{
+                        setLocalUser({...localUser, savedPosts: res.data.data.savedPosts})
+                        // setMySavedPosts(res.data.data.savedPosts)
+                        message.success("Post saved!")
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    message.error('Fail to update saved posts.')
+                }
+            )
     }
 
     const deleteSavedPosts = async (postID) => {
-        var updatedSavedPosts = user.savedPosts
-        updatedSavedPosts.splice(user.savedPosts.indexOf(postID),1).sort((a, b) => a - b)
-        const updatedUser = {...user, savedPosts: updatedSavedPosts}
+        var updatedSavedPosts = localUser.savedPosts
+        updatedSavedPosts.splice(localUser.savedPosts.indexOf(postID),1)
+        const updatedUser = {savedPosts: updatedSavedPosts}
 
-        const res = await fetch(`http://localhost:8080/users/${user.id}`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(updatedUser),
-            }
-        )
-
-        const data = await res.json()
-
-        setUser(updatedUser)
+        axios.put(base_ + '/api/update-user-info', {newUser: updatedUser})
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(`Fail to update saved posts: ${res.data.message}`)
+                    }
+                    else{
+                        setLocalUser({...localUser, savedPosts: res.data.data.savedPosts})
+                        // setMySavedPosts(res.data.data.savedPosts)
+                        message.success("Post unsaved!")
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    message.error('Fail to update saved posts.')
+                }
+            )
     }
 
     const onClickStar = (postID) => {
-        if(user.savedPosts.includes(postID)){
+        if(localUser.savedPosts.includes(postID)){
             deleteSavedPosts(postID)
         }
         else{
@@ -192,14 +262,29 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const deletePost = async (postID) => {
-        const postToDelete = await fetchPost(postID)
-        for(const key in postToDelete.pictureKeyArray){
-            S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
-        }
-        await fetch(`http://localhost:8080/posts1/${postID}`, {
-            method: 'DELETE',
-        })
-        setMyPosts(myPosts.filter((post) => post.id !== postID))
+        // const postToDelete = await fetchPost(postID)
+        axios.delete(base_ + `/api/delete-single-post?postID=${postID}`)
+            .then(
+                async (res) => {
+                    if(res.data.code===1){
+                        message.err(res.data.message)
+                    }
+                    else{
+                        // for(const key in postToDelete.pictureKeyArray){
+                        //     await S3_DELETE_BY_KEY(postToDelete.pictureKeyArray[key])
+                        // }
+                        message.success(res.data.message)
+                        setMyPosts(myPosts.filter((post) => post._id !== postID))
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    message.error("Fail to delete post")
+                }
+            )
+        
         
     }
 
@@ -236,8 +321,7 @@ const ProfilePage = ({user, setUser}) => {
 
     const onClickCard = async (post, e) => {
         setSelectedPost(post)
-        const userFromServer = await fetchUser(post.userID)
-        setSelectedPostUserInfo(userFromServer)
+        setSelectedPostUserInfo(post.simplifiedUserInfo)
         setIsProductDetailVisible(true)
     }
 
@@ -261,27 +345,48 @@ const ProfilePage = ({user, setUser}) => {
     }
 
     const handleProfilePictureUpload = async ({file}) => {
-        console.log("upload profile picture: ", file)
-        try{
-            const signed = await S3_GET_SIGNED_POST(file, 'ProfilePictures')
-            await S3_UPLOAD_SINGLE_FILE(signed, file)
-            message.success("Profile picture updated!")
-            const newUser = {...user, profilePictureKey: `ProfilePictures/${file.uid}`}
-            const res = await fetch(`http://localhost:8080/users/${user.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(newUser),
-            })
-    
-            const data = await res.json()
-    
-            setUser({...user, profilePictureKey: data.profilePictureKey})
-        }
-        catch{
-            message.error("Fail to update profile picture!")
-        }
+        S3_GET_SIGNED_POST(file, 'ProfilePictures')
+        .then(
+            (signed) => {
+                S3_UPLOAD_SINGLE_FILE(signed, file)
+                    .then(
+                        () => {   
+                            const newUser = {profilePictureKey: `ProfilePictures/${file.uid}`}
+                            axios.put(base_ + '/api/update-user-info', {newUser: newUser})
+                                .then(
+                                    async (res) => {
+                                        if(res.data.code===1){
+                                            message.error(`Fail to update profile picture: ${res.data.message}`)
+                                        }
+                                        else{
+                                            message.success("Profile picture updated!")
+                                            await S3_DELETE_BY_KEY(user.profilePictureKey)
+                                            const data = res.data.data
+                                            setUser({...user, profilePictureKey: data.profilePictureKey})
+                                        }
+                                    }
+                                )
+                                .catch(
+                                    (err) => {
+                                        console.log(err)
+                                        message.error("Fail to update profile picture!")
+                                    }
+                                )
+                            
+                        }
+                    )
+                    .catch(
+                        (err) => {
+                            message.error("Fail to update profile picture!")
+                        }
+                    )
+            }
+        )
+        .catch(
+            (err_message) => {
+                message.error(err_message)
+            }
+        )
     }
 
     return (
@@ -302,15 +407,15 @@ const ProfilePage = ({user, setUser}) => {
                     }
                 }}
                 onCollapse={(collapsed, type) => {
-                    console.log(collapsed, type);
+                    
                 }}
             >
-                <ImgCrop quality={1} modalTitle="Crop Your Profile Picture" modalOK="Confirm">
+                <ImgCrop quality={0.4} modalTitle="Crop Your Profile Picture" modalOK="Confirm">
                     <Upload customRequest={handleProfilePictureUpload} beforeUpload={handleProfilePictureBeforeUpload} fileList={[]}>
                         <Tooltip title="Edit Profile Picture" placement="top" >
                             {
                                 user.profilePictureKey===""?
-                                <Avatar size="default" src={'./default_profile_pic.jpg'} style={profilePictureStyle} />:
+                                <Avatar size="default" src={default_profile_pic} style={profilePictureStyle} />:
                                 <Avatar size="default" src={profilePictureURL} style={profilePictureStyle} />
                             }
                             
@@ -359,7 +464,7 @@ const ProfilePage = ({user, setUser}) => {
                     currentMenuKey==1?
                     <Cards posts={myPosts} displayMyPost={true} onClickDelete={onClickDelete} onClickEdit={onClickEdit} onClickCard={onClickCard}></Cards>:
                     currentMenuKey==2?
-                    <Cards posts={mySavedPosts} displayMyPost={false} favoriteIDs={user.savedPosts} onClickStar={onClickStar}  onClickCard={onClickCard}></Cards>:
+                    <Cards posts={mySavedPosts} displayMyPost={false} favoriteIDs={localUser.savedPosts} onClickStar={onClickStar}  onClickCard={onClickCard} isAuth={true}></Cards>:
                     currentMenuKey==3?
                     <ChangePasswordPage user={user} setUser={setUser}/>:
                     <EditContactInfoPage user={user} setUser={setUser} />
@@ -371,9 +476,10 @@ const ProfilePage = ({user, setUser}) => {
                 visible={isProductDetailVisible}
                 onCancel={onCloseProductDetail}
                 footer={null}
-                width='70%'
+                width={window.innerWidth>=600?"70%":"100%"}
+                destroyOnClose={true}
             >
-                <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost.id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={selectedPostUserInfo}/>
+                <ProductDetailPage post={selectedPost} displayMyPost={currentMenuKey===1?true:false} onClickStar={onClickStar} isFavorite={user.savedPosts.includes(selectedPost._id)} onClickDelete={onClickDelete} onClickEdit={onClickEdit} user={currentMenuKey==1?user:selectedPostUserInfo} isAuth={true} />
             
                 <Modal title="Delete Warning" visible={isDeleteModalVisible && isProductDetailVisible} onOk={handleDeleteOk} onCancel={handleDeleteCancel}>
                     <p>Are you sure you want to delete this post?</p>

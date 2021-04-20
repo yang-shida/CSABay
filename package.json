@@ -1,0 +1,44 @@
+{
+  "name": "csabay",
+  "version": "1.0.0",
+  "description": "A website Craigslist/eBay type website where people can publicize selling information and contact information for sellers",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"nodemon server.js\" \"npm run client\" ",
+    "build": "cd client && npm run build",
+    "install-client": "cd client && npm install",
+    "heroku-postbuild": "npm run install-client && npm run build",
+    "devStart": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shida-yang/CSABay.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shida-yang/CSABay/issues"
+  },
+  "homepage": "https://github.com/shida-yang/CSABay#readme",
+  "keywords": [],
+  "dependencies": {
+    "aws-sdk": "^2.879.0",
+    "concurrently": "^6.0.1",
+    "cookie": "^0.4.1",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "cron": "^1.8.2",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.2",
+    "node-schedule": "^2.0.0",
+    "nodemailer": "^6.5.0",
+    "parser": "^0.1.4",
+    "randomstring": "^1.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}

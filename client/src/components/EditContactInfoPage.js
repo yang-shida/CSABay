@@ -8,6 +8,10 @@ import {
     Button,
     message,
 } from 'antd';
+import axios from 'axios';
+
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const formItemLayout = {
     labelCol: {
@@ -59,25 +63,34 @@ const EditContactInfoPage = ({user, setUser}) => {
     const [phoneNum, setPhoneNum] = useState(user.phoneNum)
 
     const onFinish = async () =>{
-        const newUser = {...user, wechatID: wechatID, phoneNum: phoneNum}
+        const newUser = {wechatID: wechatID, phoneNum: phoneNum}
 
-        const res = await fetch(`http://localhost:8080/users/${user.id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(newUser),
-        })
+        axios.put(base_ + '/api/update-user-info', {newUser: newUser})
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(`Fail to update the contact info: ${res.data.message}`)
+                    }
+                    else{
+                        const data = res.data.data
+                        if(data.wechatID===newUser.wechatID && data.phoneNum===newUser.phoneNum){
+                            setUser({...user, wechatID: data.wechatID, phoneNum: data.phoneNum})
+                            message.success('Successfully updated your contact info!')
+                        }
+                        else{
+                            message.error('Update failed, please try again or contach a CSA IT department member!')
+                        }
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    console.log(err)
+                    message.error('Fail to update the contact info.')
+                }
+            )
 
-        const data = await res.json()
-
-        if(data.wechatID===newUser.wechatID && data.phoneNum===newUser.phoneNum){
-            setUser({...user, wechatID: data.wechatID, phoneNum: data.phoneNum})
-            message.success('Successfully updated your contact info!')
-        }
-        else{
-            message.error('Update failed, please try again or contach a CSA IT department member!')
-        }
+        
 
         
 

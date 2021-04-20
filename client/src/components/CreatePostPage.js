@@ -16,6 +16,10 @@ import {
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ImageUploader from './ImageUploader'
+import axios from 'axios';
+
+// const base_ = "http://localhost:3001";
+const base_ = ""
 
 const { Option } = Select;
 
@@ -63,11 +67,11 @@ const CreatePostPage = ({user}) => {
 
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
-    const [durationDays, setDurationDays] = useState('')
+    const [durationDays, setDurationDays] = useState(30)
     const [typeOfPost, setTypeOfPost] = useState('')
 
     const [zipcode, setZipcode] = useState('')
-    const [price, setPrice] = useState('')
+    const [price, setPrice] = useState(0)
 
     const [pictureKeyArray, setPictureKeyArray] = useState([])
     const [fileList, setFileList] = useState([])
@@ -81,30 +85,36 @@ const CreatePostPage = ({user}) => {
     const uploadAllPictures = () => {
         return new Promise(
             async (resolve, reject) => {
+                var count = fileList.length
                 for(let index = 0; index < fileList.length; index ++){
                     const file = fileList[index]
                     try{
                         const signed = await S3_GET_SIGNED_POST(file, 'ProductDetailPhotos')
                         await S3_UPLOAD(signed, fileList, index)
-                        resolve()
+                        count--
+                        if(count===0){
+                            resolve()
+                        }
+                        
                     }
                     catch{
                         reject()
                     }
                 }
-                resolve()
+                if(count===0){
+                    resolve()
+                }
             }
         )
     }
 
     const onFinish = async () => {
 
-        message.loading({content: "Uploading Pictures", key: "updatable"})
+        message.loading({content: "Uploading Pictures", key: "uploadPicMessage", duration: 0})
         await uploadAllPictures()
             .then(
                 async () => {
                     const newPost = {
-                        userID: user.email.toLowerCase(),
                         title: title,
                         description: description,
                         durationDays: durationDays,
@@ -116,34 +126,45 @@ const CreatePostPage = ({user}) => {
                         wechatID: wechatID.toLowerCase(),
                         phoneNum: phoneNum
                     }
-            
-                    const res = await fetch('http://localhost:8080/posts1', {
-                        method: 'POST',
-                        headers: {
-                            'Content-type': 'application/json'
-                        },
-                        body: JSON.stringify(newPost),
-                    })
-            
-                    setTitle('')
-                    setDescription('')
-                    setDurationDays('')
-                    setZipcode('')
-                    setPrice('')
-                    setPictureKeyArray([])
-                    setFileList([])
-                    setEmail(user.email)
-                    setWechatID(user.wechatID)
-                    setPhoneNum(user.phoneNum)
-            
-                    form.resetFields();
 
-                    message.success({content: "Post Created!", key: "updatable", duration: 2})
+                    axios.post(base_ + '/api/add-post', {newPost: newPost})
+                        .then(
+                            (res) => {
+                                if(res.data.code===1){
+                                    message.error({content: `Fail to create post: ${res.data.message}`, key: "uploadPicMessage", duration: 2})
+                                }
+                                else{
+                                    setTitle('')
+                                    setDescription('')
+                                    setDurationDays(30)
+                                    setTypeOfPost('')
+                                    setZipcode('')
+                                    setPrice(0)
+                                    setPictureKeyArray([])
+                                    setFileList([])
+                                    setEmail(user.email)
+                                    setWechatID(user.wechatID)
+                                    setPhoneNum(user.phoneNum)
+                            
+                                    form.resetFields();
+
+                                    message.success({content: "Post Created!", key: "uploadPicMessage", duration: 2})
+                                }
+                            }
+                        )
+                        .catch(
+                            (err) => {
+                                console.log(err)
+                                message.error({content: "Fail to create post", key: "uploadPicMessage", duration: 2})
+                            }
+                        )
+            
+                    
                 }
             )
             .catch(
                 () => {
-                    message.error({content: "Fail to upload pictures", key: "updatable", duration: 2})
+                    message.error({content: "Fail to upload pictures", key: "uploadPicMessage", duration: 2})
                 }
             )
 
@@ -164,9 +185,11 @@ const CreatePostPage = ({user}) => {
                 name="createPost"
                 onFinish={onFinish}
                 initialValues={{
+                    "duration": 30,
                     "email": user.email,
                     "wechat-id": user.wechatID,
-                    "phone": user.phoneNum
+                    "phone": user.phoneNum,
+                    "price": price
                 }}
             >
 
@@ -197,7 +220,7 @@ const CreatePostPage = ({user}) => {
 
                 <Form.Item
                     name="description"
-                    label="Post Desceiption"
+                    label="Post Description"
                     rules={[
                         {
                             required: true,
@@ -223,9 +246,9 @@ const CreatePostPage = ({user}) => {
                         [
                             {
                                 type: 'number', 
-                                min: 1, 
+                                min: 7, 
                                 max: 30, 
-                                message: 'Duration needs to be a number between 1 and 30!'
+                                message: 'Duration needs to be a number between 7 and 30!'
                             },
                             {
                                 required: true,
@@ -312,17 +335,36 @@ const CreatePostPage = ({user}) => {
                         [
                             {
                                 type: 'number',
-                                message: 'Price needs to be a number!'
+                                min: 0, 
+                                max: 99999999, 
+                                message: 'Price needs to be a number between 0 and 99999999!'
                             }
                             
                         ]
                     }
                 >
                     <InputNumber 
-                        formatter={value => `$ ${value}`}
+                        formatter={
+                            value => {
+                                return (value==0?
+                                "$ 0":
+                                `$ ${value}`)
+                            }
+                        }
                         style={{ width: '100%' }}
                         value={price} 
-                        onChange={(value) => setPrice(value)}
+                        onChange={
+                            (value) => {
+                                if(value==null){
+                                    setPrice(0)
+                                }
+                                else{
+                                    setPrice(value)
+                                }
+                                
+                            }
+                        }
+                        placeholder="$ 0"
                     />
                 </Form.Item>
 
@@ -330,7 +372,7 @@ const CreatePostPage = ({user}) => {
                     name="pictures"
                     label={
                         <span>
-                            Pictures&nbsp;
+                            Pictures (&lt;10MB Each)&nbsp;
                             <Tooltip title="The first picture will be used as the cover picture.">
                                 <QuestionCircleOutlined />
                             </Tooltip>

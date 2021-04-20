@@ -11,6 +11,7 @@ import {
   } from 'antd';
 import {PasswordInput} from 'antd-password-input-strength'
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const formItemLayout = {
     labelCol: {
@@ -54,48 +55,49 @@ const tailFormItemLayout = {
     },
 }
 
+// const base_ = "http://localhost:3001";
+const base_ = ""
+
 const ChangePasswordPage = ({user, setUser}) => {
 
     const [form] = Form.useForm();
 
-    // const [emailVerification, setEmailVerification] = useState('')
     const [oldPassword, setOldPassword] = useState('')
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
 
     const onFinish = async () =>{
-        if(oldPassword !== user.password){
-            message.error('Your old password is incorrect.')
+
+        const pwds = {pwd: password, oldPwd: oldPassword}
+
+        axios.put(base_ + '/api/change-password', pwds)
+            .then(
+                (res) => {
+                    if(res.data.code===1){
+                        message.error(res.data.message)
+                    }
+                    else{
+                        setOldPassword('')
+                        setPassword('')
+                        setConfirm('')
+                        message.success(res.data.message)
+                
+                        form.resetFields();
+                        
+                    }
+                }
+            )
+            .catch(
+                (err) => {
+                    message.error("Something went wrong!")
+                    console.log(err)
+                }
+            )
+            
         }
-        // else if(false /*check email verification*/){
-        //     message.error('Your email verification code is incorrect.')
-        // }
-        else{
-            const newUser = {...user, password: password}
 
-            const res = await fetch(`http://localhost:8080/users/${user.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(newUser),
-            })
+
     
-            const data = await res.json()
-    
-            setUser({...user, password: data.password})
-
-            // setEmailVerification('')
-            setOldPassword('')
-            setPassword('')
-            setConfirm('')
-            message.success('Successfully changed your password!')
-    
-            form.resetFields();
-        }
-
-
-    }
 
 
     return (
@@ -107,33 +109,6 @@ const ChangePasswordPage = ({user, setUser}) => {
                 name="change-password"
                 onFinish={onFinish}
             >
-{/* 
-                <Form.Item label="* Email Verification Code" >
-                    <Row gutter={6}>
-                        <Col span={20}>
-                            <Form.Item
-                                name='code'
-                                noStyle						
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input the email verification code you got!'
-                                    }
-                                ]}
-                            >
-                                <Input placeholder="Enter your email verification code" value={emailVerification} onChange={(e) => setEmailVerification(e.target.value)}/>
-                            </Form.Item>
-                        </Col>
-                        <Col span={4}>
-                            {
-                                // TODO: add onClick action to check if match database
-                            }
-                            <Button>    
-                                Get Code
-                            </Button>
-                        </Col>
-                    </Row>
-                </Form.Item> */}
 
                 <Form.Item
                     name="old-password"
