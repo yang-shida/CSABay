@@ -8,7 +8,25 @@ https://drive.google.com/file/d/1rnEDUAPQ4CdswTtRtXc8a097vfgWMUWd/view?usp=shari
 ```npm install```
 
 ## To run locally:
-Create (or get) a .env file and put it in the project root directory, then
+Create (or get) a .env file and put it in the project root directory:
+```
+// database
+MONGODB_KEY_DEV=[YOUR_MONGODB_DEV_URI]
+MONGODB_KEY_PROD=[YOUR_MONGODB_PROD_URI]
+
+// AWS to store pictures
+AWS_S3_BUCKET_NAME=[YOUR_AWS_BUCKET]
+AWS_S3_REGION=[YOUR_AWS_REGION]
+AWS_S3_ACCESS_KEY_ID=[YOUR_AWS_ACCESS_KEY_ID]
+AWS_S3_SECRET_ACCESS_KEY=[YOUR_AWS_SECRET_ACCESS_KEY]
+
+// Email for verification and notification
+EMAIL_SERVICE=[YOUR_EMAIL_SERVICE, like gmail, outlook, ...]
+EMAIL_USERNAME=[YOUR_EMAIL_USERNAME]
+EMAIL_PWD=[YOUR_EMAIL_PASSWORD]
+```
+
+then start your local server:
 ```npm run dev```
 
 ## Project Structure
