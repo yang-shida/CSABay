@@ -9,10 +9,10 @@ export const MAX_CONTENT_LEN = 10485760
 const base_ = ""
 
 const config = {
-    bucketName: 'csabayphotos',
-    region: 'us-east-2',
-    accessKeyId: 'AKIA2SGQI5JKBX7R45YB',
-    secretAccessKey: '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',
+    bucketName: process.env.AWS_S3_BUCKET_NAME,
+    region: process.env.AWS_S3_REGION,
+    accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
 }
 
 AWS.config.update({
