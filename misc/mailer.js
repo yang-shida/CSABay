@@ -1,11 +1,24 @@
 "use strict";
 const nodemailer = require("nodemailer");
 
+// use username/password
+// const transporter = nodemailer.createTransport({
+//     service: process.env.EMAIL_SERVICE,
+//     auth: {
+//       user: process.env.EMAIL_USERNAME, 
+//       pass: process.env.EMAIL_PWD, 
+//     },
+// });
+
+// use OAUTH2
 const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE,
     auth: {
-      user: process.env.EMAIL_USERNAME, 
-      pass: process.env.EMAIL_PWD, 
+        type: process.env.EMAIL_AUTH_TYPE,
+        user: process.env.EMAIL_USERNAME, 
+        clientId: process.env.EMAIL_CLIENT_ID,
+        clientSecret: process.env.EMAIL_CLIENT_SECRET,
+        refreshToken: process.env.EMAIL_REFRESH_TOKEN
     },
 });
 
