@@ -21,9 +21,19 @@ AWS_S3_ACCESS_KEY_ID=[YOUR_AWS_ACCESS_KEY_ID]
 AWS_S3_SECRET_ACCESS_KEY=[YOUR_AWS_SECRET_ACCESS_KEY]
 
 // Email for verification and notification
+// Choose ONE of the following:
+// 1. Username/password (easier)
 EMAIL_SERVICE=[YOUR_EMAIL_SERVICE, like gmail, outlook, ...]
 EMAIL_USERNAME=[YOUR_EMAIL_USERNAME]
 EMAIL_PWD=[YOUR_EMAIL_PASSWORD]
+// OR 2. OAUTH2 (better)
+EMAIL_SERVICE=[YOUR_EMAIL_SERVICE, like gmail, outlook, ...]
+EMAIL_USERNAME=[YOUR_EMAIL_USERNAME]
+EMAIL_AUTH_TYPE=oauth2
+EMAIL_CLIENT_ID=[YOUR_CLIENT_ID]
+EMAIL_CLIENT_SECRET=[YOUR_CLIENT_SECRET]
+EMAIL_REFRESH_TOKEN=[YOUR_REFRESH_TOKEN]
+(https://stackoverflow.com/questions/24098461/nodemailer-gmail-what-exactly-is-a-refresh-token-and-how-do-i-get-one)
 ```
 
 then start your local server:
