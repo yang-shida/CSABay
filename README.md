@@ -1,7 +1,7 @@
 # CSABay
 A Craigslist/eBay type website where people can publicize selling information and contact information (React.js+Node.js)
 
-# Our final demo video
+## Our final demo video
 https://drive.google.com/file/d/1rnEDUAPQ4CdswTtRtXc8a097vfgWMUWd/view?usp=sharing
 
 ## Installing Dependencies:
